@@ -10,11 +10,11 @@ const hashing = async (password) => {
 
 (async () => {
   try {
-    let { salt, newPassword } = await hashing('Admin@123');
+    let { salt, newPassword } = await hashing('Admin@246');
 
     const adminData = {
-      name: 'Admin123',
-      email: 'Admin123@gmail.com',
+      name: 'Admin246',
+      email: 'Admin246@gmail.com',
       phoneNumber: '7012139732',
     };
 

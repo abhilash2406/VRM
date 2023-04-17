@@ -2,7 +2,7 @@ const designation = require('../designation');
 
 (async () => {
   try {
-    const designationData = ['Admin', 'Driver', 'Manager', 'Accountant'];
+    const designationData = ['Admin', 'Driver', 'Manager', 'Sales'];
 
     designationData.map(async (e) => {
       let existingData = await designation.findOne({

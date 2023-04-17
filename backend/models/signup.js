@@ -1,7 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize-config');
 
-
 const signup = sequelize.define('signup', {
   id: {
     type: DataTypes.UUID,

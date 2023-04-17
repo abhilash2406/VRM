@@ -14,7 +14,7 @@ const permission = require('../permission');
       { menu: 'Driver', subMenu: 'Delete' },
       { menu: 'Driver', subMenu: 'Status' },
       { menu: 'Transaction', subMenu: 'List' },
-      { menu: 'Contactus', subMenu: 'List' },
+      { menu: 'ContactUs', subMenu: 'List' },
       { menu: 'Gallery', subMenu: 'Add' },
       { menu: 'Gallery', subMenu: 'Edit' },
       { menu: 'Gallery', subMenu: 'Delete' },
