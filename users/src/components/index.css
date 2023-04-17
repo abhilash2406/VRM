@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+
+*{
+    font-family: 'Raleway', sans-serif;
+    margin: 0 ;
+    padding: 0;
+    box-sizing: border-box;
+    word-spacing: 3px;
+    font-size: 16px;  
+    
+}
+
+.navbar{
+    /* background: linear-gradient(to right,#BE93C5 , #7BC6CC); */
+    /* background-color: #254058; */
+    background-image: linear-gradient(to left bottom, #15212c, #0b1016, #53708e, #070312, #35343a);
+}
+.footerBg {
+  background-image: linear-gradient(to right bottom, #dee3e8, #354658, #bcbfc2, #030713, #4b4243);
+}
+
+/* admin login page */
+.form-control-borderless {
+  border: none;
+}
+
+.form-control-borderless:hover, .form-control-borderless:active, .form-control-borderless:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+@media only screen and (max-width: 767px) {
+.hide-on-mobile {
+  display: none;
+}
+}
+
+.login-box {
+background: url(https://i.imgur.com/73BxBuI.png);
+background-size: cover;
+background-position: center;
+padding: 50px;
+margin: 50px auto;
+min-height: 700px;
+-webkit-box-shadow: 0 2px 60px -5px rgba(0, 0, 0, 0.1);
+box-shadow: 0 2px 60px -5px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+font-family: "Script MT";
+font-size: 54px;
+text-align: center;
+color: #888888;
+margin-bottom: 50px;
+}
+
+.logo .logo-font {
+color: #3BC3FF;
+}
+
+@media only screen and (max-width: 767px) {
+.logo {
+  font-size: 34px;
+}
+}
+
+.header-title {
+text-align: center;
+margin-bottom: 50px;
+}
+
+.login-form {
+max-width: 300px;
+margin: 0 auto;
+}
+
+.login-form .form-control {
+border-radius: 0;
+margin-bottom: 30px;
+}
+
+.login-form .form-group {
+position: relative;
+}
+
+.login-form .form-group .forgot-password {
+position: absolute;
+top: 6px;
+right: 15px;
+}
+
+.login-form .btn {
+border-radius: 0;
+-webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+margin-bottom: 30px;
+}
+
+.login-form .btn.btn-primary {
+background: #3BC3FF;
+border-color: #31c0ff;
+}
+
+.slider-feature-card {
+background: #fff;
+max-width: 280px;
+margin: 0 auto;
+padding: 30px;
+text-align: center;
+-webkit-box-shadow: 0 2px 25px -3px rgba(0, 0, 0, 0.1);
+box-shadow: 0 2px 25px -3px rgba(0, 0, 0, 0.1);
+}
+
+.slider-feature-card img {
+height: 80px;
+margin-top: 30px;
+margin-bottom: 30px;
+}
+
+.slider-feature-card h3,
+.slider-feature-card p {
+margin-bottom: 30px;
+}
+
+.carousel-indicators {
+bottom: -50px;
+}
+
+.carousel-indicators li {
+cursor: pointer;
+}
+
+.crd img{
+ height: 90vh;
+}

@@ -1,0 +1,63 @@
+{
+    "development": {
+      "database": {
+        "username": "postgres",
+        "password": "root@123",
+        "database": "truck_management",
+        "host": "localhost",
+        "dialect": "postgres",
+        "port": "5432",
+        "logging": false
+      },
+      "stripe": {
+        "publishable_key": "pk_test_51Mq775SGaNLJ20WFD9FufxBll5pD7yFCZCpUjvdibVNhx9FdDHFdDhngoHUp2IdCsSvfN9AAmxZugkroMnS6zp2v00NuN0NrSP",
+        "secret_key": "sk_test_51Mq775SGaNLJ20WFx5F0nb3lwHYXnAHEfW7g66PvxuVZMy4ElGvPIECmWe14KcwqFscegCx8RugahMvzHvAWNQJ0008CBRgw4j "
+      },
+      "docusign": {
+        "integrationKey": "bcdfbcf4-e5d8-4355-afc9-986a5321c76a",
+        "basePath": "https://demo.docusign.net/restapi",
+        "userId": "1ae6f21d-55a8-463e-af9a-395b4034b9a3",
+        "accountId": "f4e64310-0893-47d0-9950-3b7bf58aeeb8",
+        "templateId": "b7bb3681-d125-4bfd-ab96-cdd7a87712e8",
+        "clientUserId": "2000"
+      },
+      "mail": {
+        "host": "smtp.gmail.com",
+        "service": "gmail",
+        "email": "abhilashkumar@spericorn.com",
+        "pass": "AbhiLash@20"
+      },
+      "secretPass": "XkhZG4fW2t2W"
+    },
+    "local": {
+      "database": {
+        "username": "postgres",
+        "password": "root@123",
+        "database": "truck_management",
+        "host": "localhost",
+        "dialect": "postgres",
+        "port": "5432",
+        "logging": false
+      },
+      "stripe": {
+        "publishable_key": "pk_test_51Mq775SGaNLJ20WFD9FufxBll5pD7yFCZCpUjvdibVNhx9FdDHFdDhngoHUp2IdCsSvfN9AAmxZugkroMnS6zp2v00NuN0NrSP",
+        "secret_key": "sk_test_51Mq775SGaNLJ20WFx5F0nb3lwHYXnAHEfW7g66PvxuVZMy4ElGvPIECmWe14KcwqFscegCx8RugahMvzHvAWNQJ0008CBRgw4j "
+      },
+      "docusign": {
+        "integrationKey": "bcdfbcf4-e5d8-4355-afc9-986a5321c76a",
+        "basePath": "https://demo.docusign.net/restapi",
+        "userId": "1ae6f21d-55a8-463e-af9a-395b4034b9a3",
+        "accountId": "f4e64310-0893-47d0-9950-3b7bf58aeeb8",
+        "templateId": "b7bb3681-d125-4bfd-ab96-cdd7a87712e8",
+        "clientUserId": "2000"
+      },
+      "mail": {
+        "host": "smtp.gmail.com",
+        "service": "gmail",
+        "email": "abhilashkumar@spericorn.com",
+        "pass": "AbhiLash@20"
+      },
+      "secretPass": "XkhZG4fW2t2W"
+    }
+  }
+  

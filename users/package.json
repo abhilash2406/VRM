@@ -1,5 +1,5 @@
 {
-  "name": "adminconsole",
+  "name": "users",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -10,11 +10,9 @@
     "bootstrap": "^5.2.3",
     "formik": "^2.2.9",
     "js-cookie": "^3.0.1",
-    "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
-    "react-data-table-component": "^7.5.3",
     "react-dom": "^18.2.0",
     "react-google-login": "^5.2.2",
     "react-loader-spinner": "^5.3.4",
