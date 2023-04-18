@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize-config');
 
-const signup = sequelize.define('signup', {
+const users = sequelize.define('users', {
   id: {
     type: DataTypes.UUID,
     defaultValue: Sequelize.UUIDV4,
@@ -21,8 +21,8 @@ const signup = sequelize.define('signup', {
   },
 });
 
-signup.associate = (models) => {
-  signup.belongsTo(models.login, { foreignKey: 'loginId', allowNull: false });
+users.associate = (models) => {
+  users.belongsTo(models.login, { foreignKey: 'loginId', allowNull: false });
 };
 
-module.exports = signup;
+module.exports = users;

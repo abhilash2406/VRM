@@ -44,9 +44,12 @@ login.hashPassword = async function (pass, salt) {
   return await bcrypt.hash(pass, salt);
 };
 login.verifyPassword = async function (pass, hash, salt) {
+  console.log('pass', pass)
+  console.log('hash', hash)
   const hashPassword = await bcrypt.hash(pass, salt);
-  if (hashPassword === hash) return true;
-  else return false;
+  // if (hashPassword === hash) return true;
+  // else return false;
+  return await bcrypt.compare(pass, hash);
 };
 login.generateAuthToken = function (data) {
   let expiresIn = expireIn(10);
@@ -60,7 +63,7 @@ login.generateAuthToken = function (data) {
       email: data.email,
       validity: data.password.concat(data.id).concat(data.email),
     },
-    jwts.secret_key,
+    'qwerty',
     { expiresIn }
   );
 };

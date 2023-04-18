@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import { setData } from '../services';
+import { setData, getData, updateData, deleteData } from '../services';
 
 export const postLogin = (props, navigate) => async (dispatch) => {
   await setData('/auth/login', props).then((e) => {
@@ -57,4 +57,12 @@ export const resetErrorMessage = () => (dispatch) => {
     type: 'ERROR_MESSAGE',
     payload: null,
   });
+};
+
+//for post contact form details
+export const contactDetails = (input) => async (dispatch) => {
+  let { data } = await setData('/contact', input);
+  if (data.success) {
+    dispatch(setSuccessMessage(data.message));
+  }
 };

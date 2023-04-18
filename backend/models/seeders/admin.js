@@ -1,4 +1,4 @@
-const signup = require('../signup');
+const signup = require('../users');
 const login = require('../login');
 const designation = require('../designation');
 

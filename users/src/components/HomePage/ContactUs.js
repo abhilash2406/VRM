@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-
+import { contactDetails } from '../../action';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 const ContactUs = () => {
+  const dispatch = useDispatch();
   return (
     <div>
-      
       <Formik
-        initialValues={{ name: '', phonenumber: '', email: '', message: '' }}
+        initialValues={{ name: '', phoneNumber: '', email: '', message: '' }}
         validationSchema={Yup.object({
-          name: Yup.string().required('Required'),
-          phonenumber: Yup.number().required('Required'),
+          name: Yup.string().required(' Name Required'),
+          phoneNumber: Yup.string().required(' ph no is Required'),
           email: Yup.string().required('Email is Required'),
           message: Yup.string().required('Message Required'),
         })}
-        onSubmit={(values) => {
+        onSubmit={(values, { resetForm }) => {
           console.log('input values', values);
+          dispatch(contactDetails(values));
+          resetForm();
         }}
       >
         <Form
@@ -45,16 +49,16 @@ const ContactUs = () => {
             <span className="text-danger">
               <ErrorMessage name="name" />
             </span>
-            <label htmlFor="phonenumber">
+            <label htmlFor="phoneNumber">
               <b>Phone Number</b>
             </label>
             <Field
-              name="phonenumber"
-              type="number"
+              name="phoneNumber"
+              type="string"
               style={{ margin: '0% 0% 2% 0%' }}
             />
             <span className="text-danger">
-              <ErrorMessage name="phonenumber" />
+              <ErrorMessage name="phoneNumber" />
             </span>
             <label htmlFor="email">
               <b>Email</b>
@@ -81,6 +85,7 @@ const ContactUs = () => {
             <button type="submit" className="btn btn-dark">
               Submit
             </button>
+            <Link to="/">back</Link>
           </div>
         </Form>
       </Formik>

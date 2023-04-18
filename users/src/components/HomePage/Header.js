@@ -13,7 +13,18 @@ const NavLink = styled(Link)`
   color: white;
   text-decoration: none;
   margin-left: 30px;
-  font-size : 20px;
+  font-size: 20px;
+  &:hover {
+    color: red;
+    text-decoration: none;
+    border-bottom: 3px solid #cb3066;
+  }
+`;
+const NavTag = styled.a`
+  color: white;
+  text-decoration: none;
+  margin-left: 30px;
+  font-size: 20px;
   &:hover {
     color: red;
     text-decoration: none;
@@ -53,10 +64,10 @@ const Header = () => {
             <>
               <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
-                <NavLink to="/">Home</NavLink>
+                  <NavLink to="/">Home</NavLink>
                   <NavLink to="/gallery">Gallery</NavLink>
                   <NavLink to="/contact-us">Contact Us</NavLink>
-                  <NavLink to="/login">LOGIN</NavLink>
+                  <NavTag href="http://localhost:3001/login">LOGIN/Register</NavTag>
                 </Nav>
               </Navbar.Collapse>
             </>

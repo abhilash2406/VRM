@@ -35,29 +35,47 @@ const authReducer = (state = authInitials, action) => {
 
 // msg reducer
 const msgInitials = {
-    successMsg: '',
-    errorMsg: '',
-  };
-  
-  const msgReducer = (state = msgInitials, action) => {
-    switch (action.type) {
-      case 'SUCCESS_MESSAGE':
-        return {
-          ...state,
-          successMsg: action.payload,
-        };
-      case 'ERROR_MESSAGE':
-        return {
-          ...state,
-          errorMsg: action.payload,
-        };
-  
-      default:
-        return state;
-    }
-  };
+  successMsg: '',
+  errorMsg: '',
+};
+
+const msgReducer = (state = msgInitials, action) => {
+  switch (action.type) {
+    case 'SUCCESS_MESSAGE':
+      return {
+        ...state,
+        successMsg: action.payload,
+      };
+    case 'ERROR_MESSAGE':
+      return {
+        ...state,
+        errorMsg: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
+const userInitials = {
+  userData: '',
+};
+
+const userReducer = (state = userInitials, action) => {
+  switch (action.type) {
+    case 'SET_USER_DATA':
+      return {
+        ...state,
+        userData: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
 
 export default combineReducers({
   auth: authReducer,
-  msg : msgReducer
+  msg: msgReducer,
+  user: userReducer,
 });
