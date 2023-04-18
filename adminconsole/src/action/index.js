@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import { getData, postData } from '../services';
+import { getData, postData, updateData } from '../services';
 
 // for toasters
 
@@ -74,13 +74,39 @@ export const setLogout = (navigate) => async (dispatch) => {
 //for view profile
 export const viewProfile = () => async (dispatch) => {
   const { data } = await getData('/profile/view');
-  console.log('data', data)
+  console.log('data', data);
   if (data.success) {
     dispatch({
       type: 'SET_USER_DATA',
       payload: data.data,
     });
     // dispatch(setSuccessMessage(data.message));
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};
+
+//to fetch feedbacks
+export const fetchFeedbacks = () => async (dispatch) => {
+  const { data } = await getData('/profile/feedback');
+  console.log('data', data);
+  if (data.success) {
+    dispatch({
+      type: 'SET_USER_FEEDBACKS',
+      payload: data.data,
+    });
+    // dispatch(setSuccessMessage(data.message));
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};
+
+// message approve
+export const getMessageApprove = (id) => async (dispatch) => {
+  const { data } = await updateData('/profile/feedback', id);
+  if (data.success) {
+    dispatch(setSuccessMessage(data.message));
+    // dispatch(fetchFeedbacks())
   } else {
     dispatch(setErrorMessage(data.message));
   }

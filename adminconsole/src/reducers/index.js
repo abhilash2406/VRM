@@ -59,6 +59,7 @@ const msgReducer = (state = msgInitials, action) => {
 
 const userInitials = {
   userData: '',
+  feedbacks :'',
 };
 
 const userReducer = (state = userInitials, action) => {
@@ -68,7 +69,11 @@ const userReducer = (state = userInitials, action) => {
         ...state,
         userData: action.payload,
       };
-
+    case 'SET_USER_FEEDBACKS':
+      return {
+        ...state,
+        feedbacks: action.payload,
+      };
     default:
       return state;
   }

@@ -22,33 +22,35 @@ const NavBar = () => {
           data-bs-toggle="tooltip"
           data-bs-placement="right"
           data-bs-original-title="Icon-only"
-        >   T.T LOGISTICS
+        >
+          {' '}
+          T.T LOGISTICS
           <i className="bi-bootstrap fs-1"></i>
         </a>
         <ul className="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
           <li className="nav-item">
             <Link to={'/dashboard'} className="nav-link text-dark fw-bold fs-4">
-            <i class="bi-house fs-3"></i>   Dashboard
+              <i className="bi-house fs-3"></i> Dashboard
             </Link>
           </li>
           <li className="nav-item my-2 ">
             <Link to={'/trucks'} className="nav-link text-dark fw-bold fs-4">
-            <i class="bi-truck fs-3"></i>  Trucks
+              <i className="bi-truck fs-3"></i> Trucks
             </Link>
           </li>
           <li className="nav-item my-2">
             <Link to={'/routes'} className="nav-link text-dark fw-bold fs-4">
-            <i class="bi-speedometer2 fs-3"></i>  Routes
+              <i className="bi-speedometer2 fs-3"></i> Routes
             </Link>
           </li>
           <li className="nav-item my-2">
             <Link to={'/drivers'} className="nav-link text-dark fw-bold fs-4">
-            <i class="bi-people fs-3"></i>   Driver
+              <i className="bi-people fs-3"></i> Driver
             </Link>
           </li>
           <li className="nav-item my-2">
             <Link to={'/trips'} className="nav-link text-dark fw-bold fs-4">
-            <i class="bi-speedometer2 fs-3"></i>    Trips
+              <i className="bi-speedometer2 fs-3"></i> Trips
             </Link>
           </li>
 
@@ -57,7 +59,7 @@ const NavBar = () => {
               to={'/transactions'}
               className="nav-link text-dark fw-bold fs-4"
             >
-            <i class=" bi bi-cash fs-3"></i>   Transactions
+              <i className=" bi bi-cash fs-3"></i> Transactions
             </Link>
           </li>
 
@@ -66,13 +68,17 @@ const NavBar = () => {
               to={'/permissions'}
               className="nav-link text-dark fw-bold fs-4"
             >
-              <i class=" bi bi-lock fs-3"></i>  Permissions
+              <i className=" bi bi-lock fs-3"></i> Permissions
             </Link>
           </li>
-
           <li className="nav-item my-2">
             <Link to={'/gallery'} className="nav-link text-dark fw-bold fs-4">
-            <i class=" bi bi-image fs-3"></i>     Gallery
+              <i className=" bi bi-image fs-3"></i> Gallery
+            </Link>
+          </li>
+          <li className="nav-item my-2">
+            <Link to={'/feedbacks'} className="nav-link text-dark fw-bold fs-4">
+              <i className=" bi bi-book fs-3"></i> Feedbacks
             </Link>
           </li>
         </ul>

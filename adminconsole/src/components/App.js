@@ -5,6 +5,7 @@ import Registration from './Authentication/Registration';
 import Dashboard from './Main/Dashboard';
 import ListTruck from './TruckManagement/ListTruck';
 import Profile from './Main/Profile';
+import Feedbacks from './Main/Feedbacks';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
@@ -50,6 +51,8 @@ const App = () => {
           <Route path="/dashboard" element={<Dashboard />} />;
           <Route path="/trucks" element={<ListTruck />} />;
           <Route path="/profile" element={<Profile />} />;
+          <Route path="/feedbacks" element={<Feedbacks />} />;
+
 
 
         </Routes>
