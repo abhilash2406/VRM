@@ -8,7 +8,6 @@ import * as Yup from 'yup';
 import NavBar from '../Main/NavBar';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 
-
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
@@ -43,8 +42,8 @@ const AddUser = () => {
     resetForm,
   } = useFormik({
     validationSchema: Yup.object().shape({
-      Name: Yup.string().min(3).max(20).required('name is Required'),
-      phone_number: Yup.string()
+      name: Yup.string().min(3).max(20).required('name is Required'),
+      phoneNumber: Yup.string()
         .matches(phoneRegExp, 'Phone number is not valid')
         .required('phone no is Required'),
       email: Yup.string()
@@ -54,8 +53,8 @@ const AddUser = () => {
     enableReinitialize: true,
     // initial values
     initialValues: {
-      Name: '',
-      phone_number: '',
+      name: '',
+      phoneNumber: '',
       email: '',
     },
     onSubmit: (values, { resetForm }) => {
@@ -91,74 +90,86 @@ const AddUser = () => {
                 <div class="col-12 col-md-8 col-lg-8 col-xl-6">
                   <div class="row">
                     <div class="col text-center title">
-                      <h1>Wethaq KYC Form</h1>
+                      <h1>Add user</h1>
                     </div>
                   </div>
-                  <div class="row align-items-center">
-                    <div class="col mt-4">
-                      <input
-                        type="text"
-                        class="form-control"
-                        placeholder="Full Name"
-                      />
-                    </div>
-                  </div>
-                  <div class="row align-items-center mt-4">
-                    <div class="col">
-                      <input
-                        type="email"
-                        class="form-control"
-                        placeholder="Email"
-                      />
-                    </div>
-                  </div>
-                  <div class="row align-items-center mt-4">
-                    <div class="col">
-                      <input
-                        type="text"
-                        class="form-control"
-                        placeholder="Company Name"
-                      />
-                    </div>
-                  </div>
-                  <div class="row align-items-center mt-4">
-                    <div class="col">
-                      <input
-                        type="text"
-                        class="form-control"
-                        placeholder="Postal Address"
-                      />
-                    </div>
-                  </div>
-                  <div class="row align-items-center mt-4">
-                    <div class="col">
-                      <input
-                        type="password"
-                        class="form-control"
-                        placeholder="Password"
-                      />
-                    </div>
-                    <div class="col">
-                      <input
-                        type="password"
-                        class="form-control"
-                        placeholder="Confirm Password"
-                      />
-                    </div>
-                  </div>
-                  <div class="row justify-content-start mt-4">
-                    <div class="col">
-                      <div class="form-check">
-                        <label class="form-check-label">
-                          <input type="checkbox" class="form-check-input" />I
-                          hereby agree to abide by the{' '}
-                          <a href="/">Terms and Conditions.</a>
-                        </label>
+                  <form onSubmit={handleSubmit}>
+                    <div class="row align-items-center">
+                      <div class="col mt-4">
+                        <input
+                          type="text"
+                          name="name"
+                          id="name"
+                          class="form-control"
+                          placeholder="Full Name"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.name}
+                        />
+                          {errors.name && touched.name ? (
+                        <div>{errors.name}</div>
+                      ) : null}
                       </div>
-
-                      <button class="btn btn-primary mt-4">Submit</button>
                     </div>
-                  </div>
+                    <div class="row align-items-center mt-4">
+                      <div class="col">
+                        <input
+                          type="email"
+                          class="form-control"
+                          placeholder="Email"
+                        />
+                      </div>
+                    </div>
+                    <div class="row align-items-center mt-4">
+                      <div class="col">
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Company Name"
+                        />
+                      </div>
+                    </div>
+                    <div class="row align-items-center mt-4">
+                      <div class="col">
+                        <input
+                          type="text"
+                          class="form-control"
+                          placeholder="Postal Address"
+                        />
+                      </div>
+                    </div>
+                    <div class="row align-items-center mt-4">
+                      <div class="col">
+                        <input
+                          type="password"
+                          class="form-control"
+                          placeholder="Password"
+                        />
+                      </div>
+                      <div class="col">
+                        <input
+                          type="password"
+                          class="form-control"
+                          placeholder="Confirm Password"
+                        />
+                      </div>
+                    </div>
+                    <div class="row justify-content-start mt-4">
+                      <div class="col">
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" />I
+                            hereby agree to abide by the{' '}
+                            <a href="/">Terms and Conditions.</a>
+                          </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-4">
+                          Submit
+                        </button>
+                      </div>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>

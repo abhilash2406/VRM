@@ -21,7 +21,7 @@ const Feedbacks = () => {
     {
       text: {
         primary: 'yellow',
-        secondary: 'green',
+        secondary: 'white',
       },
       background: {
         default: '#002b36',
