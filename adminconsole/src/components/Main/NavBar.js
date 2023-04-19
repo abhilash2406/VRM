@@ -1,3 +1,5 @@
+// inner navbar
+
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -13,11 +15,11 @@ const NavBar = () => {
   };
 
   return (
-    <div className="col-sm-auto bg-light sticky-top">
-      <div className="d-flex flex-sm-column flex-row flex-nowrap bg-light align-items-center sticky-top">
+    <div className="col-sm-auto bg-dark sticky-top">
+      <div className="d-flex flex-sm-column flex-row flex-nowrap bg-dark align-items-center sticky-top">
         <a
           href="/dashboard"
-          className="d-block p-3 link-dark text-decoration-none pb-3"
+          className="d-block p-3 link-white text-decoration-none pb-3"
           title=""
           data-bs-toggle="tooltip"
           data-bs-placement="right"
@@ -30,7 +32,7 @@ const NavBar = () => {
         <div className="dropdown">
           <a
             href="#"
-            className="d-flex align-items-center justify-content-center p-3 link-dark text-decoration-none dropdown-toggle"
+            className="d-flex align-items-center justify-content-center p-3 link-white text-decoration-none dropdown-toggle"
             id="dropdownUser3"
             data-bs-toggle="dropdown"
             aria-expanded="false"
@@ -42,7 +44,7 @@ const NavBar = () => {
             aria-labelledby="dropdownUser3"
           >
             <li>
-              <button className="btn btn-dark mx-2" onClick={logout}>
+              <button className="btn btn-white mx-2" onClick={logout}>
                 Logout
               </button>
             </li>
@@ -59,56 +61,61 @@ const NavBar = () => {
           </ul>
         </div>
         <ul className="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto ">
-          <li className="nav-item my-2">
-            <Link to={'/dashboard'} className="nav-link text-dark fw-bold fs-4">
+          <li className="nav-item my-1">
+            <Link to={'/dashboard'} className="nav-link text-white fw-bold fs-4">
               <i className="bi-house fs-3"></i> Dashboard
             </Link>
           </li>
-          <li className="nav-item my-2 ">
-            <Link to={'/trucks'} className="nav-link text-dark fw-bold fs-4">
+          <li className="nav-item my-1 ">
+            <Link to={'/add-user'} className="nav-link text-white fw-bold fs-4">
+              <i className="bi-person fs-3"></i> Add users
+            </Link>
+          </li>
+          <li className="nav-item my-1 ">
+            <Link to={'/trucks'} className="nav-link text-white fw-bold fs-4">
               <i className="bi-truck fs-3"></i> Trucks
             </Link>
           </li>
-          <li className="nav-item my-2">
-            <Link to={'/routes'} className="nav-link text-dark fw-bold fs-4">
+          <li className="nav-item my-1">
+            <Link to={'/routes'} className="nav-link text-white fw-bold fs-4">
               <i className="bi-speedometer2 fs-3"></i> Routes
             </Link>
           </li>
-          <li className="nav-item my-2">
-            <Link to={'/drivers'} className="nav-link text-dark fw-bold fs-4">
+          <li className="nav-item my-1">
+            <Link to={'/drivers'} className="nav-link text-white fw-bold fs-4">
               <i className="bi-people fs-3"></i> Driver
             </Link>
           </li>
-          <li className="nav-item my-2">
-            <Link to={'/trips'} className="nav-link text-dark fw-bold fs-4">
+          <li className="nav-item my-1">
+            <Link to={'/trips'} className="nav-link text-white fw-bold fs-4">
               <i className="bi-speedometer2 fs-3"></i> Trips
             </Link>
           </li>
 
-          <li className="nav-item my-2">
+          <li className="nav-item my-1">
             <Link
               to={'/transactions'}
-              className="nav-link text-dark fw-bold fs-4"
+              className="nav-link text-white fw-bold fs-4"
             >
               <i className=" bi bi-cash fs-3"></i> Transactions
             </Link>
           </li>
 
-          <li className="nav-item my-2">
+          <li className="nav-item my-1">
             <Link
               to={'/permissions'}
-              className="nav-link text-dark fw-bold fs-4"
+              className="nav-link text-white fw-bold fs-4"
             >
               <i className=" bi bi-lock fs-3"></i> Permissions
             </Link>
           </li>
-          <li className="nav-item my-2">
-            <Link to={'/gallery'} className="nav-link text-dark fw-bold fs-4">
+          <li className="nav-item my-1">
+            <Link to={'/gallery'} className="nav-link text-white fw-bold fs-4">
               <i className=" bi bi-image fs-3"></i> Gallery
             </Link>
           </li>
-          <li className="nav-item my-2">
-            <Link to={'/feedbacks'} className="nav-link text-dark fw-bold fs-4">
+          <li className="nav-item my-1">
+            <Link to={'/feedbacks'} className="nav-link text-white fw-bold fs-4">
               <i className=" bi bi-book fs-3"></i> Feedbacks
             </Link>
           </li>

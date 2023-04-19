@@ -9,7 +9,7 @@ const DriverList = () => {
         <NavBar />
         <div className="col-sm p-3 min-vh-100">
           <Link to="/add-drivers">
-            <button className="btn btn-dark add-btn">Add driver</button>
+            <button className="btn btn-info add-btn">Add driver</button>
           </Link>
         </div>
       </div>

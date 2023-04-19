@@ -9,6 +9,20 @@
     font-size: 16px;  
     
 }
+body {
+  margin: 0;
+  font-family: 'Lato', sans-serif;
+  font-size: 12px;
+  /* line-height: 1.8em; */
+  text-transform: none;
+  letter-spacing: .075em;
+  font-weight: bold;
+  font-style: normal;
+  text-decoration: none;
+  color: #e7bd74;
+  background-color: rgba(34,28,28);
+  display: block;
+}
 
 .navbar{
     /* background: linear-gradient(to right,#BE93C5 , #7BC6CC); */
@@ -145,4 +159,23 @@ cursor: pointer;
   overflow: hidden;
   border: 3px solid #fff;
   border-radius: 50%;
+}
+
+/* react data table style  */
+[data-column-id="1"].rdt_TableCol {
+  color: white;
+}
+[data-column-id="2"].rdt_TableCol {
+  color: white;
+}
+[data-column-id="3"].rdt_TableCol {
+  color: white;
+}
+
+/* dashboard */
+.card-title, .card-text {
+  color : black
+}
+.card-text {
+  font-size: 30px;
 }

@@ -1,8 +1,10 @@
+// login page
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { setLogin } from '../../action';
+import { setLogin } from './action';
 import { useDispatch, useSelector } from 'react-redux';
 import Loaders from '../Loaders';
 import GoogleLogin from 'react-google-login';
@@ -161,26 +163,7 @@ const Login = () => {
               </Formik>
               <a href="http://localhost:3000">back</a>
             </div>
-            <div className="col-sm-6 hide-on-mobile">
-              <div id="demo" className="carousel slide" data-ride="carousel">
-                <ul className="carousel-indicators">
-                  <li
-                    data-target="#demo"
-                    data-slide-to="0"
-                    className="active"
-                  ></li>
-                  <li data-target="#demo" data-slide-to="1"></li>
-                </ul>
-
-                <a
-                  className="carousel-control-prev"
-                  href="#demo"
-                  data-slide="prev"
-                >
-                  <span className="carousel-control-prev-icon"></span>
-                </a>
-              </div>
-            </div>
+           
           </div>
         </div>
       </div>

@@ -9,7 +9,7 @@ const Trips = () => {
         <NavBar />
         <div className="col-sm p-3 min-vh-100">
           <Link to="/add-trips">
-            <button className="btn btn-dark add-btn">Add trip</button>
+            <button className="btn btn-info add-btn">Add trip</button>
           </Link>
         </div>
       </div>

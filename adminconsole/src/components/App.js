@@ -13,6 +13,7 @@ import DriverList from './DriverManagement.js/DriverList';
 import Trips from './TripManagement/Trips';
 import Transactions from './Transactions/Transactions';
 import Permissions from './PermissionManagement/Permissions';
+import AddUser from './AddUsers/AddUser';
 import { PrivateRoute } from './PrivateRouting';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Cookies from 'js-cookie';
@@ -61,6 +62,14 @@ const App = () => {
             element={
               <PrivateRoute>
                 <Dashboard />
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/add-user"
+            element={
+              <PrivateRoute>
+                <AddUser />
               </PrivateRoute>
             }
           />

@@ -137,7 +137,7 @@ const Gallery = () => {
       >
         <img src={selectedImage} alt="Selected slide" />
       </Modal>
-      <Link className="btn btn-dark" to={'/'}>
+      <Link className="btn btn-info" to={'/'}>
         back
       </Link>
     </div>

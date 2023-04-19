@@ -1,3 +1,5 @@
+//trip list
+
 import React from 'react';
 import NavBar from '../Main/NavBar';
 import { Link } from 'react-router-dom';
@@ -9,7 +11,7 @@ const TripRoutes = () => {
         <NavBar />
         <div className="col-sm p-3 min-vh-100">
           <Link to="/add-routes">
-            <button className="btn btn-dark add-btn">Add Routes</button>
+            <button className="btn btn-info add-btn">Add Routes</button>
           </Link>
         </div>
       </div>
