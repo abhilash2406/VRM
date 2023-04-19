@@ -27,8 +27,39 @@ const NavBar = () => {
           T.T LOGISTICS
           <i className="bi-bootstrap fs-1"></i>
         </a>
-        <ul className="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">
-          <li className="nav-item">
+        <div className="dropdown">
+          <a
+            href="#"
+            className="d-flex align-items-center justify-content-center p-3 link-dark text-decoration-none dropdown-toggle"
+            id="dropdownUser3"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i className="bi-person-circle h2"></i>
+          </a>
+          <ul
+            className="dropdown-menu text-small shadow"
+            aria-labelledby="dropdownUser3"
+          >
+            <li>
+              <button className="btn btn-dark mx-2" onClick={logout}>
+                Logout
+              </button>
+            </li>
+            <li>
+              <Link className="dropdown-item" to={'/change-password'}>
+                change password
+              </Link>
+            </li>
+            <li>
+              <Link className="dropdown-item" to={'/profile'}>
+                Profile
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <ul className="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto ">
+          <li className="nav-item my-2">
             <Link to={'/dashboard'} className="nav-link text-dark fw-bold fs-4">
               <i className="bi-house fs-3"></i> Dashboard
             </Link>
@@ -82,37 +113,6 @@ const NavBar = () => {
             </Link>
           </li>
         </ul>
-        <div className="dropdown">
-          <a
-            href="#"
-            className="d-flex align-items-center justify-content-center p-3 link-dark text-decoration-none dropdown-toggle"
-            id="dropdownUser3"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <i className="bi-person-circle h2"></i>
-          </a>
-          <ul
-            className="dropdown-menu text-small shadow"
-            aria-labelledby="dropdownUser3"
-          >
-            <li>
-              <button className="btn btn-dark mx-2" onClick={logout}>
-                Logout
-              </button>
-            </li>
-            <li>
-              <Link className="dropdown-item" to={'/change-password'}>
-                change password
-              </Link>
-            </li>
-            <li>
-              <Link className="dropdown-item" to={'/profile'}>
-                Profile
-              </Link>
-            </li>
-          </ul>
-        </div>
       </div>
     </div>
   );

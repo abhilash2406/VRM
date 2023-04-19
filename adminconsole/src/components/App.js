@@ -7,6 +7,13 @@ import ListTruck from './TruckManagement/ListTruck';
 import Profile from './Main/Profile';
 import Feedbacks from './Main/Feedbacks';
 import ViewFeedback from './Main/ViewFeedback';
+import Gallery from './Main/Gallery';
+import TripRoutes from './RouteManagement/TripRoutes';
+import DriverList from './DriverManagement.js/DriverList';
+import Trips from './TripManagement/Trips';
+import Transactions from './Transactions/Transactions';
+import Permissions from './PermissionManagement/Permissions';
+import { PrivateRoute } from './PrivateRouting';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
@@ -49,15 +56,92 @@ const App = () => {
           <Route path="/" element={<Home />} />;
           <Route path="/login" element={<Login />} />;
           <Route path="/signup" element={<Registration />} />;
-          <Route path="/dashboard" element={<Dashboard />} />;
-          <Route path="/trucks" element={<ListTruck />} />;
-          <Route path="/profile" element={<Profile />} />;
-          <Route path="/feedbacks" element={<Feedbacks />} />;
-          <Route path="/view-feedback/:id" element={<ViewFeedback />} />;
-
-
-
-
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          ;
+          <Route
+            path="/trucks"
+            element={
+              <PrivateRoute>
+                <ListTruck />
+              </PrivateRoute>
+            }
+          />
+          ;
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+          ;
+          <Route
+            path="/feedbacks"
+            element={
+              <PrivateRoute>
+                <Feedbacks />
+              </PrivateRoute>
+            }
+          />
+          ;
+          <Route
+            path="/view-feedback/:id"
+            element={
+              <PrivateRoute>
+                <ViewFeedback />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/routes"
+            element={
+              <PrivateRoute>
+                <TripRoutes />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/drivers"
+            element={
+              <PrivateRoute>
+                <DriverList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/trips"
+            element={
+              <PrivateRoute>
+                <Trips />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/transactions"
+            element={
+              <PrivateRoute>
+                <Transactions />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/permissions"
+            element={
+              <PrivateRoute>
+                <Permissions />
+              </PrivateRoute>
+            }
+          />
+          ;
+          <Route path="/gallery" element={<Gallery />} />;
         </Routes>
       </BrowserRouter>
     </div>

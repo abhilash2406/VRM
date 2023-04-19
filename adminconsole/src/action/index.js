@@ -40,6 +40,7 @@ export const resetErrorMessage = () => (dispatch) => {
 export const setLogin = (props, navigate) => async (dispatch) => {
   console.log('props', props);
   await postData('/auth/login', props).then((e) => {
+    console.log('e.data', e.data)
     if (e.data.success) {
       Cookies.set('token', e.data.data.accessToken);
       localStorage.setItem(

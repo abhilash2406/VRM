@@ -61,7 +61,7 @@ exports.getMsgToRead = async (req, res, next) => {
       data: feedback,
     });
     // }
-  } catch {
+  } catch (e) {
     res.send({
       success: false,
       message: e.message,

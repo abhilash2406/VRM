@@ -34,7 +34,7 @@ exports.Login = async (req, res, next) => {
       message: 'Login successfully',
       data: {
         user: currentUser.name,
-        designation: currentDesignation.Designation,
+        designation: currentDesignation.designation,
         accessToken,
         refreshToken,
       },

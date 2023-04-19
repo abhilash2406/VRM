@@ -64,17 +64,7 @@ const Header = () => {
           </Container>
         </Navbar>
       </div>
-      <div className="row justify-content-center ">
-        <div className="col-12 col-md-10 col-lg-8">
-          <form className="card1 card-sm border-0">
-            <div className="card-body row no-gutters align-items-center py-0">
-              <div className="col-auto">
-                <i className="fas fa-search h4 text-body"></i>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
+     
     </>
   );
 };
