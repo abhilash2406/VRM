@@ -49,17 +49,19 @@ exports.getUserMessages = async (req, res, next) => {
   }
 };
 
-exports.approveMsg = async (req, res, next) => {
+exports.getMsgToRead = async (req, res, next) => {
   try {
-    console.log('req.body', req.body.id);
-    const feedback = await contacts.findByPk(req.body.id);
-    console.log('feedback', feedback);
-    await contacts.update({ status: 'read' }, { where: { id: req.body.id } });
+    const id = req.params.id;
+    const feedback = await contacts.findByPk(id);
+    // if (feedback.status === 'unread') {
+    await contacts.update({ status: 'read' }, { where: { id: id } });
     res.send({
       success: true,
       message: 'marked as read',
+      data: feedback,
     });
-  } catch (e) {
+    // }
+  } catch {
     res.send({
       success: false,
       message: e.message,

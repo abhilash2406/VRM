@@ -13,25 +13,11 @@ const Feedbacks = () => {
   }, []);
 
   const { feedbacks } = useSelector((e) => e.user);
-  console.log('feedbacks', feedbacks);
 
   const columns = [
     {
-      name: 'name',
+      name: 'sender',
       selector: (row) => row.name,
-    },
-
-    {
-      name: 'phone',
-      selector: (row) => row.phoneNumber,
-    },
-    {
-      name: ' e-mail',
-      selector: (row) => row.email,
-    },
-    {
-      name: 'Message',
-      selector: (row) => row.message,
     },
     {
       name: 'Status',
@@ -40,21 +26,14 @@ const Feedbacks = () => {
 
     {
       name: 'action',
-      selector: (row) =>
-        row.status === 'unread' ? (
-          <div>
-            {' '}
-            <button
-              className="btn btn-dark"
-              onClick={() => {
-                dispatch(getMessageApprove({ id: row.id }));
-                dispatch(fetchFeedbacks());
-              }}
-            >
-              Mark as read
-            </button>
-          </div>
-        ) : null,
+      selector: (row) => (
+        <div>
+          {' '}
+          <Link className="btn btn-dark" to={`/view-feedback/${row.id}`}>
+            Read
+          </Link>
+        </div>
+      ),
     },
   ];
 

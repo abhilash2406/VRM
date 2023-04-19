@@ -87,9 +87,8 @@ export const viewProfile = () => async (dispatch) => {
 };
 
 //to fetch feedbacks
-export const fetchFeedbacks = () => async (dispatch) => {
+export const fetchFeedbacks = (id) => async (dispatch) => {
   const { data } = await getData('/profile/feedback');
-  console.log('data', data);
   if (data.success) {
     dispatch({
       type: 'SET_USER_FEEDBACKS',
@@ -101,12 +100,16 @@ export const fetchFeedbacks = () => async (dispatch) => {
   }
 };
 
-// message approve
-export const getMessageApprove = (id) => async (dispatch) => {
-  const { data } = await updateData('/profile/feedback', id);
+//to fetch feedbacks
+export const readFeedback = (id) => async (dispatch) => {
+  const { data } = await getData(`/profile/feedback/${id}`);
+  console.log('data', data);
   if (data.success) {
-    dispatch(setSuccessMessage(data.message));
-    // dispatch(fetchFeedbacks())
+    dispatch({
+      type: 'SET_USER_FEEDBACK',
+      payload: data.data,
+    });
+    // dispatch(setSuccessMessage(data.message));
   } else {
     dispatch(setErrorMessage(data.message));
   }
