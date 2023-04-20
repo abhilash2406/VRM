@@ -19,11 +19,37 @@ export const setLogin = (props, navigate) => async (dispatch) => {
       );
       navigate();
       dispatch(setSuccessMessage(e.data.message));
-      dispatch({
-        type: 'GET_LOGIN',
-        payload: e.data.data.designation,
-        permission: e.data.data.permission,
-      });
+      // dispatch({
+      //   type: 'GET_LOGIN',
+      //   payload: e.data.data.designation,
+      //   permission: e.data.data.permission,
+      // });
+    } else {
+      dispatch(setErrorMessage(e.data.message));
+    }
+  });
+};
+
+// login using google
+
+export const setGLogin = (props, navigate) => async (dispatch) => {
+  await postData('/auth/GLogin', props).then((e) => {
+    if (e.data.success) {
+      Cookies.set('token', e.data.data.accessToken);
+      localStorage.setItem(
+        'currentUser',
+        JSON.stringify({
+          token: e.data.data.accessToken,
+          designation: e.data.data.designation,
+        })
+      );
+      navigate();
+      dispatch(setSuccessMessage(e.data.message));
+      // dispatch({
+      //   type: 'GET_LOGIN',
+      //   payload: e.data.data.designation,
+      //   permission: e.data.data.permission,
+      // });
     } else {
       dispatch(setErrorMessage(e.data.message));
     }

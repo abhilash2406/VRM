@@ -1,6 +1,7 @@
 const users = require('../../models/users');
 const login = require('../../models/login');
-const designation = require('../../models/designation');
+const designations = require('../../models/designation');
+const transporter = require('../../modules/mail');
 
 exports.Login = async (req, res, next) => {
   try {
@@ -26,7 +27,7 @@ exports.Login = async (req, res, next) => {
     // console.log('first', accessToken);
 
     const currentUser = await users.findOne({ where: { loginId: user.id } });
-    const currentDesignation = await designation.findOne({
+    const currentDesignation = await designations.findOne({
       where: { id: user.designationId },
     });
     return res.send({
@@ -39,6 +40,103 @@ exports.Login = async (req, res, next) => {
         refreshToken,
       },
     });
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};
+
+//add users
+
+exports.addUsers = async (req, res, next) => {
+  try {
+    console.log(req.body.name);
+    var userExist = await login.findOne({ where: { email: req.body.email } });
+
+    if (userExist) {
+      res.send({ success: false, message: 'Admin already exist' });
+    } else {
+      // const imagePath = req.file.path.replace(/^public/, '');
+      // req.body.image = imagePath;
+      var randomPassword = Math.random().toString(36).slice(-8);
+      const salt = await login.generateSalt();
+      // console.log('first', salt);
+
+      req.body.password = await login.hashPassword(randomPassword, salt);
+
+      req.body.salt = salt;
+      const newUser = await designations.findOne({
+        where: { id: req.body.designation },
+      });
+      // console.log(newUser.id);
+      req.body.designationId = newUser.id;
+      const log = await login.create({
+        email: req.body.email,
+        password: req.body.password,
+        salt: req.body.salt,
+        designationId: req.body.designationId,
+      });
+
+      // console.log(log);
+      const data = await users.create({
+        name: req.body.name,
+        phoneNumber: req.body.phoneNumber,
+        // image: req.body.image,
+        loginId: log.id,
+      });
+      let mailOptions = {
+        to: req.body.email,
+        subject: 'Successfully Registered',
+        text: `Your username is ${req.body.name} and password is ${randomPassword}`,
+      };
+
+      const info = await transporter.sendMail(mailOptions);
+      return res.send({
+        success: true,
+        message: 'Added successfully',
+      });
+    }
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};
+
+// google login
+
+exports.googleLogin = async (req, res, next) => {
+  // console.log(req.body);
+  try {
+    const googleToken = req.body.token;
+    const currentUser = await login.findOne({
+      where: { email: req.body.data.data.email },
+    });
+    console.log('users', currentUser);
+    if (!users) {
+      return res.send({
+        success: false,
+        message: 'User Not Found',
+      });
+    } else {
+      const cUser = await users.findOne({ where: { loginId: currentUser.id } });
+      console.log(cUser);
+      const currentDesignation = await designations.findOne({
+        where: { id: currentUser.designationId },
+      });
+      return res.send({
+        success: true,
+        message: 'Login successfully',
+        data: {
+          user: cUser.name,
+          designation: currentDesignation.designation,
+          accessToken: googleToken,
+        },
+      });
+    }
   } catch (e) {
     res.send({
       success: false,

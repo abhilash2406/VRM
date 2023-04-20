@@ -7,13 +7,13 @@ import { readFeedback } from '../../action';
 
 const ViewFeedback = () => {
   const { id } = useParams();
-  console.log('id', id);
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(readFeedback(id));
   }, []);
   const { feedback } = useSelector((e) => e.user);
-  console.log('feedback', feedback);
+  
 
   return (
     <div className="card" style={{ width: '18rem' }}>

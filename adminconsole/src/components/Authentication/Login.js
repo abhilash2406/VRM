@@ -4,10 +4,16 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { setLogin } from './action';
+import { setLogin, setGLogin } from './action';
+import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import Loaders from '../Loaders';
-import GoogleLogin from 'react-google-login';
+import {
+  GoogleOAuthProvider,
+  GoogleLogin,
+  googleLogout,
+} from '@react-oauth/google';
+
 import { isEmpty } from 'lodash';
 
 const LoginSchema = Yup.object().shape({
@@ -29,23 +35,17 @@ const Login = () => {
   const navigate = useNavigate();
   const { setLoading } = useSelector((state) => state.auth);
 
-  // const responseGoogle = async (res) => {
-  //   const bodyObject = {
-  //     Name: res.profileObj.name,
-  //     email: res.profileObj.email,
-  //     token: res.googleId,
-  //     Image: res.profileObj.imageUrl,
-  //     ProviderId: 'Google'
-  //   };
-  //   console.log('bodyObject', bodyObject);
-  //   try {
-  //     if (isEmpty(res.errors)) {
-  //       setLoginStatus(true);
-  //     }
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
+  async function verifyGoogleAccessToken(access_token) {
+    const url = `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${access_token}`;
+    const response = await axios.get(url);
+    const data = response;
+    console.log(data);
+    dispatch(
+      setGLogin({ token: access_token, data: data }, () =>
+        navigate('/dashboard')
+      )
+    );
+  }
 
   return setLoading ? (
     <Loaders />
@@ -135,22 +135,19 @@ const Login = () => {
                         Login
                       </button>
                       <div>
-                        {/* <GoogleLogin
-                          clientId="260034014064-lkl520uidbjl3a7p2f8cl1fc8mi8d1fr.apps.googleusercontent.com"
-                          render={(renderProps) => (
-                            <button
-                              className="btn g-sigin"
-                              onClick={renderProps.onClick}
-                              disabled={renderProps.disabled}
-                            >
-                              <p>Continue with Google</p>
-                            </button>
-                          )}
-                          buttonText="Login"
-                          onSuccess={responseGoogle}
-                          onFailure={responseGoogle}
-                          cookiePolicy={'single_host_origin'}
-                        /> */}
+                        <GoogleOAuthProvider clientId="260034014064-t9k3lhrlke6ocfvt1d69r6nddktpqk34.apps.googleusercontent.com">
+                          <GoogleLogin
+                            onSuccess={(credentialResponse) => {
+                              verifyGoogleAccessToken(
+                                credentialResponse.credential
+                              );
+                            }}
+                            onError={() => {
+                              console.log('Login Failed');
+                            }}
+                            // useOneTap
+                          />
+                        </GoogleOAuthProvider>
                       </div>
 
                       <p className="small fw-bold mt-2 pt-1 mb-0">
@@ -163,7 +160,6 @@ const Login = () => {
               </Formik>
               <a href="http://localhost:3000">back</a>
             </div>
-           
           </div>
         </div>
       </div>

@@ -4,5 +4,8 @@ const controller = require('./controller');
 const validate = require('./validator');
 
 router.route('/login').post(controller.Login);
+router.route('/GLogin').post(controller.googleLogin);
+
+router.route('/add-user').post(validate.addUserValidate, controller.addUsers);
 
 module.exports = router;

@@ -11,7 +11,7 @@ const contactValidate = async (req, res, next) => {
     req.body = await schema.validateAsync(req.body);
     next();
   } catch (err) {
-    res.send({ status: 'failed', err: err.message });
+    res.send({ success: false, err: err.message });
   }
 };
 

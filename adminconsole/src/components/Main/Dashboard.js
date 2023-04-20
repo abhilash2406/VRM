@@ -12,7 +12,7 @@ const Dashboard = () => {
     dispatch(fetchFeedbacks());
   }, []);
   const { feedbacks } = useSelector((e) => e.user);
-  // console.log('feedbacks', feedbacks.length);
+ 
   return (
     <div className="container-fluid">
       <div className="row">
