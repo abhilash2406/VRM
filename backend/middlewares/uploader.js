@@ -7,11 +7,10 @@ const imageStorage = multer.diskStorage({
   },
 });
 
-
 const upload = multer({
   storage: imageStorage,
   limits: { fileSize: 1000000 },
-  fileFilter: (req, data, cb,next) => {
+  fileFilter: (req, data, cb) => {
     console.log('>>>>>??', data);
     if (
       data.mimetype === 'image/png' ||
@@ -22,14 +21,11 @@ const upload = multer({
       data.mimetype === 'image/JPEG'
     ) {
       cb(null, true);
-      next()
     } else {
       cb(null, false);
       return cb(new Error('Invalid image format'));
     }
   },
 });
-
-
 
 module.exports = { upload };

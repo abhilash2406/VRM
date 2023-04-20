@@ -32,7 +32,7 @@ const Gallery = () => {
     event.preventDefault();
 
     const formData = new FormData();
-    formData.append('file', selectedFile);
+    formData.append('image', selectedFile);
     dispatch(uploadToGallery(formData));
   };
 
