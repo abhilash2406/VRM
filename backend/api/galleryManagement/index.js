@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const controller = require('./controller');
-const { multiUpload } = require('../../middlewares/uploader');
+const { upload } = require('../../middlewares/uploader');
 
-router.route('/').post(multiUpload.array('imgs'), controller.uploadImages);
+router.route('/').post( upload.single('image'), controller.uploadImages);
 
 module.exports = router;

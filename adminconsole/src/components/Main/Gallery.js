@@ -23,19 +23,16 @@ const Gallery = () => {
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
-  const [files, setFiles] = useState([]);
-  const handleFileUpload = (event) => {
-    const newFiles = Array.from(event.target.files);
-    setFiles([...files, ...newFiles]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const handleFileSelect = (event) => {
+    setSelectedFile(event.target.files[0]);
   };
   // console.log('files', files);
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const formData = new FormData();
-    files.forEach((file) => {
-      formData.append('files[]', file);
-    });
+    formData.append('file', selectedFile);
     dispatch(uploadToGallery(formData));
   };
 
@@ -63,7 +60,7 @@ const Gallery = () => {
             <form onSubmit={handleSubmit}>
               <h3>React Multiple File Upload</h3>
               <div className="form-group">
-                <input type="file" multiple onChange={handleFileUpload} />
+                <input type="file" multiple onChange={handleFileSelect} />
               </div>
               <div className="form-group">
                 <button className="btn btn-primary" type="submit">
