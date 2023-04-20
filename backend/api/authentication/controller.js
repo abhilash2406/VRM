@@ -5,10 +5,8 @@ const transporter = require('../../modules/mail');
 
 exports.Login = async (req, res, next) => {
   try {
-    console.log('req.body', req.body);
     const { email, password } = req.body;
     const user = await login.findOne({ where: { email: email } });
-    // console.log(user);
 
     if (!user)
       return res.send({
@@ -19,12 +17,11 @@ exports.Login = async (req, res, next) => {
     if (!(await login.verifyPassword(password, user.password, user.salt)))
       return res.send({
         success: false,
-        message: 'Invalid  password',
+        message: 'Invalid email or password',
       });
 
     const accessToken = login.generateAuthToken(user);
     const refreshToken = login.generateAuthToken(user);
-    // console.log('first', accessToken);
 
     const currentUser = await users.findOne({ where: { loginId: user.id } });
     const currentDesignation = await designations.findOne({
@@ -52,7 +49,6 @@ exports.Login = async (req, res, next) => {
 
 exports.addUsers = async (req, res, next) => {
   try {
-    console.log(req.body.name);
     var userExist = await login.findOne({ where: { email: req.body.email } });
 
     if (userExist) {
@@ -62,7 +58,6 @@ exports.addUsers = async (req, res, next) => {
       // req.body.image = imagePath;
       var randomPassword = Math.random().toString(36).slice(-8);
       const salt = await login.generateSalt();
-      // console.log('first', salt);
 
       req.body.password = await login.hashPassword(randomPassword, salt);
 
@@ -70,7 +65,7 @@ exports.addUsers = async (req, res, next) => {
       const newUser = await designations.findOne({
         where: { id: req.body.designation },
       });
-      // console.log(newUser.id);
+
       req.body.designationId = newUser.id;
       const log = await login.create({
         email: req.body.email,
@@ -79,7 +74,6 @@ exports.addUsers = async (req, res, next) => {
         designationId: req.body.designationId,
       });
 
-      // console.log(log);
       const data = await users.create({
         name: req.body.name,
         phoneNumber: req.body.phoneNumber,
@@ -109,7 +103,6 @@ exports.addUsers = async (req, res, next) => {
 // google login
 
 exports.googleLogin = async (req, res, next) => {
-  // console.log(req.body);
   try {
     const googleToken = req.body.token;
     const currentUser = await login.findOne({
@@ -123,7 +116,7 @@ exports.googleLogin = async (req, res, next) => {
       });
     } else {
       const cUser = await users.findOne({ where: { loginId: currentUser.id } });
-      console.log(cUser);
+
       const currentDesignation = await designations.findOne({
         where: { id: currentUser.designationId },
       });

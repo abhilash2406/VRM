@@ -91,8 +91,44 @@ const userReducer = (state = userInitials, action) => {
   }
 };
 
+//permission reducer
+const permissionInitials = {
+  permissions: [],
+  roleData: [],
+  currentUserPermissions: [],
+};
+const permissionReducer = (state = permissionInitials, action) => {
+  switch (action.type) {
+    case 'GET_PERMISSION':
+      return {
+        ...state,
+        permissions: action.payload,
+      };
+
+    case 'SET_CURRENT_DATA':
+      return {
+        ...state,
+        currentUserPermissions: action.payload,
+      };
+    case 'SET_ROLE_DATA':
+      return {
+        ...state,
+        roleData: action.payload,
+      };
+    case 'SET_GRANTED':
+      return {
+        ...state,
+        grantedPermissions: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   auth: authReducer,
   msg: msgReducer,
   user: userReducer,
+  permissions: permissionReducer,
 });

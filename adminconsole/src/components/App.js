@@ -19,9 +19,14 @@ import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
 import './index.css';
+import io from 'socket.io-client';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { resetSuccessMessage, resetErrorMessage } from '../action';
+import {
+  setCurrentPermissions,
+  permissionOfLogin,
+} from './PermissionManagement/action';
 
 const toastConfig = {
   position: 'top-right',
@@ -34,9 +39,25 @@ const toastConfig = {
   theme: 'dark',
 };
 
+const socket = io.connect('http://localhost:5000');
+
 const App = () => {
   const dispatch = useDispatch();
+  const { role } = useSelector((e) => e.auth);
   const { successMsg, errorMsg } = useSelector((e) => e.msg);
+  useEffect(() => {
+    socket.on('GetPermissions', (data) => {
+      console.log('socketData', data);
+      // setPermis(data);
+      dispatch(setCurrentPermissions(role, data));
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    if (Cookies.get('token')) {
+      dispatch(permissionOfLogin());
+    }
+  }, []);
 
   useEffect(() => {
     if (successMsg) {
@@ -65,7 +86,7 @@ const App = () => {
               </PrivateRoute>
             }
           />
-            <Route
+          <Route
             path="/add-user"
             element={
               <PrivateRoute>

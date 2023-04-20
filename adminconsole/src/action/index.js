@@ -35,8 +35,6 @@ export const resetErrorMessage = () => (dispatch) => {
   });
 };
 
-
-
 // action for logout
 export const setLogout = (navigate) => async (dispatch) => {
   localStorage.removeItem('currentUser');
@@ -88,4 +86,10 @@ export const readFeedback = (id) => async (dispatch) => {
   } else {
     dispatch(setErrorMessage(data.message));
   }
+};
+
+// image upload
+export const uploadToGallery = (imgs) => async (dispatch) => {
+  console.log('imgs', imgs);
+  const { data } = await postData('/gallery', imgs);
 };

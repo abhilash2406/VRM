@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import NavBar from './NavBar';
 import Modal from 'react-modal';
 import { Link } from 'react-router-dom';
+import { uploadToGallery } from '../../action';
+import { useDispatch } from 'react-redux';
 
 const customStyles = {
   content: {
@@ -17,8 +19,25 @@ const customStyles = {
 };
 
 const Gallery = () => {
+  const dispatch = useDispatch();
+
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
+  const [files, setFiles] = useState([]);
+  const handleFileUpload = (event) => {
+    const newFiles = Array.from(event.target.files);
+    setFiles([...files, ...newFiles]);
+  };
+  // console.log('files', files);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('files[]', file);
+    });
+    dispatch(uploadToGallery(formData));
+  };
 
   const handleImageClick = (event) => {
     setSelectedImage(event.target.src);
@@ -41,6 +60,17 @@ const Gallery = () => {
             </h1>
 
             <hr className="mt-2 mb-5" />
+            <form onSubmit={handleSubmit}>
+              <h3>React Multiple File Upload</h3>
+              <div className="form-group">
+                <input type="file" multiple onChange={handleFileUpload} />
+              </div>
+              <div className="form-group">
+                <button className="btn btn-primary" type="submit">
+                  Upload
+                </button>
+              </div>
+            </form>
 
             <div className="row text-center text-lg-start">
               <div className="col-lg-3 col-md-4 col-6">

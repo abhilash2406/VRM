@@ -6,5 +6,7 @@ router.route('/view').get(controller.viewProfile);
 router.route('/feedback').get(controller.getUserMessages);
 
 router.route('/feedback/:id').get(controller.getMsgToRead);
+router.route('/permissions').post(controller.ProfilePermissions);
+
 
 module.exports = router;

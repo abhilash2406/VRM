@@ -1,8 +1,10 @@
 const users = require('../../models/users');
 const login = require('../../models/login');
-const designation = require('../../models/designation');
+const designations = require('../../models/designation');
+const permissions = require('../../models/permission');
 const contacts = require('../../models/contact');
 const jwt = require('jsonwebtoken');
+const permissionSetting = require('../../models/permissionSetting');
 
 exports.viewProfile = async (req, res, next) => {
   try {
@@ -63,6 +65,39 @@ exports.getMsgToRead = async (req, res, next) => {
     // }
   } catch (e) {
     res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};
+
+exports.ProfilePermissions = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization')
+      ? req.header('Authorization').replace('Bearer ', '')
+      : null;
+    // console.log('token', token);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    let user = await login.findByPk(decoded.id);
+    const permission_data = await permissionSetting.findAll({
+      where: { designationId: user.designationId },
+      include: permissions,
+    });
+    // console.log('permissions', permission_data);
+    const mappingArray = permission_data.map((data) => {
+      return {
+        menu: data.permission.menu,
+        subMenu: data.permission.subMenu,
+      };
+    });
+    let role = await designations.findByPk(user.designationId);
+
+    res.json({
+      success: true,
+      data: { permission: mappingArray, designation: role.Designation },
+    });
+  } catch (e) {
+    res.json({
       success: false,
       message: e.message,
     });
