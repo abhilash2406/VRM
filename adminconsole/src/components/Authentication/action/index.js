@@ -55,3 +55,26 @@ export const setGLogin = (props, navigate) => async (dispatch) => {
     }
   });
 };
+
+// signup
+export const setSignuP = (props, navigate) => async (dispatch) => {
+  await postData('/auth/signUp', props).then((e) => {
+    if (e.data.success) {
+      navigate();
+    } else {
+      dispatch(setErrorMessage(e.data.message));
+    }
+  });
+};
+
+//google sign up
+export const setGsignUp = (props, navigate) => async (dispatch) => {
+  await postData('/auth/GsignUp', props).then((e) => {
+    if (e.data.success) {
+      navigate();
+    } else {
+      dispatch(setErrorMessage(e.data.message));
+    }
+  });
+};
+

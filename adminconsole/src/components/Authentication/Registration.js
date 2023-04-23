@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import MultiSelect from './MultiSelect';
+import Select from 'react-select';
+import styledComponents from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   GoogleOAuthProvider,
@@ -8,39 +11,30 @@ import {
 } from '@react-oauth/google';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { setSignuP, setGsignUp } from './action';
 
 const signuPSchema = Yup.object().shape({
   // validating username
-  first_name: Yup.string().required('first name is Required'),
-
-  // validating last name
-  last_name: Yup.string().required('last name is Required'),
-
-  // validating username
   email: Yup.string()
     .email('type mail in valid format')
-    .required('username is Required'),
-
-  // validating password
-  password: Yup.string()
-    .required('No password provided.')
-    .min(4, 'Password is too short - should be 8 chars minimum.')
-    .matches(/[a-zA-Z]/, 'Password can only contain Latin letters.'),
+    .required('email is Required'),
 });
 
 const Registration = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   async function verifyGoogleAccessToken(access_token) {
     const url = `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${access_token}`;
     const response = await axios.get(url);
     const data = response;
     console.log(data);
-    // dispatch(
-    //   setGLogin({ token: access_token, data: data }, () =>
-    //     navigate('/dashboard')
-    //   )
-    // );
+    dispatch(
+      setGsignUp({ token: access_token, data: data }, () =>
+        navigate('/fill-details')
+      )
+    );
   }
   return (
     <section className="body">
@@ -60,8 +54,6 @@ const Registration = () => {
               <Formik
                 initialValues={{
                   // initial values
-                  first_name: '',
-                  last_name: '',
                   email: '',
                 }}
                 // validation
@@ -70,7 +62,7 @@ const Registration = () => {
                 onSubmit={(values, { resetForm }) => {
                   resetForm({ values: '' });
                   console.log('values', values);
-                  // dispatch(setLogin(values, () => navigate('/dashboard')));
+                  dispatch(setSignuP(values, () => navigate('/fill-details')));
                 }}
               >
                 {({
@@ -91,52 +83,12 @@ const Registration = () => {
                       <input
                         type="text"
                         className="form-control"
-                        id="first_name"
-                        name="first_name"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.first_name}
-                        placeholder="Enter Your first_name"
-                      />
-
-                      {errors.first_name && touched.first_name ? (
-                        <div>{errors.first_name}</div>
-                      ) : null}
-                    </div>
-
-                    <div className="form-group mb-4">
-                      <label htmlFor="pass" style={{ fontWeight: '700' }}>
-                        password
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="last_name"
-                        name="last_name"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.last_name}
-                        placeholder="Enter Your last_name"
-                      />
-
-                      {errors.last_name && touched.last_name ? (
-                        <div>{errors.last_name}</div>
-                      ) : null}
-                    </div>
-
-                    <div className="form-group mb-4">
-                      <label htmlFor="pass" style={{ fontWeight: '700' }}>
-                        email
-                      </label>
-                      <input
-                        type="email"
-                        className="form-control"
                         id="email"
                         name="email"
                         onChange={handleChange}
                         onBlur={handleBlur}
                         value={values.email}
-                        placeholder="Enter Your email"
+                        placeholder="Enter Your your email"
                       />
 
                       {errors.email && touched.email ? (
@@ -163,8 +115,6 @@ const Registration = () => {
                           />
                         </GoogleOAuthProvider>
                       </div>
-
-                
                     </div>
                   </form>
                 )}

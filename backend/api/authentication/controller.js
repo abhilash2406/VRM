@@ -137,3 +137,52 @@ exports.googleLogin = async (req, res, next) => {
     });
   }
 };
+
+// sign  up
+exports.SignUp = async (req, res, next) => {
+  try {
+    const user = await login.findOne({ where: { email: req.body.email } });
+
+    if (user) {
+      return res.send({
+        success: false,
+        message: 'This user already exists',
+      });
+    } else {
+      res.send({
+        success: true,
+        data: req.body.email,
+      });
+    }
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};
+
+exports.googleSignUp = async (req, res, next) => {
+  try {
+    const user = await login.findOne({
+      where: { email: req.body.data.data.email },
+    });
+
+    if (user) {
+      return res.send({
+        success: false,
+        message: 'This user already exists',
+      });
+    } else {
+      res.send({
+        success: true,
+        data: req.body.email,
+      });
+    }
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};
