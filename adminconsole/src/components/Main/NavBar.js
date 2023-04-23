@@ -3,6 +3,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { setLogout } from '../../action';
 
@@ -13,6 +14,12 @@ const NavBar = () => {
     e.preventDefault();
     dispatch(setLogout(() => navigate('/login')));
   };
+
+  const { grantedPermissions } = useSelector((state) => state.auth);
+  console.log('grantedPermissions', grantedPermissions);
+  let array = grantedPermissions?.filter((item) => item.menu === 'Admin');
+
+  let permissionAllowed = array?.map((e) => e.subMenu);
 
   return (
     <div className="col-sm-auto bg-dark sticky-top">

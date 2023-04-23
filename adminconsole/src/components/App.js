@@ -4,6 +4,7 @@ import Login from './Authentication/Login';
 import Registration from './Authentication/Registration';
 import Dashboard from './Main/Dashboard';
 import ListTruck from './TruckManagement/ListTruck';
+import AddTruck from './TruckManagement/AddTruck';
 import Profile from './Main/Profile';
 import Feedbacks from './Main/Feedbacks';
 import ViewFeedback from './Main/ViewFeedback';
@@ -100,6 +101,14 @@ const App = () => {
             element={
               <PrivateRoute>
                 <ListTruck />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/add-trucks"
+            element={
+              <PrivateRoute>
+                <AddTruck />
               </PrivateRoute>
             }
           />

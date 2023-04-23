@@ -89,7 +89,7 @@ export const readFeedback = (id) => async (dispatch) => {
 };
 
 // image upload
-export const uploadToGallery = (imgs) => async (dispatch) => {
-  console.log('imgs', imgs);
-  const { data } = await postData('/gallery', imgs);
+export const uploadToGallery = (image) => async (dispatch) => {
+  console.log('imgs', image);
+  const { data } = await postData('/gallery', image);
 };

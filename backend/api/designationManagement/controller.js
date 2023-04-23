@@ -2,17 +2,10 @@ const designation = require('../../models/designation');
 const { Op } = require('sequelize');
 const sequelize = require('../../config/sequelize-config');
 
-
 exports.getAllDesignations = async (req, res, next) => {
   try {
-    console.log('kevin')
-    const data = await designation.findAll({
-      where: {
-        designation: {
-          [Op.ne]: 'Admin',
-        },
-      },
-    });
+    console.log('kevin');
+    const data = await designation.findAll();
     res.send({
       success: true,
       message: 'data retrieval success',
@@ -25,5 +18,3 @@ exports.getAllDesignations = async (req, res, next) => {
     });
   }
 };
-
-
