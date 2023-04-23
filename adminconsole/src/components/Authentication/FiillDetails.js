@@ -1,8 +1,10 @@
-import React,{useState,useEffect} from 'react'
+import React, { useState, useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Select from 'react-select';
 import styledComponents from 'styled-components';
+import { useNavigate, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 const SELECT = styledComponents(Select)`width: 100%;
 padding: 10px;
@@ -15,43 +17,43 @@ outline:none
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
-  const signuPSchema = Yup.object().shape({
-    // validating username
-    first_name: Yup.string().required('first name is Required'),
-  
-    // validating last name
-    last_name: Yup.string().required('last name is Required'),
-  
-    // validating username
-    email: Yup.string()
-      .email('type mail in valid format')
-      .required('email is Required'),
-    phoneNumber: Yup.string()
-      .matches(phoneRegExp, 'Phone number is not valid')
-      .required('phone no is Required'),
-  
-    // validating password
-    password: Yup.string()
-      .required('No password provided.')
-      .min(4, 'Password is too short - should be 8 chars minimum.')
-      .matches(/[a-zA-Z]/, 'Password can only contain Latin letters.'),
-  });
+const signuPSchema = Yup.object().shape({
+  // validating username
+  first_name: Yup.string().required('first name is Required'),
+
+  // validating last name
+  last_name: Yup.string().required('last name is Required'),
+
+  // validating username
+  email: Yup.string()
+    .email('type mail in valid format')
+    .required('email is Required'),
+  phoneNumber: Yup.string()
+    .matches(phoneRegExp, 'Phone number is not valid')
+    .required('phone no is Required'),
+
+  // validating password
+  password: Yup.string()
+    .required('No password provided.')
+    .min(4, 'Password is too short - should be 8 chars minimum.')
+    .matches(/[a-zA-Z]/, 'Password can only contain Latin letters.'),
+});
 
 const FiillDetails = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    //multi select
-    const options = [
-      { value: 'two_wheeler', label: 'Two wheeler' },
-      { value: 'four_wheeler', label: 'four wheeler' },
-      { value: 'heavy_vechile', label: 'heavy vechile' },
-    ];
-  
-    const [selectedOptions, setSelectedOptions] = useState([]);
-  
-    const handleSelectChange = (selected) => {
-      setSelectedOptions(selected);
-    };
+  //multi select
+  const options = [
+    { value: 'two_wheeler', label: 'Two wheeler' },
+    { value: 'four_wheeler', label: 'four wheeler' },
+    { value: 'heavy_vechile', label: 'heavy vechile' },
+  ];
+
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const handleSelectChange = (selected) => {
+    setSelectedOptions(selected);
+  };
   return (
     <section className="body">
       <div className="container">
@@ -199,7 +201,6 @@ const FiillDetails = () => {
                       <button type="submit" className="btn btn-primary">
                         Register
                       </button>
-                     
                     </div>
                   </form>
                 )}
@@ -210,7 +211,7 @@ const FiillDetails = () => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default FiillDetails
+export default FiillDetails;
