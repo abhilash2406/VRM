@@ -5,6 +5,7 @@ import Select from 'react-select';
 import styledComponents from 'styled-components';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { getUserData } from './action';
 
 const SELECT = styledComponents(Select)`width: 100%;
 padding: 10px;
@@ -39,21 +40,12 @@ const signuPSchema = Yup.object().shape({
     .matches(/[a-zA-Z]/, 'Password can only contain Latin letters.'),
 });
 
-const FiillDetails = () => {
+const FillDetails = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { usermail } = useSelector((e) => e.auth);
+  console.log('usermail', usermail);
 
-  //multi select
-  const options = [
-    { value: 'two_wheeler', label: 'Two wheeler' },
-    { value: 'four_wheeler', label: 'four wheeler' },
-    { value: 'heavy_vechile', label: 'heavy vechile' },
-  ];
-
-  const [selectedOptions, setSelectedOptions] = useState([]);
-
-  const handleSelectChange = (selected) => {
-    setSelectedOptions(selected);
-  };
   return (
     <section className="body">
       <div className="container">
@@ -61,7 +53,7 @@ const FiillDetails = () => {
           <div className="row">
             <div className="col-sm-6">
               <div className="logo">
-                <span className="logo-font">Go</span>Signup
+                <span className="logo-font">Fill</span>Your details
               </div>
             </div>
           </div>
@@ -74,16 +66,17 @@ const FiillDetails = () => {
                   // initial values
                   first_name: '',
                   last_name: '',
-                  email: '',
+                  email: usermail,
                   phoneNumber: '',
+                  password: '',
                 }}
                 // validation
                 validationSchema={signuPSchema}
                 // on submit values
                 onSubmit={(values, { resetForm }) => {
-                  resetForm({ values: '' });
+                  // resetForm({ values: '' });
                   console.log('values', values);
-                  // dispatch(setLogin(values, () => navigate('/dashboard')));
+                  dispatch(getUserData(values, () => navigate('/dashboard')));
                 }}
               >
                 {({
@@ -98,8 +91,8 @@ const FiillDetails = () => {
                 }) => (
                   <form onSubmit={handleSubmit}>
                     <div className="form-group mb-4">
-                      <label htmlFor="uname" style={{ fontWeight: '700' }}>
-                        Enter Your E-mail
+                      <label htmlFor="first_name" style={{ fontWeight: '700' }}>
+                        Enter Your first name
                       </label>
                       <input
                         type="text"
@@ -118,8 +111,8 @@ const FiillDetails = () => {
                     </div>
 
                     <div className="form-group mb-4">
-                      <label htmlFor="pass" style={{ fontWeight: '700' }}>
-                        password
+                      <label htmlFor="last_name" style={{ fontWeight: '700' }}>
+                        enter your last name
                       </label>
                       <input
                         type="text"
@@ -138,7 +131,7 @@ const FiillDetails = () => {
                     </div>
 
                     <div className="form-group mb-4">
-                      <label htmlFor="pass" style={{ fontWeight: '700' }}>
+                      <label htmlFor="email" style={{ fontWeight: '700' }}>
                         email
                       </label>
                       <input
@@ -159,6 +152,12 @@ const FiillDetails = () => {
 
                     <div className="row align-items-center mt-4">
                       <div className="col">
+                        <label
+                          htmlFor="phoneNumber"
+                          style={{ fontWeight: '700' }}
+                        >
+                          enter your phone number
+                        </label>
                         <input
                           type="text"
                           id="phoneNumber"
@@ -174,27 +173,24 @@ const FiillDetails = () => {
                         ) : null}
                       </div>
                     </div>
-
-                    <div>
-                      <SELECT
-                        id="multi-select"
-                        options={options}
-                        value={selectedOptions}
-                        onChange={handleSelectChange}
-                        isMulti
-                      />
-                    </div>
                     <div className="form-group mb-4">
-                      <label htmlFor="file-input" className="input-label">
-                        Upload Licensce
+                      <label htmlFor="pass" style={{ fontWeight: '700' }}>
+                        password
                       </label>
                       <input
-                        id="file-input"
-                        type="file"
-                        className="file-input"
-                        accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-                        placeholder="Upload Licensce"
+                        type="password"
+                        className="form-control"
+                        id="password"
+                        name="password"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.password}
+                        placeholder="Enter Your passWord"
                       />
+
+                      {errors.password && touched.password ? (
+                        <div>{errors.password}</div>
+                      ) : null}
                     </div>
 
                     <div className="text-center text-lg-start mt-4 pt-2">
@@ -205,7 +201,7 @@ const FiillDetails = () => {
                   </form>
                 )}
               </Formik>
-              <a href="http://localhost:3000">back</a>
+              <Link to={'/signup'}>back</Link>
             </div>
           </div>
         </div>
@@ -214,4 +210,4 @@ const FiillDetails = () => {
   );
 };
 
-export default FiillDetails;
+export default FillDetails;

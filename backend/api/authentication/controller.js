@@ -2,6 +2,11 @@ const users = require('../../models/users');
 const login = require('../../models/login');
 const designations = require('../../models/designation');
 const transporter = require('../../modules/mail');
+const Docusign = require('docusign-esign');
+const { docusign } = require('../../config');
+const fs = require('fs');
+const path = require('path');
+const session = require('express-session');
 
 exports.Login = async (req, res, next) => {
   try {
@@ -176,7 +181,7 @@ exports.googleSignUp = async (req, res, next) => {
     } else {
       res.send({
         success: true,
-        data: req.body.email,
+        data: req.body.data.data.email,
       });
     }
   } catch (e) {
@@ -186,3 +191,121 @@ exports.googleSignUp = async (req, res, next) => {
     });
   }
 };
+
+exports.signUpUser = async (req, res, next) => {
+  // console.log('req.body', req.body);
+
+  // console.log(docusign);
+  const { url, result } = await documentSign(req);
+  res.send({
+    success: true,
+    url: url,
+  });
+};
+
+async function documentSign(req) {
+  await checkToken(req);
+  let envelopesApi = getEnvelopesApi(req);
+  // console.log('envelopesApi', envelopesApi)
+  let envelope = makeEnvelope(req);
+  // console.log('envelopes', envelope);
+
+  let result = await envelopesApi.createEnvelope(docusign.accountId, {
+    envelopeDefinition: envelope,
+  });
+  // console.log('ENVELOPE RESULT', result);
+
+  let viewRequest = makeRecipientViewRequest(
+    req.body.first_name,
+    req.body.email
+  );
+  console.log('viewRequest', viewRequest);
+  const { url } = await envelopesApi.createRecipientView(
+    docusign.accountId,
+    result.envelopeId,
+    { recipientViewRequest: viewRequest }
+  );
+  console.log('result', result);
+  return { result, url };
+}
+
+async function checkToken(req) {
+  try {
+    if (req.session.access_token && Date.now() < req.session.expires_at) {
+      console.log('RE USING ACCESS TOKEN', req.session.access_token);
+    } else {
+      let dsApiClient = new Docusign.ApiClient();
+      console.log('first', dsApiClient);
+      dsApiClient.setBasePath(docusign.basePath);
+      const results = await dsApiClient.requestJWTUserToken(
+        docusign.integrationKey,
+        docusign.userId,
+        'signature',
+        fs.readFileSync(path.join(__dirname, '../../private.key')),
+        3600
+      );
+      // console.log('results', results);
+      req.session.access_token = results.body.access_token;
+      req.session.expires_at =
+        Date.now() + (results.body.expires_in - 60) * 1000;
+
+      req.session.save(function (err) {
+        if (err) console.log(err);
+      });
+    }
+    // req.redirect('')
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function getEnvelopesApi(req) {
+  let dsApiClient = new Docusign.ApiClient();
+  dsApiClient.setBasePath(docusign.basePath);
+  dsApiClient.addDefaultHeader(
+    'Authorization',
+    'Bearer ' + req.session.access_token.trim()
+  );
+  return new Docusign.EnvelopesApi(dsApiClient);
+}
+
+function makeEnvelope(req) {
+  let env = new Docusign.EnvelopeDefinition();
+  env.templateId = docusign.templateId;
+  let text = Docusign.Text.constructFromObject({
+    tabLabel: 'Signer Name',
+    value: req.body.first_name,
+  });
+
+  // pull together the existing and new tabs ina a tab object
+  let tabs = Docusign.Tabs.constructFromObject({
+    textTabs: [text],
+  });
+
+  let signer1 = Docusign.TemplateRole.constructFromObject({
+    email: req.body.email,
+    name: req.body.first_name,
+    tabs: tabs,
+    clientUserId: docusign.clientUserId,
+    roleName: 'Signer',
+  });
+
+  env.templateRoles = [signer1];
+  env.status = 'sent';
+
+  return env;
+}
+
+function makeRecipientViewRequest(name, email) {
+  let viewRequest = new Docusign.RecipientViewRequest();
+
+  viewRequest.returnUrl = 'http://localhost:3001/success';
+  viewRequest.authenticationMethod = 'none';
+
+  // Recipient info must match embedded recipient info we use to create the envelope
+  viewRequest.email = email;
+  viewRequest.userName = name;
+  viewRequest.clientUserId = docusign.clientUserId;
+
+  return viewRequest;
+}

@@ -60,6 +60,10 @@ export const setGLogin = (props, navigate) => async (dispatch) => {
 export const setSignuP = (props, navigate) => async (dispatch) => {
   await postData('/auth/signUp', props).then((e) => {
     if (e.data.success) {
+      dispatch({
+        type: 'SET_USERMAIL',
+        payload: e.data.data,
+      });
       navigate();
     } else {
       dispatch(setErrorMessage(e.data.message));
@@ -71,6 +75,10 @@ export const setSignuP = (props, navigate) => async (dispatch) => {
 export const setGsignUp = (props, navigate) => async (dispatch) => {
   await postData('/auth/GsignUp', props).then((e) => {
     if (e.data.success) {
+      dispatch({
+        type: 'SET_USERMAIL',
+        payload: e.data.data,
+      });
       navigate();
     } else {
       dispatch(setErrorMessage(e.data.message));
@@ -78,3 +86,15 @@ export const setGsignUp = (props, navigate) => async (dispatch) => {
   });
 };
 
+// fetch sign up user data
+export const getUserData = (props, navigate) => async (dispatch) => {
+  console.log('props', props)
+  await postData('/auth/userdata', props).then((e) => {
+    if (e.data.success) {
+      console.log('data', e.data);
+      window.location.href = e.data.url;
+    } else {
+      dispatch(setErrorMessage(e.data.message));
+    }
+  });
+};

@@ -90,14 +90,15 @@ exports.ProfilePermissions = async (req, res, next) => {
         subMenu: data.permission.subMenu,
       };
     });
+    // console.log('mappingArray', mappingArray);
     let role = await designations.findByPk(user.designationId);
 
-    res.json({
+    res.send({
       success: true,
       data: { permission: mappingArray, designation: role.Designation },
     });
   } catch (e) {
-    res.json({
+    res.send({
       success: false,
       message: e.message,
     });

@@ -16,11 +16,11 @@ const TripRoutes = () => {
       <div className="row">
         <NavBar />
         <div className="col-sm p-3 min-vh-100">
-          {permissionAllowed?.includes('Add') ? (
+          {/* {permissionAllowed?.includes('Add') ? ( */}
             <Link to="/add-routes">
               <button className="btn btn-info add-btn">Add Routes</button>
             </Link>
-          ) : null}
+          {/* ) : null} */}
         </div>
       </div>
     </div>

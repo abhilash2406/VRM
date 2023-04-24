@@ -6,6 +6,7 @@ const authInitials = {
   setLoading: null,
   grantedPermissions: [],
   role: '',
+  usermail: '',
 };
 const authReducer = (state = authInitials, action) => {
   switch (action.type) {
@@ -26,6 +27,11 @@ const authReducer = (state = authInitials, action) => {
       return {
         ...state,
         setLoading: action.payload,
+      };
+    case 'SET_USERMAIL':
+      return {
+        ...state,
+        usermail: action.payload,
       };
 
     default:
@@ -62,6 +68,7 @@ const userInitials = {
   feedbacks: [],
   feedback: '',
   designations: [],
+  imgs: [],
 };
 
 const userReducer = (state = userInitials, action) => {
@@ -85,6 +92,11 @@ const userReducer = (state = userInitials, action) => {
       return {
         ...state,
         designations: action.payload,
+      };
+    case 'SET_GALLERY':
+      return {
+        ...state,
+        imgs: action.payload,
       };
     default:
       return state;

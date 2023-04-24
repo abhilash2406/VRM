@@ -1,11 +1,12 @@
 //gallery
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavBar from './NavBar';
 import Modal from 'react-modal';
 import { Link } from 'react-router-dom';
 import { uploadToGallery } from '../../action';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { retrieveImgs } from '../../action';
 
 const customStyles = {
   content: {
@@ -20,6 +21,12 @@ const customStyles = {
 
 const Gallery = () => {
   const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(retrieveImgs());
+  }, []);
+
+  const { imgs } = useSelector((e) => e.user);
+  console.log(imgs);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');

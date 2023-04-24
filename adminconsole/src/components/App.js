@@ -15,7 +15,9 @@ import Trips from './TripManagement/Trips';
 import Transactions from './Transactions/Transactions';
 import Permissions from './PermissionManagement/Permissions';
 import AddUser from './AddUsers/AddUser';
-import FiillDetails from './Authentication/FiillDetails';
+import FillDetails from './Authentication/FillDetails';
+import CardDetails from './Authentication/CardDetails';
+import StripePayment from './Authentication/StripePayment';
 import { PrivateRoute } from './PrivateRouting';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Cookies from 'js-cookie';
@@ -80,7 +82,10 @@ const App = () => {
           <Route path="/" element={<Home />} />;
           <Route path="/login" element={<Login />} />;
           <Route path="/signup" element={<Registration />} />;
-          <Route path="/fill-deatils" element={<FiillDetails />} />;
+          <Route path="/fill-details" element={<FillDetails />} />;
+          <Route path="/payment" element={<CardDetails />} />;
+          
+
 
           <Route
             path="/dashboard"

@@ -93,3 +93,14 @@ export const uploadToGallery = (image) => async (dispatch) => {
   console.log('imgs', image);
   const { data } = await postData('/gallery', image);
 };
+
+// fetch images
+export const retrieveImgs = () => async (dispatch) => {
+  console.log('first');
+  const { data } = await getData('/gallery');
+  console.log('data', data);
+  dispatch({
+    type: 'SET_GALLERY',
+    payload: data.data,
+  });
+};

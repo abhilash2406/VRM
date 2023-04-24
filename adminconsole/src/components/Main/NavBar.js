@@ -16,7 +16,7 @@ const NavBar = () => {
   };
 
   const { grantedPermissions } = useSelector((state) => state.auth);
-  console.log('grantedPermissions', grantedPermissions);
+  // console.log('grantedPermissions', grantedPermissions);
   let array = grantedPermissions?.filter((item) => item.menu === 'Admin');
 
   let permissionAllowed = array?.map((e) => e.subMenu);

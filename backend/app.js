@@ -5,11 +5,20 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
 require('dotenv').config();
+const session = require('express-session');
+
 
 var indexRouter = require('./routes/index');
 
 
 var app = express();
+app.use(
+  session({
+    secret: 'abhilash',
+    resave: true,
+    saveUninitialized: true,
+  })
+);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
