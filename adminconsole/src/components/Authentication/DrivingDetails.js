@@ -4,16 +4,24 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 
+const SELECT = styledComponents(Select)`width: 100%;
+padding: 10px;
+margin-bottom: 20px;
+border: none;
+border-radius: 5px;
+box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+outline:none
+`;
 const DrivingDetails = () => {
   //multi select
   const options = [
     { value: 'two_wheeler', label: 'Two wheeler' },
     { value: 'four_wheeler', label: 'four wheeler' },
-    { value: 'heavy_vechile', label: 'heavy vechile' },
+    { value: 'heavy_vehicle', label: 'heavy vehicle' },
   ];
 
   const [selectedOptions, setSelectedOptions] = useState([]);
-
+  console.log('selectedOptions', selectedOptions);
   const handleSelectChange = (selected) => {
     setSelectedOptions(selected);
   };
@@ -312,6 +320,50 @@ const DrivingDetails = () => {
               {errors.contact_name && touched.contact_name ? (
                 <div>{errors.contact_name}</div>
               ) : null}
+            </div>
+            <div>
+              <SELECT
+                id="multi-select"
+                options={options}
+                value={selectedOptions}
+                onChange={handleSelectChange}
+                isMulti
+              />
+            </div>
+            <div className="form-group mb-4">
+              <label htmlFor="license" style={{ fontWeight: '700' }}>
+                license No
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="licenseNo"
+                name="licenseNo"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.licenseNo}
+                placeholder="Enter Your license_no"
+              />
+
+              {errors.licenseNo && touched.licenseNo ? (
+                <div>{errors.licenseNo}</div>
+              ) : null}
+            </div>
+            <div className="form-group mb-4">
+              <label htmlFor="file-input" className="input-label">
+                Upload license
+              </label>
+              <input
+                type="file"
+                id="licensePhoto"
+                name="licensePhoto"
+                ref={fileInputRef}
+                onChange={handleImage2Change}
+                onBlur={handleBlur}
+                value={values.licensePhoto}
+                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                placeholder="Upload license"
+              />
             </div>
             <div className="row justify-content-between text-left">
               <div className="form-group w-50 mb-4">

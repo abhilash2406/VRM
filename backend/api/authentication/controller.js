@@ -251,13 +251,13 @@ async function documentSign(req) {
     req.body.first_name,
     req.body.email
   );
-  console.log('viewRequest', viewRequest);
+  // console.log('viewRequest', viewRequest);
   const { url } = await envelopesApi.createRecipientView(
     docusign.accountId,
     result.envelopeId,
     { recipientViewRequest: viewRequest }
   );
-  console.log('result', result);
+  // console.log('result', result);
   return { result, url };
 }
 
@@ -267,7 +267,7 @@ async function checkToken(req) {
       console.log('RE USING ACCESS TOKEN', req.session.access_token);
     } else {
       let dsApiClient = new Docusign.ApiClient();
-      console.log('first', dsApiClient);
+      // console.log('first', dsApiClient);
       dsApiClient.setBasePath(docusign.basePath);
       const results = await dsApiClient.requestJWTUserToken(
         docusign.integrationKey,

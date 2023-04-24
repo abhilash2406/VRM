@@ -2,13 +2,15 @@ var express = require('express');
 var router = express.Router();
 const controller = require('./controller');
 const validate = require('./validator');
+const { multiUpload, upload } = require('../../middlewares/uploader');
 
 router.route('/login').post(controller.Login);
 router.route('/GLogin').post(controller.googleLogin);
 router.route('/signUp').post(controller.SignUp);
 router.route('/GsignUp').post(controller.googleSignUp);
-router.route('/userdata').post(controller.signUpUser)
-
+router
+  .route('/userdata')
+  .post(upload.single('userPhoto'), controller.signUpUser);
 
 router.route('/add-user').post(validate.addUserValidate, controller.addUsers);
 

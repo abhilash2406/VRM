@@ -1,7 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize-config');
 
-
 const driver = sequelize.define('driver', {
   id: {
     type: DataTypes.UUID,
@@ -38,6 +37,7 @@ const driver = sequelize.define('driver', {
   },
   status: {
     type: DataTypes.ENUM('approved', 'reject', 'pending'),
+    defaultValue: 'pending',
     allowNull: true,
   },
   truckId: {
