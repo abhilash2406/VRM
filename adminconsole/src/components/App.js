@@ -83,7 +83,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />;
           <Route path="/signup" element={<Registration />} />;
           <Route path="/fill-details" element={<FillDetails />} />;
-          <Route path="/payment" element={<CardDetails />} />;
+          <Route path="/payment" element={<StripePayment />} />;
           
 
 

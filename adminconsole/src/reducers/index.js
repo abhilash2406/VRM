@@ -7,6 +7,7 @@ const authInitials = {
   grantedPermissions: [],
   role: '',
   usermail: '',
+  userdata: [],
 };
 const authReducer = (state = authInitials, action) => {
   switch (action.type) {
@@ -32,6 +33,11 @@ const authReducer = (state = authInitials, action) => {
       return {
         ...state,
         usermail: action.payload,
+      };
+    case 'SET_USERDATA':
+      return {
+        ...state,
+        userdata: action.payload,
       };
 
     default:

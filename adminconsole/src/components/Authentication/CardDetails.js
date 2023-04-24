@@ -9,7 +9,7 @@ import {
 } from '@stripe/react-stripe-js';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-// import { bookEvents } from '../../action';
+import { makePayment } from './action';
 import styled from 'styled-components';
 import { instance } from '../../api/instance';
 
@@ -29,7 +29,7 @@ const CardDetails = () => {
   const stripe = useStripe();
   const elements = useElements();
   const dispatch = useDispatch();
-//   const { bookingDetails } = useSelector((state) => state.booking);
+  const { userdata } = useSelector((state) => state.auth);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -41,11 +41,9 @@ const CardDetails = () => {
     });
     if (!error) {
       const { id } = paymentMethod;
-    //   dispatch(
-    //     bookEvents({ id: id, bookingDetails: bookingDetails }, () =>
-    //       navigate('/success')
-    //     )
-    //   );
+      dispatch(
+        makePayment({ id: id, userdata: userdata }, () => navigate('/success'))
+      );
     } else {
       console.log(error.message);
     }

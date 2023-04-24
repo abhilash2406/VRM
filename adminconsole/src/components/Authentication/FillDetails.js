@@ -49,7 +49,7 @@ const FillDetails = () => {
   return (
     <section className="body">
       <div className="container">
-        <div className="login-box">
+        <div className="signup-box">
           <div className="row">
             <div className="col-sm-6">
               <div className="logo">

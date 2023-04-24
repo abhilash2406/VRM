@@ -193,15 +193,47 @@ exports.googleSignUp = async (req, res, next) => {
 };
 
 exports.signUpUser = async (req, res, next) => {
-  // console.log('req.body', req.body);
+  const hashing = async (password) => {
+    const salt = await login.generateSalt();
+    let newPassword = await login.hashPassword(password, salt);
+    return { salt, newPassword };
+  };
 
-  // console.log(docusign);
+  console.log('req.body', req.body);
+
+  let { salt, newPassword } = await hashing(req.body.password);
+  const designationDetails = await designations.findOne({
+    where: { designation: 'Driver' },
+  });
+
+  const loginDetails = await login.create({
+    email: req.body.email,
+    password: newPassword,
+    salt,
+    designationId: designationDetails.id,
+  });
+
+  await users.create({
+    name: req.body.first_name,
+    phoneNumber: req.body.phoneNumber,
+    loginId: loginDetails.id,
+  });
+
+  const userData = {
+    name : req.body.first_name,
+    email:req.body.email,
+    phn:req.body.phoneNumber
+  }
+
   const { url, result } = await documentSign(req);
   res.send({
     success: true,
     url: url,
+    data:userData
   });
 };
+
+//docusign functions
 
 async function documentSign(req) {
   await checkToken(req);
@@ -299,7 +331,7 @@ function makeEnvelope(req) {
 function makeRecipientViewRequest(name, email) {
   let viewRequest = new Docusign.RecipientViewRequest();
 
-  viewRequest.returnUrl = 'http://localhost:3001/success';
+  viewRequest.returnUrl = 'http://localhost:3001/payment';
   viewRequest.authenticationMethod = 'none';
 
   // Recipient info must match embedded recipient info we use to create the envelope

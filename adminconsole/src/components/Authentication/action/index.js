@@ -88,13 +88,23 @@ export const setGsignUp = (props, navigate) => async (dispatch) => {
 
 // fetch sign up user data
 export const getUserData = (props, navigate) => async (dispatch) => {
-  console.log('props', props)
+  console.log('props', props);
   await postData('/auth/userdata', props).then((e) => {
     if (e.data.success) {
       console.log('data', e.data);
+      dispatch({
+        type: 'SET_USERDATA',
+        payload: e.data.data,
+      });
       window.location.href = e.data.url;
     } else {
       dispatch(setErrorMessage(e.data.message));
     }
   });
+};
+
+
+// make payment using stripe
+export const makePayment = (userdata) => async (dispatch) => {
+  console.log('userdata', userdata);
 };
