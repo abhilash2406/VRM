@@ -103,6 +103,13 @@ export const getUserData = (props, navigate) => async (dispatch) => {
   });
 };
 
+export const getDriverData = (props, navigate) => (dispatch) => {
+  dispatch({
+    type: 'SET_DRIVER_DETAILS',
+    payload: props,
+  });
+  navigate();
+};
 
 // make payment using stripe
 export const makePayment = (userdata) => async (dispatch) => {

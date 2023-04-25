@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import { getData, postData, updateData } from '../services';
+import { deleteData, getData, postData, updateData } from '../services';
 
 // for toasters
 
@@ -103,4 +103,15 @@ export const retrieveImgs = () => async (dispatch) => {
     type: 'SET_GALLERY',
     payload: data.data,
   });
+};
+
+// image upload
+export const dltFromGallery = (id) => async (dispatch) => {
+  const { data } = await deleteData(`/gallery/${id}`);
+  if (data.success) {
+    dispatch(setSuccessMessage(data.message));
+    dispatch(retrieveImgs());
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
 };

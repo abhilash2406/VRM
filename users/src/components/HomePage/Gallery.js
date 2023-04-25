@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Modal from 'react-modal';
 import { Link } from 'react-router-dom';
+import { retrieveImgs } from '../../action';
+import { useDispatch, useSelector } from 'react-redux';
 
 const customStyles = {
   content: {
@@ -14,6 +16,13 @@ const customStyles = {
 };
 
 const Gallery = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(retrieveImgs());
+  }, []);
+  const { imgs } = useSelector((e) => e.auth);
+  console.log(imgs);
+
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
 
@@ -32,103 +41,16 @@ const Gallery = () => {
       <hr class="mt-2 mb-5" />
 
       <div class="row text-center text-lg-start">
-        <div class="col-lg-3 col-md-4 col-6">
-          <img
-            class="img-fluid img-thumbnail"
-            src="https://source.unsplash.com/pWkk7iiCoDM/400x300"
-            alt=""
-            onClick={handleImageClick}
-          />
-        </div>
-        <div class="col-lg-3 col-md-4 col-6">
-          <img
-            class="img-fluid img-thumbnail"
-            src="https://source.unsplash.com/aob0ukAYfuI/400x300"
-            alt=""
-            onClick={handleImageClick}
-          />
-        </div>
-        <div class="col-lg-3 col-md-4 col-6">
-          <img
-            class="img-fluid img-thumbnail"
-            src="https://source.unsplash.com/EUfxH-pze7s/400x300"
-            alt=""
-            onClick={handleImageClick}
-          />
-        </div>
-        <div class="col-lg-3 col-md-4 col-6">
-          <img
-            class="img-fluid img-thumbnail"
-            src="https://source.unsplash.com/M185_qYH8vg/400x300"
-            alt=""
-            onClick={handleImageClick}
-          />
-        </div>
-        <div class="col-lg-3 col-md-4 col-6">
-          <img
-            class="img-fluid img-thumbnail"
-            src="https://source.unsplash.com/sesveuG_rNo/400x300"
-            alt=""
-            onClick={handleImageClick}
-          />
-        </div>
-        <div class="col-lg-3 col-md-4 col-6">
-          <img
-            class="img-fluid img-thumbnail"
-            src="https://source.unsplash.com/AvhMzHwiE_0/400x300"
-            alt=""
-            onClick={handleImageClick}
-          />
-        </div>
-        <div class="col-lg-3 col-md-4 col-6">
-          <img
-            class="img-fluid img-thumbnail"
-            src="https://source.unsplash.com/2gYsZUmockw/400x300"
-            alt=""
-            onClick={handleImageClick}
-          />
-        </div>
-        <div class="col-lg-3 col-md-4 col-6">
-          <img
-            class="img-fluid img-thumbnail"
-            src="https://source.unsplash.com/EMSDtjVHdQ8/400x300"
-            alt=""
-            onClick={handleImageClick}
-          />
-        </div>
-        <div class="col-lg-3 col-md-4 col-6">
-          <img
-            class="img-fluid img-thumbnail"
-            src="https://source.unsplash.com/8mUEy0ABdNE/400x300"
-            alt=""
-            onClick={handleImageClick}
-          />
-        </div>
-        <div class="col-lg-3 col-md-4 col-6">
-          <a href="#" class="d-block mb-4 h-100">
+        {imgs.map((image) => (
+          <div className="col-lg-3 col-md-4 col-6">
             <img
-              class="img-fluid img-thumbnail"
-              src="https://source.unsplash.com/G9Rfc1qccH4/400x300"
+              className="img-fluid img-thumbnail"
+              src={`http://localhost:5000/${image.image}`}
               alt=""
+              onClick={handleImageClick}
             />
-          </a>
-        </div>
-        <div class="col-lg-3 col-md-4 col-6">
-          <img
-            class="img-fluid img-thumbnail"
-            src="https://source.unsplash.com/aJeH0KcFkuc/400x300"
-            alt=""
-            onClick={handleImageClick}
-          />
-        </div>
-        <div class="col-lg-3 col-md-4 col-6">
-          <img
-            class="img-fluid img-thumbnail"
-            src="https://source.unsplash.com/p2TQ-3Bh3Oo/400x300"
-            alt=""
-            onClick={handleImageClick}
-          />
-        </div>
+          </div>
+        ))}
       </div>
       <Modal
         isOpen={modalIsOpen}

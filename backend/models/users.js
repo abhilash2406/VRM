@@ -15,6 +15,10 @@ const users = sequelize.define('users', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  signed: {
+    type: DataTypes.ENUM('Signed', 'Unsigned'),
+    defaultValue: 'Unsigned',
+  },
   loginId: {
     type: DataTypes.UUID,
     defaultValue: Sequelize.UUIDV4,

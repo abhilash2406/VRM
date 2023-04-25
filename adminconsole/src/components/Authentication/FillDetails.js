@@ -5,7 +5,7 @@ import Select from 'react-select';
 import styledComponents from 'styled-components';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUserData } from './action';
+import { getUserData, getDriverData } from './action';
 
 const SELECT = styledComponents(Select)`width: 100%;
 padding: 10px;
@@ -76,7 +76,9 @@ const FillDetails = () => {
                 onSubmit={(values, { resetForm }) => {
                   // resetForm({ values: '' });
                   console.log('values', values);
-                  dispatch(getUserData(values, () => navigate('/dashboard')));
+                  dispatch(
+                    getDriverData(values, () => navigate('/driver-details'))
+                  );
                 }}
               >
                 {({

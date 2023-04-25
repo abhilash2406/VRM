@@ -1,6 +1,7 @@
 const users = require('../../models/users');
 const login = require('../../models/login');
 const designations = require('../../models/designation');
+const drivers = require('../../models/driver');
 const transporter = require('../../modules/mail');
 const Docusign = require('docusign-esign');
 const { docusign } = require('../../config');
@@ -193,13 +194,18 @@ exports.googleSignUp = async (req, res, next) => {
 };
 
 exports.signUpUser = async (req, res, next) => {
+  console.log('req.body', req.body);
+  const userPhotoPath = req.files['userPhoto'][0].path.replace(/^public/, '');
+  const licensePhotoPath = req.files['licensePhoto'][0].path.replace(
+    /^public/,
+    ''
+  );
+
   const hashing = async (password) => {
     const salt = await login.generateSalt();
     let newPassword = await login.hashPassword(password, salt);
     return { salt, newPassword };
   };
-
-  console.log('req.body', req.body);
 
   let { salt, newPassword } = await hashing(req.body.password);
   const designationDetails = await designations.findOne({
@@ -216,20 +222,32 @@ exports.signUpUser = async (req, res, next) => {
   await users.create({
     name: req.body.first_name,
     phoneNumber: req.body.phoneNumber,
+    signed: 'unsigned',
     loginId: loginDetails.id,
   });
 
+  await drivers.create({
+    licenseNo: req.body.licenseNo,
+    licensePhoto: licensePhotoPath,
+    userPhoto: userPhotoPath,
+    licenseType: req.body.licenseType,
+    shift: req.body.shift,
+    dailyWage: req.body.dailyWage,
+    bata: req.body.bata,
+    status: 'pending',
+  });
+
   const userData = {
-    name : req.body.first_name,
-    email:req.body.email,
-    phn:req.body.phoneNumber
-  }
+    name: req.body.first_name,
+    email: req.body.email,
+    phn: req.body.phoneNumber,
+  };
 
   const { url, result } = await documentSign(req);
   res.send({
     success: true,
     url: url,
-    data:userData
+    data: userData,
   });
 };
 
@@ -331,7 +349,7 @@ function makeEnvelope(req) {
 function makeRecipientViewRequest(name, email) {
   let viewRequest = new Docusign.RecipientViewRequest();
 
-  viewRequest.returnUrl = 'http://localhost:3001/payment';
+  viewRequest.returnUrl = 'http://localhost:3001/success';
   viewRequest.authenticationMethod = 'none';
 
   // Recipient info must match embedded recipient info we use to create the envelope

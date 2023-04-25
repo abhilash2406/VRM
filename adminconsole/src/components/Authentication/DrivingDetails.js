@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styledComponents from 'styled-components';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { getUserData } from './action';
 
 const SELECT = styledComponents(Select)`width: 100%;
 padding: 10px;
@@ -13,6 +16,12 @@ box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
 outline:none
 `;
 const DrivingDetails = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [activeSection, setActiveSection] = useState(1);
+
+  const { driverData } = useSelector((e) => e.auth);
+  console.log('driverData', driverData);
   //multi select
   const options = [
     { value: 'two_wheeler', label: 'Two wheeler' },
@@ -21,9 +30,24 @@ const DrivingDetails = () => {
   ];
 
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [error, setError] = useState('');
+  console.log('error', error);
   console.log('selectedOptions', selectedOptions);
   const handleSelectChange = (selected) => {
     setSelectedOptions(selected);
+    setError('');
+  };
+
+  const [licenseImg, setLicenseImg] = useState('');
+  const [userImg, setUserImg] = useState('');
+
+  const handleImage2Change = (e) => {
+    const file = e.target.files[0];
+    setLicenseImg(file);
+  };
+  const handleImage1Change = (e) => {
+    const file = e.target.files[0];
+    setUserImg(file);
   };
 
   const {
@@ -37,67 +61,48 @@ const DrivingDetails = () => {
     errors,
     resetForm,
   } = useFormik({
-    // validationSchema: Yup.object().shape({
-    //   name: Yup.string().min(3).max(20).required('venue name is Required'),
+    validationSchema: Yup.object().shape({
+      licenseNo: Yup.string().required('License number is required'),
 
-    //   pin: Yup.string().required('pin is Required'),
-    //   city: Yup.string().required('city is Required'),
-    //   state: Yup.string().required('state is Required'),
-    //   country: Yup.string().required('country is Required'),
-    //   contact_number: Yup.string()
-    //     .matches(phoneRegExp, 'Phone number is not valid')
-    //     .required('phone no is Required'),
-    //   contact_name: Yup.string()
-    //     .min(3)
-    //     .max(20)
-    //     .required('contact name is Required'),
-    // }),
+      shift: Yup.string().required('shift is required'),
+      dailyWage: Yup.string().required('dailyWage is required'),
+      bata: Yup.string().required('bata is required'),
+    }),
     enableReinitialize: true,
     // initial values
     initialValues: {
-      name: '',
-      city: '',
-      state: '',
-      country: '',
-      pin: '',
-      contact_number: '',
-      contact_name: '',
+      licenseType: '',
+
+      licenseNo: '',
+      shift: '',
+      dailyWage: '',
+      bata: '',
     },
     onSubmit: async (values, { resetForm }) => {
-      await Geocode.fromAddress(values.city).then(
-        (response) => {
-          const { lat, lng } = response.results[0].geometry.location;
-          console.log(lat, lng);
-          values.latitude = lat;
-          values.longitude = lng;
-        },
-        (error) => {
-          alert(error);
-          console.error(error);
-        }
-      );
-
-      const formData = new FormData();
-      formData.append('name', inputValues.name);
-      formData.append('city', inputValues.city);
-      formData.append('state', inputValues.state);
-      formData.append('country', inputValues.country);
-      formData.append('pin', inputValues.pin);
-      formData.append('latitude', inputValues.latitude);
-      formData.append('longitude', inputValues.longitude);
-      formData.append('contact_number', inputValues.contact_number);
-      formData.append('contact_name', inputValues.contact_name);
-      formData.append('image', fileInputRef.current.files[0]);
-      resetForm({ values: '' });
-
-      if (id) {
-        // dispatch(updateVenue(id, formData));
-        // resetForm();
-        // navigate('/venues');
+      if (selectedOptions.length === 0) {
+        setError('Please select an option');
+        alert('Please select at least one value.');
       } else {
-        dispatch(addVenues(formData));
-        // resetForm();
-        navigate('/venues');
+        const formData = new FormData();
+
+        formData.append('licenseType', selectedOptions);
+
+        formData.append('licenseNo', values.licenseNo);
+        formData.append('first_name', driverData.first_name);
+        formData.append('last_name', driverData.last_name);
+        formData.append('email', driverData.email);
+        formData.append('phoneNumber', driverData.phoneNumber);
+        formData.append('password', driverData.password);
+        formData.append('bata', values.bata);
+        formData.append('shift', values.shift);
+        formData.append('dailyWage', values.dailyWage);
+        formData.append('licensePhoto', licenseImg);
+        formData.append('userPhoto', userImg);
+
+        // resetForm({ values: '' });
+        console.log({ ...values });
+
+        dispatch(getUserData(formData, () => navigate('/dashboard')));
       }
     },
   });
@@ -106,293 +111,142 @@ const DrivingDetails = () => {
 
   return (
     <div className="row d-flex justify-content-center">
-      <div className="col-xl-7 col-lg-8 col-md-9 col-11 text-center">
-        <h3>{id ? 'EDIT' : 'ADD'} VENUE</h3>
+      <div className=" text-left">
+        <h3> Driver details</h3>
 
-        <div className="card">
-          <h5 className="text-center mb-4">
-            Powering world-class Venues for events
-          </h5>
+        <div className="card bg-black">
           <form onSubmit={handleSubmit}>
-            <div className="row justify-content-between text-left">
-              <div className="form-group mb-4 w-50">
-                <label htmlFor="uname" style={{ fontWeight: '700' }}>
-                  Name
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="name"
-                  name="name"
-                  onChange={(e) =>
-                    setInputValues({
-                      ...inputValues,
-                      name: e.target.value,
-                    })
-                  }
-                  value={inputValues.name}
-                  placeholder="Enter venue name"
-                />
+            <div className="d-flex flex-row">
+              <div className="form-group mb-4 w-50 mx-3">
+                <div className="form-group mb-4 w-75">
+                  <label htmlFor="uname" style={{ fontWeight: '700' }}>
+                    image
+                  </label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    id="userPhoto"
+                    name="userPhoto"
+                    onChange={handleImage1Change}
+                    onBlur={handleBlur}
+                  />
 
-                {errors.name && touched.name ? <div>{errors.name}</div> : null}
+                  {errors.userPhoto && touched.userPhoto ? (
+                    <div>{errors.userPhoto}</div>
+                  ) : null}
+                </div>
+                <div className="w-75">
+                  <label style={{ fontWeight: '700' }}>owned license</label>
+                  <SELECT
+                    id="multi-select"
+                    options={options}
+                    value={selectedOptions}
+                    onChange={handleSelectChange}
+                    isMulti
+                  />
+                  {error && <div className="error">{error}</div>}
+                </div>
+                <div className="form-group mb-4 w-75">
+                  <label htmlFor="license" style={{ fontWeight: '700' }}>
+                    license No
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="licenseNo"
+                    name="licenseNo"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.licenseNo}
+                    placeholder="Enter Your license_no"
+                  />
+
+                  {errors.licenseNo && touched.licenseNo ? (
+                    <div>{errors.licenseNo}</div>
+                  ) : null}
+                </div>
+                <div className="form-group mb-4 w-75">
+                  <label htmlFor="file-input" className="input-label">
+                    Upload license
+                  </label>
+                  <input
+                    type="file"
+                    id="licensePhoto"
+                    className="form-control"
+                    name="licensePhoto"
+                    onChange={handleImage2Change}
+                    onBlur={handleBlur}
+                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                    placeholder="Upload license"
+                  />
+                </div>
+                <div className="form-group mb-4 w-75">
+                  <select
+                    name="shift"
+                    value={values.shift}
+                    onChange={handleChange}
+                    className="form-control"
+                    onBlur={handleBlur}
+                    style={{ display: 'block' }}
+                  >
+                    <option value="">Select an shift</option>
+
+                    <option value="morning">morning</option>
+                    <option value="night">night</option>
+                  </select>
+                  {errors.shift && touched.shift ? (
+                    <div>{errors.shift}</div>
+                  ) : null}
+                </div>
+                <div className="form-group mb-4 w-75">
+                  <label htmlFor="first_name" style={{ fontWeight: '700' }}>
+                    Enter dailyWage
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="dailyWage"
+                    name="dailyWage"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.dailyWage}
+                    placeholder="Enter Your dailyWage"
+                  />
+
+                  {errors.dailyWage && touched.dailyWage ? (
+                    <div>{errors.dailyWage}</div>
+                  ) : null}
+                </div>
+                <div className="form-group mb-4 w-75">
+                  <label htmlFor="first_name" style={{ fontWeight: '700' }}>
+                    Enter bata
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="bata"
+                    name="bata"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.bata}
+                    placeholder="Enter Your bata"
+                  />
+
+                  {errors.bata && touched.bata ? (
+                    <div>{errors.bata}</div>
+                  ) : null}
+                </div>
+
+                <div className="row ">
+                  <div className="form-group col-sm-6">
+                    {' '}
+                    <button type="submit" className="btn btn-dark">
+                      Register
+                    </button>{' '}
+                  </div>
+                </div>
               </div>
-              <div className="form-group w-25 mb-4">
-                <GoogleMap position={position} />
-              </div>
-
-              <div>
-                <SELECT
-                  id="multi-select"
-                  options={options}
-                  value={selectedOptions}
-                  onChange={handleSelectChange}
-                  isMulti
-                />
-              </div>
-              <div className="form-group mb-4">
-                <label htmlFor="file-input" className="input-label">
-                  Upload Licensce
-                </label>
-                <input
-                  id="file-input"
-                  type="file"
-                  className="file-input"
-                  accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-                  placeholder="Upload Licensce"
-                />
-              </div>
-              <div className="row align-items-center mt-4">
-                <input
-                  type="radio"
-                  id="one"
-                  name="group"
-                  value="One"
-                  onChange={(e) => e.target.value}
-                  required
-                />
-                <label htmlFor="one">One</label>
-                <br />
-
-                <input
-                  type="radio"
-                  id="two"
-                  name="group"
-                  value="Two"
-                  onChange={(e) => e.target.value}
-                />
-                <label htmlFor="two">Two</label>
-              </div>
-              <div className="form-group w-50 mb-4">
-                <label htmlFor="uname" style={{ fontWeight: '700' }}>
-                  City
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="city"
-                  name="city"
-                  onChange={(e) =>
-                    setInputValues({
-                      ...inputValues,
-                      City: e.target.value,
-                    })
-                  }
-                  onBlur={handleBlur}
-                  value={inputValues.city}
-                />
-
-                {errors.city && touched.city ? <div>{errors.city}</div> : null}
-              </div>
-            </div>
-            <div className="row justify-content-between text-left">
-              <div className="form-group mb-4 w-50">
-                <label htmlFor="uname" style={{ fontWeight: '700' }}>
-                  State
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="state"
-                  name="state"
-                  onChange={(e) =>
-                    setInputValues({
-                      ...inputValues,
-                      state: e.target.value,
-                    })
-                  }
-                  onBlur={handleBlur}
-                  value={inputValues.state}
-                  placeholder="Enter Your state"
-                />
-
-                {errors.state && touched.state ? (
-                  <div>{errors.state}</div>
-                ) : null}
-              </div>
-              <div className="form-group w-50 mb-4">
-                <label htmlFor="uname" style={{ fontWeight: '700' }}>
-                  country
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="country"
-                  name="country"
-                  onChange={(e) =>
-                    setInputValues({
-                      ...inputValues,
-                      country: e.target.value,
-                    })
-                  }
-                  onBlur={handleBlur}
-                  value={inputValues.country}
-                />
-
-                {errors.country && touched.country ? (
-                  <div>{errors.country}</div>
-                ) : null}
-              </div>
-            </div>
-            <div className="row justify-content-between text-left">
-              <div className="form-group w-50 mb-4">
-                <label htmlFor="uname" style={{ fontWeight: '700' }}>
-                  Pin code
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="pin"
-                  name="pin"
-                  onChange={(e) =>
-                    setInputValues({
-                      ...inputValues,
-                      pin: e.target.value,
-                    })
-                  }
-                  onBlur={handleBlur}
-                  value={inputValues.pin}
-                />
-
-                {errors.pin && touched.pin ? <div>{errors.pin}</div> : null}
-              </div>
-              <div className="form-group w-50 mb-4">
-                <label htmlFor="uname" style={{ fontWeight: '700' }}>
-                  contact_no
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="contact_number"
-                  name="contact_number"
-                  onChange={(e) =>
-                    setInputValues({
-                      ...inputValues,
-                      contact_number: e.target.value,
-                    })
-                  }
-                  value={inputValues.contact_number}
-                />
-
-                {errors.contact_number && touched.contact_number ? (
-                  <div>{errors.contact_number}</div>
-                ) : null}
-              </div>
-            </div>
-
-            <div className="form-group w-50 mb-4">
-              <label htmlFor="uname" style={{ fontWeight: '700' }}>
-                contact Name
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="contact_name"
-                name="contact_name"
-                onChange={(e) =>
-                  setInputValues({
-                    ...inputValues,
-                    contact_name: e.target.value,
-                  })
-                }
-                value={inputValues.contact_name}
-              />
-
-              {errors.contact_name && touched.contact_name ? (
-                <div>{errors.contact_name}</div>
-              ) : null}
-            </div>
-            <div>
-              <SELECT
-                id="multi-select"
-                options={options}
-                value={selectedOptions}
-                onChange={handleSelectChange}
-                isMulti
-              />
-            </div>
-            <div className="form-group mb-4">
-              <label htmlFor="license" style={{ fontWeight: '700' }}>
-                license No
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="licenseNo"
-                name="licenseNo"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.licenseNo}
-                placeholder="Enter Your license_no"
-              />
-
-              {errors.licenseNo && touched.licenseNo ? (
-                <div>{errors.licenseNo}</div>
-              ) : null}
-            </div>
-            <div className="form-group mb-4">
-              <label htmlFor="file-input" className="input-label">
-                Upload license
-              </label>
-              <input
-                type="file"
-                id="licensePhoto"
-                name="licensePhoto"
-                ref={fileInputRef}
-                onChange={handleImage2Change}
-                onBlur={handleBlur}
-                value={values.licensePhoto}
-                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-                placeholder="Upload license"
-              />
-            </div>
-            <div className="row justify-content-between text-left">
-              <div className="form-group w-50 mb-4">
-                <label htmlFor="uname" style={{ fontWeight: '700' }}>
-                  image
-                </label>
-                <input
-                  type="file"
-                  className="form-control"
-                  id="image"
-                  name="image"
-                  ref={fileInputRef}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-
-                {errors.image && touched.image ? (
-                  <div>{errors.image}</div>
-                ) : null}
-              </div>
-            </div>
-
-            <div className="row justify-content-end">
-              <div className="form-group col-sm-6">
-                {' '}
-                <button type="submit" className="btn btn-dark">
-                  Add
-                </button>{' '}
-              </div>
+              <div className="form-group mb-4 mx-3"></div>
             </div>
           </form>
         </div>

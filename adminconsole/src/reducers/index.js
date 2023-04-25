@@ -8,6 +8,7 @@ const authInitials = {
   role: '',
   usermail: '',
   userdata: [],
+  driverData: [],
 };
 const authReducer = (state = authInitials, action) => {
   switch (action.type) {
@@ -38,6 +39,11 @@ const authReducer = (state = authInitials, action) => {
       return {
         ...state,
         userdata: action.payload,
+      };
+    case 'SET_DRIVER_DETAILS':
+      return {
+        ...state,
+        driverData: action.payload,
       };
 
     default:
@@ -144,9 +150,40 @@ const permissionReducer = (state = permissionInitials, action) => {
   }
 };
 
+//truck reducer
+const truckInitials = {
+  brands: [],
+  models: [],
+  variants: [],
+};
+
+const truckReducer = (state = truckInitials, action) => {
+  switch (action.type) {
+    case 'GET_TRUCK_BRANDS':
+      return {
+        ...state,
+        brands: action.payload,
+      };
+    case 'GET_TRUCK_MODELS':
+      return {
+        ...state,
+        models: action.payload,
+      };
+    case 'GET_TRUCK_VARIANTS':
+      return {
+        ...state,
+        variants: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   auth: authReducer,
   msg: msgReducer,
   user: userReducer,
   permissions: permissionReducer,
+  truck: truckReducer,
 });

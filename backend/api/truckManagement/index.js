@@ -3,10 +3,8 @@ var router = express.Router();
 const controller = require('./controller');
 const { upload } = require('../../middlewares/uploader');
 
-router
-  .route('/')
-  .post(upload.single('image'), controller.uploadImages)
-  .get(controller.retrieveImages);
+router.route('/brands').get(controller.getTruckBrands);
+router.route('/models').get(controller.getTruckModels);
+router.route('/variants').get(controller.getTruckVariants);
 
-router.route('/:id').delete(controller.dltImages);
 module.exports = router;

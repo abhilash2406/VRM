@@ -3,10 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import NavBar from './NavBar';
 import Modal from 'react-modal';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { uploadToGallery } from '../../action';
 import { useDispatch, useSelector } from 'react-redux';
-import { retrieveImgs } from '../../action';
+import { retrieveImgs, dltFromGallery } from '../../action';
+import { deleteData } from '../../services';
 
 const customStyles = {
   content: {
@@ -20,6 +21,7 @@ const customStyles = {
 };
 
 const Gallery = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(retrieveImgs());
@@ -64,27 +66,38 @@ const Gallery = () => {
             </h1>
 
             <hr className="mt-2 mb-5" />
-            <form onSubmit={handleSubmit}>
-              <h3>React Multiple File Upload</h3>
-              <div className="form-group">
-                <input type="file" multiple onChange={handleFileSelect} />
-              </div>
-              <div className="form-group">
-                <button className="btn btn-primary" type="submit">
-                  Upload
-                </button>
-              </div>
-            </form>
+            <div className="mb-3">
+              <form onSubmit={handleSubmit}>
+                <h3>React Multiple File Upload</h3>
+                <div className="form-group">
+                  <input type="file" multiple onChange={handleFileSelect} />
+                </div>
+                <div className="form-group">
+                  <button className="btn btn-primary" type="submit">
+                    Upload
+                  </button>
+                </div>
+              </form>
+            </div>
 
             <div className="row text-center text-lg-start">
               {imgs.map((image) => (
                 <div className="col-lg-3 col-md-4 col-6">
                   <img
                     className="img-fluid img-thumbnail"
-                    src={`http://localhost:5000/${image.image?.slice(6)}`}
+                    src={`http://localhost:5000/${image.image}`}
                     alt=""
                     onClick={handleImageClick}
                   />
+                  <button
+                    className="btn btn-info"
+                    onClick={() => {
+                      dispatch(dltFromGallery(image.id));
+                    }}
+                    style={{ margin: '0% 4% 0% 0%' }}
+                  >
+                    delete
+                  </button>
                 </div>
               ))}
             </div>

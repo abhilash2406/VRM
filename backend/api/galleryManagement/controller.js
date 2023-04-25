@@ -1,4 +1,5 @@
 const gallery = require('../../models/gallery');
+const path = require('path');
 
 exports.uploadImages = async (req, res, next) => {
   //   console.log("images")
@@ -20,6 +21,23 @@ exports.retrieveImages = async (req, res, next) => {
     res.send({
       success: false,
       message: e.message,
+    });
+  }
+};
+//delete
+exports.dltImages = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const Gallery = await gallery.findByPk(id);
+    await Gallery.destroy();
+    return res.send({
+      success: true,
+      message: 'image deleted successfully',
+    });
+  } catch (err) {
+    return es.send({
+      success: false,
+      message: err.message,
     });
   }
 };

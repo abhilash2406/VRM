@@ -6,6 +6,7 @@ const authInitials = {
   setLoading: null,
   grantedPermissions: [],
   role: '',
+  imgs: [],
 };
 const authReducer = (state = authInitials, action) => {
   switch (action.type) {
@@ -27,6 +28,11 @@ const authReducer = (state = authInitials, action) => {
         ...state,
         setLoading: action.payload,
       };
+    case 'SET_GALLERY':
+      return {
+        ...state,
+        imgs: action.payload,
+      };
 
     default:
       return state;
@@ -35,29 +41,29 @@ const authReducer = (state = authInitials, action) => {
 
 // msg reducer
 const msgInitials = {
-    successMsg: '',
-    errorMsg: '',
-  };
-  
-  const msgReducer = (state = msgInitials, action) => {
-    switch (action.type) {
-      case 'SUCCESS_MESSAGE':
-        return {
-          ...state,
-          successMsg: action.payload,
-        };
-      case 'ERROR_MESSAGE':
-        return {
-          ...state,
-          errorMsg: action.payload,
-        };
-  
-      default:
-        return state;
-    }
-  };
+  successMsg: '',
+  errorMsg: '',
+};
+
+const msgReducer = (state = msgInitials, action) => {
+  switch (action.type) {
+    case 'SUCCESS_MESSAGE':
+      return {
+        ...state,
+        successMsg: action.payload,
+      };
+    case 'ERROR_MESSAGE':
+      return {
+        ...state,
+        errorMsg: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
 
 export default combineReducers({
   auth: authReducer,
-  msg : msgReducer
+  msg: msgReducer,
 });

@@ -66,3 +66,14 @@ export const contactDetails = (input) => async (dispatch) => {
     dispatch(setSuccessMessage(data.message));
   }
 };
+
+//list images
+export const retrieveImgs = () => async (dispatch) => {
+  console.log('first');
+  const { data } = await getData('/gallery');
+  console.log('data', data);
+  dispatch({
+    type: 'SET_GALLERY',
+    payload: data.data,
+  });
+};
