@@ -49,7 +49,7 @@ const AddTruck = () => {
 
       engineNo: Yup.string().required('engine number is required'),
       chassisNo: Yup.string().required('engine number is required'),
-      RCNo: Yup.string().required('required').min(3).max(30),
+      RCNo: Yup.string().required('enter rc no').min(3).max(30),
 
       yrManufacture: Yup.number()
         .required()
@@ -99,10 +99,10 @@ const AddTruck = () => {
   });
 
   return (
-    <section class="get-in-touch">
-      <h1 class="title">Enter Truck Details</h1>
-      <form class="contact-form row" onSubmit={handleSubmit}>
-        <div class="form-field col-lg-6 mt-4">
+    <section className="get-in-touch">
+      <h1 className="title">Enter Truck Details</h1>
+      <form className="contact-form row" onSubmit={handleSubmit}>
+        <div className="form-field col-lg-6 mt-4">
           <select
             name="brand"
             className="form-control"
@@ -120,7 +120,7 @@ const AddTruck = () => {
           </select>
           {errors.brand && touched.brand ? <div>{errors.brand}</div> : null}
         </div>
-        <div class="form-field col-lg-6 mt-4">
+        <div className="form-field col-lg-6 mt-4">
           <select
             name="model"
             className="form-control"
@@ -138,7 +138,7 @@ const AddTruck = () => {
           </select>
           {errors.model && touched.model ? <div>{errors.model}</div> : null}
         </div>
-        <div class="form-field col-lg-6 ">
+        <div className="form-field col-lg-6 ">
           <select
             name="variant"
             className="form-control"
@@ -158,7 +158,7 @@ const AddTruck = () => {
             <div>{errors.variant}</div>
           ) : null}
         </div>
-        <div class="form-field col-lg-6 ">
+        <div className="form-field col-lg-6 ">
           <input
             type="text"
             name="VIN"
@@ -172,7 +172,7 @@ const AddTruck = () => {
 
           {errors.VIN && touched.VIN ? <div>{errors.VIN}</div> : null}
         </div>
-        <div class="form-field col-lg-6 ">
+        <div className="form-field col-lg-6 ">
           <input
             type="text"
             name="engineNo"
@@ -189,7 +189,7 @@ const AddTruck = () => {
           ) : null}
         </div>
 
-        <div class="form-field col-lg-6 ">
+        <div className="form-field col-lg-6 ">
           <input
             type="text"
             name="chassisNo"
@@ -205,7 +205,7 @@ const AddTruck = () => {
             <div>{errors.chassisNo}</div>
           ) : null}
         </div>
-        <div class="form-field col-lg-6 ">
+        <div className="form-field col-lg-6 ">
           <input
             type="text"
             name="RCNo"
@@ -216,8 +216,7 @@ const AddTruck = () => {
             onChange={handleChange}
             onBlur={handleBlur}
           />
-
-          {errors.title && touched.title ? <div>{errors.title}</div> : null}
+          {errors.RCNo && touched.RCNo ? <div>{errors.RCNo}</div> : null}
         </div>
 
         <div className="col-lg-6">
@@ -226,12 +225,14 @@ const AddTruck = () => {
             type="file"
             name="rcPhoto"
             className="form-control"
-
             id="rcPhoto"
             // onChange={handleFileChange}
             onBlur={handleBlur}
           />
-          {errors.rcPhoto && <p>{errors.rcPhoto}</p>}
+
+          {errors.rcPhoto && touched.rcPhoto ? (
+            <div>{errors.rcPhoto}</div>
+          ) : null}
         </div>
         <div className="col-lg-6">
           <label htmlFor="yrManufacture">Year of Manufacturing:</label>
@@ -288,8 +289,10 @@ const AddTruck = () => {
           ) : null}
         </div>
 
-        <div class="form-field col-lg-12">
-          <button type="submit" className='btn btn-warning'>submit</button>
+        <div className="form-field col-lg-12">
+          <button type="submit" className="btn btn-warning">
+            submit
+          </button>
         </div>
       </form>
       <Link to={'/trucks'}>back</Link>

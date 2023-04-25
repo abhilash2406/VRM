@@ -73,10 +73,11 @@ exports.getMsgToRead = async (req, res, next) => {
 
 exports.ProfilePermissions = async (req, res, next) => {
   try {
+    console.log("hy")
     const token = req.header('Authorization')
       ? req.header('Authorization').replace('Bearer ', '')
       : null;
-    // console.log('token', token);
+    console.log('token', token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     let user = await login.findByPk(decoded.id);
     const permission_data = await permissionSetting.findAll({
@@ -90,12 +91,12 @@ exports.ProfilePermissions = async (req, res, next) => {
         subMenu: data.permission.subMenu,
       };
     });
-    // console.log('mappingArray', mappingArray);
+    console.log('mappingArray', mappingArray);
     let role = await designations.findByPk(user.designationId);
 
     res.send({
       success: true,
-      data: { permission: mappingArray, designation: role.Designation },
+      data: { permission: mappingArray, designation: role.designation },
     });
   } catch (e) {
     res.send({

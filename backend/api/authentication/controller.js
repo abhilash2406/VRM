@@ -114,7 +114,7 @@ exports.googleLogin = async (req, res, next) => {
     const currentUser = await login.findOne({
       where: { email: req.body.data.data.email },
     });
-    console.log('users', currentUser);
+    // console.log('users', currentUser);
     if (!users) {
       return res.send({
         success: false,
@@ -139,7 +139,7 @@ exports.googleLogin = async (req, res, next) => {
   } catch (e) {
     res.send({
       success: false,
-      message: e.message,
+      message: 'non registered email',
     });
   }
 };
