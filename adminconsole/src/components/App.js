@@ -18,6 +18,7 @@ import Permissions from './PermissionManagement/Permissions';
 import AddUser from './AddUsers/AddUser';
 import FillDetails from './Authentication/FillDetails';
 import DrivingDetails from './Authentication/DrivingDetails';
+import AddDrivers from './DriverManagement.js/AddDrivers';
 import CardDetails from './Authentication/CardDetails';
 import StripePayment from './Authentication/StripePayment';
 import Success from './Authentication/Success';
@@ -89,7 +90,6 @@ const App = () => {
           <Route path="/driver-details" element={<DrivingDetails />} />;
           <Route path="/payment" element={<StripePayment />} />;
           <Route path="/success" element={<Success />} />;
-
           <Route
             path="/dashboard"
             element={
@@ -123,7 +123,7 @@ const App = () => {
               </PrivateRoute>
             }
           />
-           <Route
+          <Route
             path="/edit-trucks/:id"
             element={
               <PrivateRoute>
@@ -166,7 +166,7 @@ const App = () => {
               </PrivateRoute>
             }
           />
-            <Route
+          <Route
             path="/add-routes"
             element={
               <PrivateRoute>
@@ -179,6 +179,14 @@ const App = () => {
             element={
               <PrivateRoute>
                 <DriverList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/add-drivers"
+            element={
+              <PrivateRoute>
+                <AddDrivers />
               </PrivateRoute>
             }
           />

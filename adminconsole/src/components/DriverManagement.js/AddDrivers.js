@@ -5,11 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { useFormik, Formik } from 'formik';
 import * as Yup from 'yup';
-import { getUserData } from './action';
-import {
-  getAllTruckBrands,
-  getCorrespondingData,
-} from '../TruckManagement/action';
+
+import { getCorrespondingData,getAllTruckBrands } from '../TruckManagement/action';
 
 const SELECT = styledComponents(Select)`width: 100%;
 padding: 10px;
@@ -19,13 +16,12 @@ border-radius: 5px;
 box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
 outline:none
 `;
-const DrivingDetails = () => {
+const AddDrivers = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [activeSection, setActiveSection] = useState(1);
 
-  const { driverData } = useSelector((e) => e.auth);
-  console.log('driverData', driverData);
+ 
   //multi select
   const options = [
     { value: 'two_wheeler', label: 'Two wheeler' },
@@ -177,11 +173,6 @@ const DrivingDetails = () => {
               console.log('values', values);
               const formData = new FormData();
               if (isChecked1 === true) {
-                formData.append('first_name', driverData.first_name);
-                formData.append('last_name', driverData.last_name);
-                formData.append('email', driverData.email);
-                formData.append('phoneNumber', driverData.phoneNumber);
-                formData.append('password', driverData.password);
                 formData.append('licenseType', selectedOptions);
                 formData.append('licenseNo', values.licenseNo);
                 formData.append('shift', values.shift);
@@ -201,11 +192,6 @@ const DrivingDetails = () => {
                 formData.append('truckPhoto', truckPhoto);
                 formData.append('rcPhoto', rcPhoto);
               } else {
-                formData.append('first_name', driverData.first_name);
-                formData.append('last_name', driverData.last_name);
-                formData.append('email', driverData.email);
-                formData.append('phoneNumber', driverData.phoneNumber);
-                formData.append('password', driverData.password);
                 formData.append('licenseType', selectedOptions);
                 formData.append('licenseNo', values.licenseNo);
                 formData.append('shift', values.shift);
@@ -215,7 +201,7 @@ const DrivingDetails = () => {
                 formData.append('bata', values.bata);
               }
               // resetForm({ values: '' });
-              dispatch(getUserData(values, () => navigate('/success')));
+              // dispatch(getUserData(values, () => navigate('/success')));
             }}
           >
             {({
@@ -611,4 +597,4 @@ const DrivingDetails = () => {
   );
 };
 
-export default DrivingDetails;
+export default AddDrivers;
