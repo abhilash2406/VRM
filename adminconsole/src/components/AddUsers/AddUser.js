@@ -30,7 +30,7 @@ const AddUser = () => {
   }, []);
 
   const { designations } = useSelector((state) => state.user);
-  // console.log('designations', designations);
+  console.log('designations', designations);
 
   // const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
 
@@ -51,7 +51,7 @@ const AddUser = () => {
       email: Yup.string()
         .email('type mail in valid format')
         .required('email is Required'),
-        designation: Yup.string().required('designation is Required'),
+      designation: Yup.string().required('designation is Required'),
     }),
     enableReinitialize: true,
     // initial values
@@ -67,7 +67,7 @@ const AddUser = () => {
       formData.append('name', values.name);
       formData.append('phoneNumber', values.phoneNumber);
       formData.append('email', values.email);
-      formData.append('designation',values.designation)
+      formData.append('designation', values.designation);
 
       if (id) {
         // formData.append(
@@ -83,12 +83,19 @@ const AddUser = () => {
       }
     },
   });
-  
-  const dOptions = designations?.map((item, index) => (
-    <option key={index} value={item.id}>
-      {item.designation}
-    </option>
-  ));
+
+  const options = designations.filter(
+    (item) => item.designation !== 'Admin' && item.designation !== 'Driver'
+  );
+  console.log('options', options);
+
+  const dOptions = options
+    ?.map((item, index) => (
+      <option key={index} value={item.id}>
+        {item.designation}
+      </option>
+    ))
+    .filter((item) => item.designation !== 'Admin');
 
   return (
     <div className="container-fluid">

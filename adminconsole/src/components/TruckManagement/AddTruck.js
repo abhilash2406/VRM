@@ -8,6 +8,8 @@ import {
   getAllTruckBrands,
   getAllTruckModels,
   getAllTruckVariants,
+  addTrucks,
+  getCorrespondingData,
 } from './action';
 
 const schema = Joi.object({});
@@ -19,16 +21,37 @@ const AddTruck = () => {
 
   useEffect(() => {
     dispatch(getAllTruckBrands());
-    dispatch(getAllTruckModels());
-    dispatch(getAllTruckVariants());
+    // dispatch(getAllTruckModels());
+    // dispatch(getAllTruckVariants());
   }, []);
 
   const { brands } = useSelector((e) => e.truck);
   const { models } = useSelector((e) => e.truck);
   const { variants } = useSelector((e) => e.truck);
-  // console.log(brands);
-  // console.log(models);
-  // console.log(variants);
+
+  const [branid, setBrandId] = useState('');
+  const [modelid, setModelId] = useState('');
+
+  const getDataFromDb = (e) => {
+    const bid = document.getElementById('brand').value;
+    setBrandId(bid);
+    const mid = document.getElementById('model').value;
+    setModelId(mid);
+    console.log(bid, mid);
+    dispatch(getCorrespondingData({ brandId: bid, modelId: mid }));
+  };
+
+  const [truckPhoto, setTruckPhoto] = useState('');
+  const [rcPhoto, setRcPhoto] = useState('');
+
+  const handleImage2Change = (e) => {
+    const file = e.target.files[0];
+    setTruckPhoto(file);
+  };
+  const handleImage1Change = (e) => {
+    const file = e.target.files[0];
+    setRcPhoto(file);
+  };
 
   const {
     handleSubmit,
@@ -42,14 +65,29 @@ const AddTruck = () => {
     resetForm,
   } = useFormik({
     validationSchema: Yup.object().shape({
-      brand: Yup.string().required('brand is required'),
-      model: Yup.string().required('model is required'),
+      // brand: Yup.string().required('brand is required'),
+      // model: Yup.string().required('model is required'),
       variant: Yup.string().required('variant is required'),
-      VIN: Yup.string().required('vin required'),
+      VIN: Yup.string()
+        .matches(
+          /^[A-HJ-NPR-Z\d]{8}[X\d][A-HJ-NPR-Z\d]{2}\d{6}$/i,
+          'Invalid VIN number'
+        )
+        .required('VIN number is required'),
 
-      engineNo: Yup.string().required('engine number is required'),
-      chassisNo: Yup.string().required('engine number is required'),
-      RCNo: Yup.string().required('enter rc no').min(3).max(30),
+      engineNo: Yup.string()
+        .matches(/^([a-zA-Z0-9_-]){6,20}$/, 'Invalid engine number')
+        .required('Engine number is required'),
+      chassisNo: Yup.string()
+        .matches(/^[A-HJ-NPR-Z\d]{17}$/i, 'Invalid chassis number')
+        .required('Chassis number is required'),
+
+      RCNo: Yup.string()
+        .matches(
+          /^(([A-Z]{2}\d{2}[A-Z]{2}\d{4})|([A-Z]{2}-\d{2}-[A-Z]{2}-\d{4}))$/i,
+          'Invalid RC number'
+        )
+        .required('RC number is required'),
 
       yrManufacture: Yup.number()
         .required()
@@ -67,15 +105,13 @@ const AddTruck = () => {
       engineNo: '',
       chassisNo: '',
       RCNo: '',
-
       yrManufacture: '',
-
       status: '',
     },
     onSubmit: (values, { resetForm }) => {
       const formData = new FormData();
-      formData.append('brand', values.brand);
-      formData.append('model', values.model);
+      formData.append('brand', branid);
+      formData.append('model', modelid);
       formData.append('variant', values.variant);
       formData.append('VIN', values.VIN);
       formData.append('engineNo', values.engineNo);
@@ -83,18 +119,14 @@ const AddTruck = () => {
       formData.append('RCNo', values.RCNo);
       formData.append('status', values.status);
       formData.append('yrManufacture', values.yrManufacture);
-
+      formData.append('truckPhoto', truckPhoto);
+      formData.append('rcPhoto', rcPhoto);
       //   resetForm({ values: '' });
       console.log({ ...values });
-      // if (id) {
-      // dispatch(updateEvent(id, formData));
+
+      dispatch(addTrucks(formData, () => navigate('/trucks')));
       // resetForm();
       // navigate('/events');
-      // } else {
-      // dispatch(addEvents(formData, () => navigate('/events')));
-      // resetForm();
-      // navigate('/events');
-      // }
     },
   });
 
@@ -102,45 +134,48 @@ const AddTruck = () => {
     <section className="get-in-touch">
       <h1 className="title">Enter Truck Details</h1>
       <form className="contact-form row" onSubmit={handleSubmit}>
-        <div className="form-field col-lg-6 mt-4">
+        <div className="form-field col-lg-4 mt-4">
           <select
             name="brand"
+            id="brand"
             className="form-control"
-            value={values.brand}
-            onChange={handleChange}
+            // value={values.brand}
+            onChange={(e) => getDataFromDb(e)}
             onBlur={handleBlur}
             style={{ display: 'block' }}
           >
             <option value="">Select an brand</option>
             {brands?.map((item, index) => (
-              <option key={index} value={item.id}>
+              <option key={index} value={item.brandId}>
                 {item.name}
               </option>
             ))}
           </select>
           {errors.brand && touched.brand ? <div>{errors.brand}</div> : null}
         </div>
-        <div className="form-field col-lg-6 mt-4">
+        <div className="form-field col-lg-4 mt-4">
           <select
             name="model"
+            id="model"
             className="form-control"
-            value={values.model}
-            onChange={handleChange}
+            // value={values.model}
+            onChange={(e) => getDataFromDb(e)}
             onBlur={handleBlur}
             style={{ display: 'block' }}
           >
             <option value="">Select truck model</option>
             {models?.map((item, index) => (
-              <option key={index} value={item.id}>
+              <option key={index} value={item.modelId}>
                 {item.name}
               </option>
             ))}
           </select>
           {errors.model && touched.model ? <div>{errors.model}</div> : null}
         </div>
-        <div className="form-field col-lg-6 ">
+        <div className="form-field col-lg-4 mt-4 ">
           <select
             name="variant"
+            id="variant"
             className="form-control"
             value={values.variant}
             onChange={handleChange}
@@ -226,7 +261,7 @@ const AddTruck = () => {
             name="rcPhoto"
             className="form-control"
             id="rcPhoto"
-            // onChange={handleFileChange}
+            onChange={handleImage1Change}
             onBlur={handleBlur}
           />
 
@@ -266,10 +301,10 @@ const AddTruck = () => {
             onChange={handleChange}
             onBlur={handleBlur}
           >
-            <option value=""></option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
+            <option value="">select truck status</option>
+            <option value="active">active</option>
+            <option value="deactive">deactive</option>
+            <option value="pending">pending</option>
           </select>
           {errors.status && touched.status ? <div>{errors.status}</div> : null}
         </div>
@@ -281,7 +316,7 @@ const AddTruck = () => {
             className="form-control"
             id="truckPhoto"
             multiple
-            // onChange={handleFileChange}
+            onChange={handleImage2Change}
             onBlur={handleBlur}
           />
           {errors.truckPhoto && touched.truckPhoto ? (

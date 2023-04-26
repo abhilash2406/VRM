@@ -194,6 +194,7 @@ exports.googleSignUp = async (req, res, next) => {
 };
 
 exports.signUpUser = async (req, res, next) => {
+
   console.log('req.body', req.body);
   const userPhotoPath = req.files['userPhoto'][0].path.replace(/^public/, '');
   const licensePhotoPath = req.files['licensePhoto'][0].path.replace(
@@ -222,18 +223,21 @@ exports.signUpUser = async (req, res, next) => {
   await users.create({
     name: req.body.first_name,
     phoneNumber: req.body.phoneNumber,
-    signed: 'unsigned',
+    signed: 'Unsigned',
     loginId: loginDetails.id,
   });
+  const jsonString = JSON.stringify(req.body.licenseType);
 
   await drivers.create({
     licenseNo: req.body.licenseNo,
     licensePhoto: licensePhotoPath,
     userPhoto: userPhotoPath,
-    licenseType: req.body.licenseType,
+    licenseType: jsonString,
     shift: req.body.shift,
     dailyWage: req.body.dailyWage,
     bata: req.body.bata,
+    loginId: loginDetails.id,
+
     status: 'pending',
   });
 
@@ -359,3 +363,60 @@ function makeRecipientViewRequest(name, email) {
 
   return viewRequest;
 }
+
+exports.proceedPayment = async (req, res, next) => {
+  try {
+    let { id, bookingDetails } = req.body;
+
+    console.log('bookingData', bookingDetails);
+    console.log('id', id);
+
+    const eventData = await event.findByPk(bookingDetails.eventId);
+    console.log('event', eventData.price);
+
+    const customer = await Stripe.customers.create({
+      name: bookingDetails.guest_name,
+      email: bookingDetails.guest_email,
+      phone: bookingDetails.guest_no,
+    });
+
+    // console.log('customer', customer);
+
+    const intent = await Stripe.paymentIntents.create({
+      payment_method: id,
+      amount: eventData.price * 100,
+      currency: 'inr',
+      confirm: true,
+      payment_method_types: ['card'],
+    });
+
+    const paymentIntent = await Stripe.paymentIntents.confirm(intent.id, {
+      payment_method: id,
+    });
+
+    const Bookings = await booking.create({
+      date_of_booking: bookingDetails.booking_date,
+      total_amount: eventData.price,
+      paymentMethod: bookingDetails.paymentMethod,
+      event_id: bookingDetails.eventId,
+    });
+    console.log('Bookings', Bookings);
+    const Guest = await guest.create({
+      name: bookingDetails.guest_name,
+      email: bookingDetails.guest_email,
+      phone: bookingDetails.guest_no,
+      cus_id: customer.id.toString(),
+      booking_id: Bookings.id,
+    });
+
+    return res.json({
+      success: true,
+      data: paymentIntent,
+    });
+  } catch (e) {
+    res.json({
+      success: false,
+      message: e,
+    });
+  }
+};

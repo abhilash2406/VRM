@@ -20,7 +20,7 @@ const driver = sequelize.define('driver', {
     allowNull: false,
   },
   licenseType: {
-    type: DataTypes.JSON,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   shift: {

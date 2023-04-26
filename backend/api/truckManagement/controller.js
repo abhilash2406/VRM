@@ -1,6 +1,11 @@
 const Brand = require('../../models/brand');
 const TruckModel = require('../../models/truckModel');
 const Variant = require('../../models/variant');
+const trucks = require('../../models/truck');
+const login = require('../../models/login');
+const users = require('../../models/users');
+const jwt = require('jsonwebtoken');
+
 
 exports.getTruckBrands = async (req, res, next) => {
   try {
@@ -42,6 +47,120 @@ exports.getTruckVariants = async (req, res, next) => {
       message: 'truck variants fetched',
       data: data,
     });
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};
+exports.correspondingData = async (req, res, next) => {
+  try {
+    console.log(req.body);
+    if (!req.body.brandId && !req.body.modelId) {
+      console.log('not bid entered');
+      const brand_data = await Brand.findAll({});
+      res.send({
+        success: true,
+        brand: brand_data,
+      });
+    } else if (req.body.brandId && !req.body.modelId) {
+      console.log('bid entered', req.body);
+      const brand_data = await Brand.findAll({});
+      const model_data = await TruckModel.findAll({
+        where: {
+          brandId: req.body.brandId,
+        },
+      });
+      res.send({
+        success: true,
+        model: model_data,
+        brand: brand_data,
+      });
+    } else {
+      const brand_data = await Brand.findAll({});
+      const model_data = await TruckModel.findAll({
+        where: {
+          brandId: req.body.brandId,
+        },
+      });
+      const variant_data = await Variant.findAll({
+        where: {
+          modelId: req.body.modelId,
+        },
+      });
+      res.send({
+        success: true,
+        model: model_data,
+        brand: brand_data,
+        variant: variant_data,
+      });
+    }
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};
+exports.addTrucks = async (req, res, next) => {
+  try {
+    console.log('hy');
+    console.log('req.body', req.body);
+    const rcPhotoPath = req.files['rcPhoto'][0].path.replace(/^public/, '');
+    const truckPhotoPath = req.files['truckPhoto'][0].path.replace(
+      /^public/,
+      ''
+    );
+
+    const truckBrand = await Brand.findOne({
+      where: {
+        brandId: req.body.brand,
+      },
+    });
+
+    const truckModel = await TruckModel.findOne({
+      where: {
+        modelId: req.body.model,
+      },
+    });
+
+    const truckVariant = await Variant.findOne({
+      where: {
+        id: req.body.variant,
+      },
+    });
+
+    const token = req.header('Authorization')
+      ? req.header('Authorization').replace('Bearer ', '')
+      : null;
+    // console.log('token', token);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    let who = await login.findByPk(decoded.id);
+    let crctUser = await users.findOne({
+      where: {
+        loginId: who.id,
+      },
+    });
+
+    const data = await trucks.create({
+      brand: truckBrand.name,
+      model: truckModel.name,
+      variant: truckVariant.name,
+      VIN: req.body.VIN,
+      engineNo: req.body.engineNo,
+      chassisNo: req.body.chassisNo,
+      RCNo: req.body.RCNo,
+      yrManufacture: req.body.yrManufacture,
+      rcPhoto: rcPhotoPath,
+      truckPhoto: truckPhotoPath,
+      condition: 'working',
+      isActive: true,
+      status: req.body.status,
+      createdBy: crctUser.id,
+    });
+
+    console.log(crctUser);
   } catch (e) {
     res.send({
       success: false,

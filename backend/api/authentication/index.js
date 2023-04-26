@@ -15,6 +15,8 @@ router.route('/userdata').post(
   ]),
   controller.signUpUser
 );
+router.post('/payment', controller.proceedPayment);
+
 
 router.route('/add-user').post(validate.addUserValidate, controller.addUsers);
 

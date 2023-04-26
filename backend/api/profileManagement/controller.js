@@ -91,7 +91,7 @@ exports.ProfilePermissions = async (req, res, next) => {
         subMenu: data.permission.subMenu,
       };
     });
-    console.log('mappingArray', mappingArray);
+    // console.log('mappingArray', mappingArray);
     let role = await designations.findByPk(user.designationId);
 
     res.send({

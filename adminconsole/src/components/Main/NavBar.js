@@ -15,6 +15,8 @@ const NavBar = () => {
     dispatch(setLogout(() => navigate('/login')));
   };
 
+  const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
+
   const { grantedPermissions } = useSelector((state) => state.auth);
   // console.log('grantedPermissions', grantedPermissions);
   let array = grantedPermissions?.filter((item) => item.menu === 'Admin');
@@ -69,7 +71,10 @@ const NavBar = () => {
         </div>
         <ul className="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto ">
           <li className="nav-item my-1">
-            <Link to={'/dashboard'} className="nav-link text-white fw-bold fs-4">
+            <Link
+              to={'/dashboard'}
+              className="nav-link text-white fw-bold fs-4"
+            >
               <i className="bi-house fs-3"></i> Dashboard
             </Link>
           </li>
@@ -98,31 +103,38 @@ const NavBar = () => {
               <i className="bi-speedometer2 fs-3"></i> Trips
             </Link>
           </li>
+          {userRole === 'Admin' ? (
+            <li className="nav-item my-1">
+              <Link
+                to={'/transactions'}
+                className="nav-link text-white fw-bold fs-4"
+              >
+                <i className=" bi bi-cash fs-3"></i> Transactions
+              </Link>
+            </li>
+          ) : null}
 
-          <li className="nav-item my-1">
-            <Link
-              to={'/transactions'}
-              className="nav-link text-white fw-bold fs-4"
-            >
-              <i className=" bi bi-cash fs-3"></i> Transactions
-            </Link>
-          </li>
+          {userRole === 'Admin' ? (
+            <li className="nav-item my-1">
+              <Link
+                to={'/permissions'}
+                className="nav-link text-white fw-bold fs-4"
+              >
+                <i className=" bi bi-lock fs-3"></i> Permissions
+              </Link>
+            </li>
+          ) : null}
 
-          <li className="nav-item my-1">
-            <Link
-              to={'/permissions'}
-              className="nav-link text-white fw-bold fs-4"
-            >
-              <i className=" bi bi-lock fs-3"></i> Permissions
-            </Link>
-          </li>
           <li className="nav-item my-1">
             <Link to={'/gallery'} className="nav-link text-white fw-bold fs-4">
               <i className=" bi bi-image fs-3"></i> Gallery
             </Link>
           </li>
           <li className="nav-item my-1">
-            <Link to={'/feedbacks'} className="nav-link text-white fw-bold fs-4">
+            <Link
+              to={'/feedbacks'}
+              className="nav-link text-white fw-bold fs-4"
+            >
               <i className=" bi bi-book fs-3"></i> Feedbacks
             </Link>
           </li>
