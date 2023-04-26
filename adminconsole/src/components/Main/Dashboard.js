@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import NavBar from './NavBar';
 import { fetchFeedbacks } from '../../action';
+import { getAllTruckData } from '../TruckManagement/action';
 import Graph from './Graph';
 import Chart from 'chart.js/auto';
 import { CategoryScale } from 'chart.js';
@@ -13,8 +14,11 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchFeedbacks());
+    dispatch(getAllTruckData())
   }, []);
   const { feedbacks } = useSelector((e) => e.user);
+  const { truckData } = useSelector((e) => e.truck);
+
   const [tripsData, setTripsData] = useState([]);
   useEffect(() => {
     // Fetch trips data from API or generate random data here
@@ -47,7 +51,7 @@ const Dashboard = () => {
             <div className="card" style={{ width: '15rem' }}>
               <div className="card-body">
                 <h5 className="card-title">No of  trucks</h5>
-                <p className="card-text">{feedbacks.length}</p>
+                <p className="card-text">{truckData.length}</p>
               </div>
             </div>
             <div className="card" style={{ width: '15rem' }}>

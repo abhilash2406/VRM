@@ -122,6 +122,14 @@ const App = () => {
               </PrivateRoute>
             }
           />
+           <Route
+            path="/edit-trucks/:id"
+            element={
+              <PrivateRoute>
+                <AddTruck />
+              </PrivateRoute>
+            }
+          />
           ;
           <Route
             path="/profile"

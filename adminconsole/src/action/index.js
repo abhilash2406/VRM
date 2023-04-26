@@ -115,3 +115,15 @@ export const dltFromGallery = (id) => async (dispatch) => {
     dispatch(setErrorMessage(data.message));
   }
 };
+
+
+// dlt upload
+export const dltFeedBack = (id) => async (dispatch) => {
+  const { data } = await deleteData(`/profile/feedback/${id}`);
+  if (data.success) {
+    dispatch(setSuccessMessage(data.message));
+    dispatch(fetchFeedbacks());
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};

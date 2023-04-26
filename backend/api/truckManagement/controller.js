@@ -5,7 +5,7 @@ const trucks = require('../../models/truck');
 const login = require('../../models/login');
 const users = require('../../models/users');
 const jwt = require('jsonwebtoken');
-
+const { Op } = require('sequelize');
 
 exports.getTruckBrands = async (req, res, next) => {
   try {
@@ -103,68 +103,153 @@ exports.correspondingData = async (req, res, next) => {
     });
   }
 };
+
+// add truck
 exports.addTrucks = async (req, res, next) => {
   try {
-    console.log('hy');
-    console.log('req.body', req.body);
-    const rcPhotoPath = req.files['rcPhoto'][0].path.replace(/^public/, '');
-    const truckPhotoPath = req.files['truckPhoto'][0].path.replace(
-      /^public/,
-      ''
-    );
-
-    const truckBrand = await Brand.findOne({
+    const truck_exist = await trucks.findAll({
       where: {
-        brandId: req.body.brand,
+        [Op.or]: [
+          {
+            VIN: {
+              [Op.like]: `%${req.body.VIN}%`,
+            },
+          },
+          {
+            RCNo: {
+              [Op.like]: `%${req.body.RCNo}%`,
+            },
+          },
+        ],
       },
     });
 
-    const truckModel = await TruckModel.findOne({
-      where: {
-        modelId: req.body.model,
-      },
-    });
+    if (truck_exist.length) {
+      res.send({
+        success: false,
+        message: 'this truck is already added',
+      });
+    } else {
+      console.log('req.body', req.body);
+      const rcPhotoPath = req.files['rcPhoto'][0].path.replace(/^public/, '');
+      const truckPhotoPath = req.files['truckPhoto'][0].path.replace(
+        /^public/,
+        ''
+      );
 
-    const truckVariant = await Variant.findOne({
-      where: {
-        id: req.body.variant,
-      },
-    });
+      const truckBrand = await Brand.findOne({
+        where: {
+          brandId: req.body.brand,
+        },
+      });
 
-    const token = req.header('Authorization')
-      ? req.header('Authorization').replace('Bearer ', '')
-      : null;
-    // console.log('token', token);
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    let who = await login.findByPk(decoded.id);
-    let crctUser = await users.findOne({
-      where: {
-        loginId: who.id,
-      },
-    });
+      const truckModel = await TruckModel.findOne({
+        where: {
+          modelId: req.body.model,
+        },
+      });
 
-    const data = await trucks.create({
-      brand: truckBrand.name,
-      model: truckModel.name,
-      variant: truckVariant.name,
-      VIN: req.body.VIN,
-      engineNo: req.body.engineNo,
-      chassisNo: req.body.chassisNo,
-      RCNo: req.body.RCNo,
-      yrManufacture: req.body.yrManufacture,
-      rcPhoto: rcPhotoPath,
-      truckPhoto: truckPhotoPath,
-      condition: 'working',
-      isActive: true,
-      status: req.body.status,
-      createdBy: crctUser.id,
-    });
+      const truckVariant = await Variant.findOne({
+        where: {
+          id: req.body.variant,
+        },
+      });
 
-    console.log(crctUser);
+      const token = req.header('Authorization')
+        ? req.header('Authorization').replace('Bearer ', '')
+        : null;
+      // console.log('token', token);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      let who = await login.findByPk(decoded.id);
+      let crctUser = await users.findOne({
+        where: {
+          loginId: who.id,
+        },
+      });
+
+      const data = await trucks.create({
+        brand: truckBrand.name,
+        model: truckModel.name,
+        variant: truckVariant.name,
+        VIN: req.body.VIN,
+        engineNo: req.body.engineNo,
+        chassisNo: req.body.chassisNo,
+        RCNo: req.body.RCNo,
+        yrManufacture: req.body.yrManufacture,
+        rcPhoto: rcPhotoPath,
+        truckPhoto: truckPhotoPath,
+        condition: 'working',
+        isActive: true,
+        status: req.body.status,
+        createdBy: crctUser.id,
+      });
+
+      console.log(crctUser);
+    }
   } catch (e) {
     res.send({
       success: false,
       message: e.message,
+    });
+  }
+};
+
+// get all trucks
+exports.getAllTruckData = async (req, res, next) => {
+  try {
+    const data = await trucks.findAll();
+    res.send({
+      success: true,
+      message: 'data retrieved successfully',
+      data: data,
+    });
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};
+
+// get all trucks
+exports.truckToEdit = async (req, res, next) => {
+  try {
+    console.log('req.params.id', req.params.id);
+    const data = await trucks.findByPk(req.params.id);
+    res.send({
+      success: true,
+      message: 'data retrieved successfully',
+      data: data,
+    });
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};
+
+//dlt trucks
+exports.dltTruck = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const feedback = await trucks.findByPk(id);
+    if (feedback.length === 0) {
+      return res.send({
+        success: false,
+        message: 'not matching data found to delete',
+      });
+    } else {
+      await feedback.destroy();
+      return res.send({
+        success: true,
+        message: ' deleted successfully',
+      });
+    }
+  } catch (err) {
+    return es.send({
+      success: false,
+      message: err.message,
     });
   }
 };

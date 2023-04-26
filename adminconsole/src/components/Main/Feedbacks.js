@@ -4,7 +4,7 @@ import React from 'react';
 import NavBar from '../Main/NavBar';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchFeedbacks, getMessageApprove } from '../../action';
+import { fetchFeedbacks, dltFeedBack } from '../../action';
 import { useEffect } from 'react';
 import DataTable, { createTheme } from 'react-data-table-component';
 
@@ -60,6 +60,15 @@ const Feedbacks = () => {
           <Link className="btn btn-info" to={`/view-feedback/${row.id}`}>
             Read
           </Link>
+          <button
+            className="btn btn-warning"
+            onClick={() => {
+              dispatch(dltFeedBack(row.id));
+            }}
+            style={{ marginLeft:"5px" }}
+          >
+            delete
+          </button>
         </div>
       ),
     },

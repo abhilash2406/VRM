@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const controller = require('./controller');
+const validate = require('./validator');
 const { upload } = require('../../middlewares/uploader');
 
 router.route('/brands').get(controller.getTruckBrands);
@@ -11,8 +12,11 @@ router.route('/add').post(
     { name: 'rcPhoto', maxCount: 1 },
     { name: 'truckPhoto', maxCount: 1 },
   ]),
+  validate.TruckValidate,
   controller.addTrucks
 );
 router.route('/get-data').post(controller.correspondingData);
+router.route('/').get(controller.getAllTruckData);
+router.route('/:id').get(controller.truckToEdit).delete(controller.dltTruck);
 
 module.exports = router;

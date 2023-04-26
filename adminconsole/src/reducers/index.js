@@ -155,6 +155,8 @@ const truckInitials = {
   brands: [],
   models: [],
   variants: [],
+  truckData: [],
+  truckDetails: [],
 };
 
 const truckReducer = (state = truckInitials, action) => {
@@ -174,6 +176,17 @@ const truckReducer = (state = truckInitials, action) => {
         ...state,
         variants: action.payload,
       };
+    case 'GET_ALL_TRUCKS':
+      return {
+        ...state,
+        truckData: action.payload,
+      };
+      case 'GET_SELECTED_TRUCKDATA':
+        return {
+          ...state,
+          truckDetails: action.payload,
+        };
+  
 
     default:
       return state;

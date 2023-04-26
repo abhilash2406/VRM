@@ -57,7 +57,7 @@ const driver = sequelize.define('driver', {
 driver.associate = (models) => {
   driver.belongsTo(models.login, { foreignKey: 'loginId', allowNull: true });
   driver.belongsTo(models.truck, { foreignKey: 'truckId', allowNull: true });
-  driver.belongsTo(models.truck, { foreignKey: 'routeId', allowNull: true });
+  driver.belongsTo(models.route, { foreignKey: 'routeId', allowNull: true });
 };
 
 module.exports = driver;

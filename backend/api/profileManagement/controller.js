@@ -71,9 +71,27 @@ exports.getMsgToRead = async (req, res, next) => {
   }
 };
 
+//dlt feedback
+exports.dltFeedback = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const feedback = await contacts.findByPk(id);
+    await feedback.destroy();
+    return res.send({
+      success: true,
+      message: ' deleted successfully',
+    });
+  } catch (err) {
+    return es.send({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 exports.ProfilePermissions = async (req, res, next) => {
   try {
-    console.log("hy")
+    console.log('hy');
     const token = req.header('Authorization')
       ? req.header('Authorization').replace('Bearer ', '')
       : null;

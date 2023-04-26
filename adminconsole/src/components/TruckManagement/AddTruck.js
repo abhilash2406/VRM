@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Joi from 'joi';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getAllTruckBrands,
@@ -10,14 +10,24 @@ import {
   getAllTruckVariants,
   addTrucks,
   getCorrespondingData,
+  getTruckDataToEdit,
 } from './action';
 
 const schema = Joi.object({});
 
 const AddTruck = () => {
+  // console.log(id);
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getTruckDataToEdit(id));
+    }
+  }, [id]);
+  const { truckDetails } = useSelector((e) => e.truck);
 
   useEffect(() => {
     dispatch(getAllTruckBrands());
@@ -98,15 +108,15 @@ const AddTruck = () => {
     enableReinitialize: true,
     // initial values
     initialValues: {
-      brand: '',
+      brand: id ? truckDetails.brand : '',
       model: '',
       variant: '',
-      VIN: '',
-      engineNo: '',
-      chassisNo: '',
-      RCNo: '',
-      yrManufacture: '',
-      status: '',
+      VIN: id ? truckDetails.VIN : '',
+      engineNo: id ? truckDetails.engineNo : '',
+      chassisNo: id ? truckDetails.chassisNo : '',
+      RCNo: id ? truckDetails.RCNo : '',
+      yrManufacture: id ? truckDetails.yrManufacture : '',
+      status: id ? truckDetails.status : '',
     },
     onSubmit: (values, { resetForm }) => {
       const formData = new FormData();
@@ -125,8 +135,7 @@ const AddTruck = () => {
       console.log({ ...values });
 
       dispatch(addTrucks(formData, () => navigate('/trucks')));
-      // resetForm();
-      // navigate('/events');
+      resetForm();
     },
   });
 

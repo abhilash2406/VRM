@@ -1,4 +1,4 @@
-import { getData, postData, updateData } from '../../../services';
+import { getData, postData, updateData,deleteData } from '../../../services';
 import { setSuccessMessage, setErrorMessage } from '../../../action';
 
 //get all truck brands
@@ -29,10 +29,11 @@ export const getAllTruckVariants = () => async (dispatch) => {
 };
 
 //add truck
-export const addTrucks = (props) => async (dispatch) => {
+export const addTrucks = (props, navigate) => async (dispatch) => {
   const { data } = await postData('trucks/add', props);
   if (data.success) {
     dispatch(setSuccessMessage(data.success));
+    navigate('/trucks');
   } else {
     dispatch(setErrorMessage(data.message));
   }
@@ -53,4 +54,43 @@ export const getCorrespondingData = (dat) => async (dispatch) => {
     type: 'GET_TRUCK_VARIANTS',
     payload: data.variant,
   });
+};
+
+// get all truck data
+export const getAllTruckData = () => async (dispatch) => {
+  const { data } = await getData('/trucks');
+  if (data.success) {
+    dispatch({
+      type: 'GET_ALL_TRUCKS',
+      payload: data.data,
+    });
+    // dispatch(setSuccessMessage(data.message));
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};
+
+// get all truck data
+export const getTruckDataToEdit = (id) => async (dispatch) => {
+  const { data } = await getData(`trucks/${id}`);
+  if (data.success) {
+    dispatch({
+      type: 'GET_SELECTED_TRUCKDATA',
+      payload: data.data,
+    });
+    dispatch(setSuccessMessage(data.message));
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};
+
+// dlt upload
+export const dltTruck = (id) => async (dispatch) => {
+  const { data } = await deleteData(`/trucks/${id}`);
+  if (data.success) {
+    dispatch(setSuccessMessage(data.message));
+    dispatch(getAllTruckData());
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
 };
