@@ -12,11 +12,12 @@ router.route('/userdata').post(
   upload.fields([
     { name: 'userPhoto', maxCount: 1 },
     { name: 'licensePhoto', maxCount: 1 },
+    { name: 'truckPhoto', maxCount: 1 },
+    { name: 'rcPhoto', maxCount: 1 },
   ]),
   controller.signUpUser
 );
 router.post('/payment', controller.proceedPayment);
-
 
 router.route('/add-user').post(validate.addUserValidate, controller.addUsers);
 

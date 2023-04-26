@@ -196,63 +196,63 @@ exports.googleSignUp = async (req, res, next) => {
 exports.signUpUser = async (req, res, next) => {
 
   console.log('req.body', req.body);
-  const userPhotoPath = req.files['userPhoto'][0].path.replace(/^public/, '');
-  const licensePhotoPath = req.files['licensePhoto'][0].path.replace(
-    /^public/,
-    ''
-  );
+  // const userPhotoPath = req.files['userPhoto'][0].path.replace(/^public/, '');
+  // const licensePhotoPath = req.files['licensePhoto'][0].path.replace(
+  //   /^public/,
+  //   ''
+  // );
 
-  const hashing = async (password) => {
-    const salt = await login.generateSalt();
-    let newPassword = await login.hashPassword(password, salt);
-    return { salt, newPassword };
-  };
+  // const hashing = async (password) => {
+  //   const salt = await login.generateSalt();
+  //   let newPassword = await login.hashPassword(password, salt);
+  //   return { salt, newPassword };
+  // };
 
-  let { salt, newPassword } = await hashing(req.body.password);
-  const designationDetails = await designations.findOne({
-    where: { designation: 'Driver' },
-  });
+  // let { salt, newPassword } = await hashing(req.body.password);
+  // const designationDetails = await designations.findOne({
+  //   where: { designation: 'Driver' },
+  // });
 
-  const loginDetails = await login.create({
-    email: req.body.email,
-    password: newPassword,
-    salt,
-    designationId: designationDetails.id,
-  });
+  // const loginDetails = await login.create({
+  //   email: req.body.email,
+  //   password: newPassword,
+  //   salt,
+  //   designationId: designationDetails.id,
+  // });
 
-  await users.create({
-    name: req.body.first_name,
-    phoneNumber: req.body.phoneNumber,
-    signed: 'Unsigned',
-    loginId: loginDetails.id,
-  });
-  const jsonString = JSON.stringify(req.body.licenseType);
+  // await users.create({
+  //   name: req.body.first_name,
+  //   phoneNumber: req.body.phoneNumber,
+  //   signed: 'Unsigned',
+  //   loginId: loginDetails.id,
+  // });
+  // const jsonString = JSON.stringify(req.body.licenseType);
 
-  await drivers.create({
-    licenseNo: req.body.licenseNo,
-    licensePhoto: licensePhotoPath,
-    userPhoto: userPhotoPath,
-    licenseType: jsonString,
-    shift: req.body.shift,
-    dailyWage: req.body.dailyWage,
-    bata: req.body.bata,
-    loginId: loginDetails.id,
+  // await drivers.create({
+  //   licenseNo: req.body.licenseNo,
+  //   licensePhoto: licensePhotoPath,
+  //   userPhoto: userPhotoPath,
+  //   licenseType: jsonString,
+  //   shift: req.body.shift,
+  //   dailyWage: req.body.dailyWage,
+  //   bata: req.body.bata,
+  //   loginId: loginDetails.id,
 
-    status: 'pending',
-  });
+  //   status: 'pending',
+  // });
 
-  const userData = {
-    name: req.body.first_name,
-    email: req.body.email,
-    phn: req.body.phoneNumber,
-  };
+  // const userData = {
+  //   name: req.body.first_name,
+  //   email: req.body.email,
+  //   phn: req.body.phoneNumber,
+  // };
 
-  const { url, result } = await documentSign(req);
-  res.send({
-    success: true,
-    url: url,
-    data: userData,
-  });
+  // const { url, result } = await documentSign(req);
+  // res.send({
+  //   success: true,
+  //   url: url,
+  //   data: userData,
+  // });
 };
 
 //docusign functions

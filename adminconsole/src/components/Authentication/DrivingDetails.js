@@ -142,8 +142,6 @@ const DrivingDetails = () => {
     status: Yup.string().required(),
   });
 
-
-
   const fileInputRef = useRef(null);
 
   return (
@@ -176,8 +174,38 @@ const DrivingDetails = () => {
             }
             // on submit values
             onSubmit={(values, { resetForm }) => {
-              resetForm({ values: '' });
-              dispatch(getUserData(values, () => navigate('/dashboard')));
+              console.log('values', values);
+              const formData = new FormData();
+              if (isChecked1 === true) {
+                formData.append('licenseType', selectedOptions);
+                formData.append('licenseNo', values.licenseNo);
+                formData.append('shift', values.shift);
+                formData.append('dailyWage', values.dailyWage);
+                formData.append('licensePhoto', licenseImg);
+                formData.append('userPhoto', userImg);
+                formData.append('bata', values.bata);
+                formData.append('brand', branid);
+                formData.append('model', modelid);
+                formData.append('variant', values.variant);
+                formData.append('VIN', values.VIN);
+                formData.append('engineNo', values.engineNo);
+                formData.append('chassisNo', values.chassisNo);
+                formData.append('RCNo', values.RCNo);
+                formData.append('status', values.status);
+                formData.append('yrManufacture', values.yrManufacture);
+                formData.append('truckPhoto', truckPhoto);
+                formData.append('rcPhoto', rcPhoto);
+              } else {
+                formData.append('licenseType', selectedOptions);
+                formData.append('licenseNo', values.licenseNo);
+                formData.append('shift', values.shift);
+                formData.append('dailyWage', values.dailyWage);
+                formData.append('licensePhoto', licenseImg);
+                formData.append('userPhoto', userImg);
+                formData.append('bata', values.bata);
+              }
+              // resetForm({ values: '' });
+              dispatch(getUserData(values, () => navigate('/success')));
             }}
           >
             {({

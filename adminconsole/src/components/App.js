@@ -10,6 +10,7 @@ import Feedbacks from './Main/Feedbacks';
 import ViewFeedback from './Main/ViewFeedback';
 import Gallery from './Main/Gallery';
 import TripRoutes from './RouteManagement/TripRoutes';
+import AddRoutes from './RouteManagement/AddRoutes';
 import DriverList from './DriverManagement.js/DriverList';
 import Trips from './TripManagement/Trips';
 import Transactions from './Transactions/Transactions';
@@ -162,6 +163,14 @@ const App = () => {
             element={
               <PrivateRoute>
                 <TripRoutes />
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path="/add-routes"
+            element={
+              <PrivateRoute>
+                <AddRoutes />
               </PrivateRoute>
             }
           />

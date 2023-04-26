@@ -1,7 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize-config');
 
-
 const truck = sequelize.define('truck', {
   id: {
     type: DataTypes.UUID,
