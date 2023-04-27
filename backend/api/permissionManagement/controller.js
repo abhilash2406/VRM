@@ -7,7 +7,7 @@ exports.getAllPermissions = async (req, res, next) => {
   try {
     const data = await permissions.findAll({});
 
-    res.json({
+    res.send({
       success: true,
       data: data,
     });
@@ -36,9 +36,9 @@ exports.grantPermissions = async (req, res, next) => {
       where: { designationId: desId },
       include: permissions,
     });
-    // console.log('permission_data', permission_data)
+    
     let role = await designations.findByPk(req.params.id);
-    // console.log(role);
+    
     const permissionArray = permission_data.map((data) => {
       return {
         menu: data.permission.menu,
@@ -66,13 +66,13 @@ exports.grantPermissions = async (req, res, next) => {
 
 exports.getUserData = async (req, res, next) => {
   try {
-    // console.log(req.params.id);
+   
     const allowed = await permissionSetting.findAll({
       where: {
         designationId: req.params.id,
       },
     });
-    // console.log(allowed);
+    
     let a = allowed.map((item) => ({
       permissionId: item.permissionId,
       designationId: item.designationId,

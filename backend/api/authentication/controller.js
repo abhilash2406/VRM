@@ -1,6 +1,8 @@
 const users = require('../../models/users');
 const login = require('../../models/login');
 const designations = require('../../models/designation');
+const permissionSetting = require('../../models/permissionSetting');
+const permissions = require('../../models/permission');
 const drivers = require('../../models/driver');
 const transporter = require('../../modules/mail');
 const Docusign = require('docusign-esign');
@@ -42,6 +44,17 @@ exports.Login = async (req, res, next) => {
     const currentDesignation = await designations.findOne({
       where: { id: user.designationId },
     });
+
+    const permission_data = await permissionSetting.findAll({
+      where: { designationId: user.designationId },
+      include: permissions,
+    });
+    const mappingArray = permission_data.map((data) => {
+      return {
+        menu: data.permission.menu,
+        subMenu: data.permission.subMenu,
+      };
+    });
     return res.send({
       success: true,
       message: 'Login successfully',
@@ -50,6 +63,7 @@ exports.Login = async (req, res, next) => {
         designation: currentDesignation.designation,
         accessToken,
         refreshToken,
+        permission: mappingArray,
       },
     });
   } catch (e) {
@@ -132,8 +146,23 @@ exports.googleLogin = async (req, res, next) => {
     } else {
       const cUser = await users.findOne({ where: { loginId: currentUser.id } });
 
+      const Cuser = await login.findByPk(currentUser.id); // assuming `userId` is the ID of the user you want to update
+      await Cuser.update({
+        token: googleToken,
+      });
+
       const currentDesignation = await designations.findOne({
         where: { id: currentUser.designationId },
+      });
+      const permission_data = await permissionSetting.findAll({
+        where: { designationId: currentUser.designationId },
+        include: permissions,
+      });
+      const mappingArray = permission_data.map((data) => {
+        return {
+          menu: data.permission.menu,
+          subMenu: data.permission.subMenu,
+        };
       });
       return res.send({
         success: true,
@@ -142,6 +171,7 @@ exports.googleLogin = async (req, res, next) => {
           user: cUser.name,
           designation: currentDesignation.designation,
           accessToken: googleToken,
+          permission: mappingArray,
         },
       });
     }
@@ -207,8 +237,6 @@ exports.googleSignUp = async (req, res, next) => {
 exports.signUpUser = async (req, res, next) => {
   console.log('req.body', req.body);
   console.log('req.files', req.files);
-
-  
 
   const hashing = async (password) => {
     const salt = await login.generateSalt();
@@ -305,7 +333,7 @@ exports.signUpUser = async (req, res, next) => {
         shift: req.body.shift,
         dailyWage: req.body.dailyWage,
         bata: req.body.bata,
-        loginId: loginDetails.id,
+        userId: users.id,
         truckId: truckdet.id,
         status: 'pending',
       });
@@ -334,7 +362,7 @@ exports.signUpUser = async (req, res, next) => {
         shift: req.body.shift,
         dailyWage: req.body.dailyWage,
         bata: req.body.bata,
-        loginId: loginDetails.id,
+        userId: users.id,
         status: 'pending',
       });
       const userData = {

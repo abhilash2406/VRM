@@ -18,7 +18,7 @@ const NavBar = () => {
   const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
 
   const { grantedPermissions } = useSelector((state) => state.auth);
-  // console.log('grantedPermissions', grantedPermissions);
+
   let array = grantedPermissions?.filter((item) => item.menu === 'Admin');
 
   let permissionAllowed = array?.map((e) => e.subMenu);
@@ -125,11 +125,17 @@ const NavBar = () => {
             </li>
           ) : null}
 
-          <li className="nav-item my-1">
-            <Link to={'/gallery'} className="nav-link text-white fw-bold fs-4">
-              <i className=" bi bi-image fs-3"></i> Gallery
-            </Link>
-          </li>
+          {userRole === 'Admin' || userRole === 'Manager' ? (
+            <li className="nav-item my-1">
+              <Link
+                to={'/gallery'}
+                className="nav-link text-white fw-bold fs-4"
+              >
+                <i className=" bi bi-image fs-3"></i> Gallery
+              </Link>
+            </li>
+          ) : null}
+
           <li className="nav-item my-1">
             <Link
               to={'/feedbacks'}

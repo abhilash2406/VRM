@@ -11,6 +11,10 @@ const DriverList = () => {
     dispatch(getAllDrivers());
   }, []);
 
+  const { grantedPermissions } = useSelector((state) => state.auth);
+  let array = grantedPermissions?.filter((item) => item.menu === 'Driver');
+  let permissionAllowed = array?.map((e) => e.subMenu);
+
   const { driverData } = useSelector((e) => e.driver);
   console.log('driverData', driverData);
   return (
@@ -18,9 +22,11 @@ const DriverList = () => {
       <div className="row">
         <NavBar />
         <div className="col-sm p-3 min-vh-100">
-          <Link to="/add-drivers">
-            <button className="btn btn-info add-btn">Add driver</button>
-          </Link>
+          {permissionAllowed?.includes('Add') ? (
+            <Link to="/add-drivers">
+              <button className="btn btn-info add-btn">Add driver</button>
+            </Link>
+          ) : null}
         </div>
       </div>
     </div>

@@ -278,7 +278,7 @@ const AddDrivers = () => {
                         <button type="submit" className="btn btn-dark">
                           Register
                         </button>{' '}
-                        <Link to={'/drivers'}>back</Link>
+                        <Link to={'/drivers'} className='btn btn-warning'>back</Link>
                       </div>
                     </div>
                   </div>

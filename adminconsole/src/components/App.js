@@ -56,15 +56,15 @@ const App = () => {
   useEffect(() => {
     socket.on('GetPermissions', (data) => {
       console.log('socketData', data);
-      // setPermis(data);
+     
       dispatch(setCurrentPermissions(role, data));
     });
   }, [socket]);
 
   useEffect(() => {
-    if (Cookies.get('token')) {
+    
       dispatch(permissionOfLogin());
-    }
+    
   }, []);
 
   useEffect(() => {

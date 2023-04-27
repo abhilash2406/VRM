@@ -49,14 +49,14 @@ const driver = sequelize.define('driver', {
 
     allowNull: true,
   },
-  loginId: {
+  userId: {
     type: DataTypes.UUID,
-    defaultValue: Sequelize.UUIDV4,
+    allowNull: true,
   },
 });
 
 driver.associate = (models) => {
-  driver.belongsTo(models.login, { foreignKey: 'loginId', allowNull: true });
+  driver.belongsTo(models.users, { foreignKey: 'userId' });
   driver.belongsTo(models.truck, { foreignKey: 'truckId' });
   driver.belongsTo(models.route, {
     foreignKey: 'routeId',

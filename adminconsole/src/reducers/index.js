@@ -210,6 +210,24 @@ const driverReducer = (state = driverInitials, action) => {
   }
 };
 
+//route reducer
+const routeInitials = {
+  routeData: [],
+};
+
+const routeReducer = (state = routeInitials, action) => {
+  switch (action.type) {
+    case 'GET_ALL_ROUTE':
+      return {
+        ...state,
+        routeData: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   auth: authReducer,
   msg: msgReducer,
@@ -217,4 +235,5 @@ export default combineReducers({
   permissions: permissionReducer,
   truck: truckReducer,
   driver: driverReducer,
+  routes: routeReducer,
 });

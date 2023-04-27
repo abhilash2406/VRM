@@ -102,9 +102,11 @@ const ListTruck = () => {
         <NavBar />
         <div className="col-sm p-3 min-vh-100">
           <div className="mb-3">
-            <Link to="/add-trucks">
-              <button className="btn btn-info add-btn">Add Truck</button>
-            </Link>
+            {permissionAllowed?.includes('Add') ? (
+              <Link to="/add-trucks">
+                <button className="btn btn-info add-btn">Add Truck</button>
+              </Link>
+            ) : null}
           </div>
 
           <DataTable

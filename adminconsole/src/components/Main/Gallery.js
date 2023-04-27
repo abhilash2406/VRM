@@ -58,7 +58,6 @@ const Gallery = () => {
     setModalIsOpen(false);
   };
   const { grantedPermissions } = useSelector((state) => state.auth);
-  console.log('grantedPermissions', grantedPermissions);
   let array = grantedPermissions?.filter((item) => item.menu === 'Gallery');
   let permissionAllowed = array?.map((e) => e.subMenu);
 
@@ -75,17 +74,20 @@ const Gallery = () => {
 
             <hr className="mt-2 mb-5" />
             <div className="mb-3">
-              <form onSubmit={handleSubmit}>
-                <h3>React Multiple File Upload</h3>
-                <div className="form-group">
-                  <input type="file" multiple onChange={handleFileSelect} />
-                </div>
-                <div className="form-group">
-                  <button className="btn btn-primary" type="submit">
-                    Upload
-                  </button>
-                </div>
-              </form>
+              {permissionAllowed?.includes('Delete') ? (
+                <form onSubmit={handleSubmit}>
+                  <h3>React Multiple File Upload</h3>
+
+                  <div className="form-group">
+                    <input type="file" multiple onChange={handleFileSelect} />
+                  </div>
+                  <div className="form-group">
+                    <button className="btn btn-primary" type="submit">
+                      Upload
+                    </button>
+                  </div>
+                </form>
+              ) : null}
             </div>
 
             <div className="row text-center text-lg-start">
@@ -97,13 +99,13 @@ const Gallery = () => {
                     alt=""
                     onClick={handleImageClick}
                   />
-                  {permissionAllowed?.includes('Add') ? (
+                  {permissionAllowed?.includes('Delete') ? (
                     <button
-                      className="btn btn-info"
+                      className="btn btn-warning"
                       onClick={() => {
                         dispatch(dltFromGallery(image.id));
                       }}
-                      style={{ margin: '0% 4% 0% 0%' }}
+                      style={{ margin: '2% 4% 0% 0%' }}
                     >
                       delete
                     </button>

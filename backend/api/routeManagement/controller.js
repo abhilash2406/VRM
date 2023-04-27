@@ -36,3 +36,21 @@ exports.getAllRoutes = async (req, res) => {
     });
   }
 };
+
+exports.deleteRoute = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const Routes = await routes.findByPk(id);
+
+    await Routes.destroy();
+    res.send({
+      success: true,
+      message: 'deleted successfully',
+    });
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};

@@ -8,13 +8,14 @@ const { Op } = require('sequelize');
 
 exports.getDriverDatas = async (req, res, next) => {
   try {
+    console.log('hy');
     const data = await drivers.findAll({
       include: [
         {
-          model: login,
+          model: users,
           include: [
             {
-              model: users,
+              model: login,
             },
           ],
         },
@@ -26,7 +27,7 @@ exports.getDriverDatas = async (req, res, next) => {
     res.send({
       success: true,
       message: 'data fetched ',
-      //   data: data,
+        data: data,
     });
   } catch (e) {
     res.send({
@@ -76,7 +77,7 @@ exports.addDrivers = async (req, res, next) => {
           salt: req.body.salt,
           designationId: req.body.designationId,
         });
-        const data = await users.create({
+        const user = await users.create({
           name: req.body.name,
           phoneNumber: req.body.phoneNumber,
           loginId: log.id,
@@ -94,7 +95,7 @@ exports.addDrivers = async (req, res, next) => {
           shift: req.body.shift,
           dailyWage: req.body.dailyWage,
           bata: req.body.bata,
-          loginId: log.id,
+          userId: user.id,
           status: 'approved',
         });
 
@@ -118,3 +119,4 @@ exports.addDrivers = async (req, res, next) => {
     });
   }
 };
+

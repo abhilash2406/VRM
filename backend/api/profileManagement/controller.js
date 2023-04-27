@@ -11,10 +11,10 @@ exports.viewProfile = async (req, res, next) => {
     const token = req.header('Authorization')
       ? req.header('Authorization').replace('Bearer ', '')
       : null;
-    //   console.log('token', token);
+    console.log('token', token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     let who = await login.findByPk(decoded.id);
-    // console.log(who);
+    console.log(who);
     let currentUser = await users.findOne({
       where: {
         loginId: who.id,
@@ -95,21 +95,21 @@ exports.ProfilePermissions = async (req, res, next) => {
     const token = req.header('Authorization')
       ? req.header('Authorization').replace('Bearer ', '')
       : null;
-    console.log('token', token);
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    let user = await login.findByPk(decoded.id);
+    const user = await login.findByPk(decoded.id);
     const permission_data = await permissionSetting.findAll({
       where: { designationId: user.designationId },
       include: permissions,
     });
-    // console.log('permissions', permission_data);
+
     const mappingArray = permission_data.map((data) => {
       return {
         menu: data.permission.menu,
         subMenu: data.permission.subMenu,
       };
     });
-    // console.log('mappingArray', mappingArray);
+
     let role = await designations.findByPk(user.designationId);
 
     res.send({
