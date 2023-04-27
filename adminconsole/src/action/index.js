@@ -92,7 +92,12 @@ export const readFeedback = (id) => async (dispatch) => {
 export const uploadToGallery = (image) => async (dispatch) => {
   console.log('imgs', image);
   const { data } = await postData('/gallery', image);
-  dispatch(retrieveImgs())
+  if (data.success) {
+    dispatch(retrieveImgs());
+    dispatch(setSuccessMessage(data.message));
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
 };
 
 // fetch images
@@ -116,7 +121,6 @@ export const dltFromGallery = (id) => async (dispatch) => {
     dispatch(setErrorMessage(data.message));
   }
 };
-
 
 // dlt upload
 export const dltFeedBack = (id) => async (dispatch) => {

@@ -166,6 +166,7 @@ exports.addTrucks = async (req, res, next) => {
           loginId: who.id,
         },
       });
+      console.log('crctUser', crctUser)
 
       const data = await trucks.create({
         brand: truckBrand.name,

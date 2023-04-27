@@ -13,6 +13,7 @@ import TripRoutes from './RouteManagement/TripRoutes';
 import AddRoutes from './RouteManagement/AddRoutes';
 import DriverList from './DriverManagement.js/DriverList';
 import Trips from './TripManagement/Trips';
+import AddTrips from './TripManagement/AddTrips';
 import Transactions from './Transactions/Transactions';
 import Permissions from './PermissionManagement/Permissions';
 import AddUser from './AddUsers/AddUser';
@@ -56,15 +57,13 @@ const App = () => {
   useEffect(() => {
     socket.on('GetPermissions', (data) => {
       console.log('socketData', data);
-     
+
       dispatch(setCurrentPermissions(role, data));
     });
   }, [socket]);
 
   useEffect(() => {
-    
-      dispatch(permissionOfLogin());
-    
+    dispatch(permissionOfLogin());
   }, []);
 
   useEffect(() => {
@@ -195,6 +194,14 @@ const App = () => {
             element={
               <PrivateRoute>
                 <Trips />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/add-trips"
+            element={
+              <PrivateRoute>
+                <AddTrips />
               </PrivateRoute>
             }
           />

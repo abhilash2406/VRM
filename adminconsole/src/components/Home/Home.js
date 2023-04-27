@@ -20,7 +20,7 @@ const Home = () => {
         <Carousel.Item>
           <img
             className="d-block w-100"
-            src="https://greatwaygroup.com/img/slider/slide03.jpg"
+            src="https://s3-ap-northeast-1.amazonaws.com/wp-gogovan.com/wp-content/uploads/sites/5/2021/03/26094714/IN_vehicle_type_1280x760.jpg"
             alt="Second slide"
           />
 
@@ -36,7 +36,7 @@ const Home = () => {
           <Carousel.Caption></Carousel.Caption>
         </Carousel.Item>
       </Carousel>
-     
+
       <Footer />
     </div>
   );

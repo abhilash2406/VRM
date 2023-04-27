@@ -35,8 +35,8 @@ const NavBar = () => {
           data-bs-original-title="Icon-only"
         >
           {' '}
-          T.T LOGISTICS
-          <i className="bi-bootstrap fs-1"></i>
+          GOGOX
+          <i className="bi-truck fs-1"></i>
         </a>
         <div className="dropdown">
           <a

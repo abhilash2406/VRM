@@ -26,21 +26,7 @@ const DrivingDetails = () => {
 
   const { driverData } = useSelector((e) => e.auth);
   console.log('driverData', driverData);
-  //multi select
-  const options = [
-    { value: 'two_wheeler', label: 'Two wheeler' },
-    { value: 'four_wheeler', label: 'four wheeler' },
-    { value: 'heavy_vehicle', label: 'heavy vehicle' },
-  ];
 
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [error, setError] = useState('');
-
-  console.log('selectedOptions', selectedOptions);
-  const handleSelectChange = (selected) => {
-    setSelectedOptions(selected);
-    setError('');
-  };
 
   const [licenseImg, setLicenseImg] = useState('');
   const [userImg, setUserImg] = useState('');

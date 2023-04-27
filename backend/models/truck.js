@@ -65,11 +65,12 @@ const truck = sequelize.define('truck', {
   createdBy: {
     type: DataTypes.UUID,
     defaultValue: Sequelize.UUIDV4,
+    allowNull: true,
   },
 });
 
 truck.associate = (models) => {
-  truck.belongsTo(models.login, { foreignKey: 'createdBy', allowNull: true });
+  truck.belongsTo(models.login, { foreignKey: 'createdBy' });
 };
 
 module.exports = truck;

@@ -53,7 +53,7 @@ const Header = () => {
                 src={require('../../images/icons8-truck-50.png')}
                 style={{ marginBottom: '20px' }}
               />
-              <Logo to="/">TRUCKS</Logo>
+              <Logo to="/">GOGOX</Logo>
             </Navbar.Brand>
 
             <Navbar.Toggle

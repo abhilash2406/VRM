@@ -324,12 +324,12 @@ exports.signUpUser = async (req, res, next) => {
         status: req.body.status,
       });
 
-      const jsonString = JSON.stringify(req.body.licenseType);
+      
       const driver = await drivers.create({
         licenseNo: req.body.licenseNo,
         licensePhoto: req.files['licensePhoto'][0].path.replace(/^public/, ''),
         userPhoto: req.files['userPhoto'][0].path.replace(/^public/, ''),
-        licenseType: jsonString,
+        licenseType: req.body.licenseType,
         shift: req.body.shift,
         dailyWage: req.body.dailyWage,
         bata: req.body.bata,

@@ -10,5 +10,7 @@ router.use('/gallery', require('../api/galleryManagement/index'));
 router.use('/trucks', require('../api/truckManagement/index'));
 router.use('/drivers', require('../api/driverManagement/index'));
 router.use('/routes', require('../api/routeManagement/index'));
+router.use('/trips', require('../api/tripManagement/index'));
+
 
 module.exports = router;
