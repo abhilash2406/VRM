@@ -65,7 +65,7 @@ const Header = () => {
               <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
                   <NavLink to="/">Home</NavLink>
-                  <NavLink to="/gallery">Gallery</NavLink>
+                  <NavLink to="/image-gallery">Gallery</NavLink>
                   <NavLink to="/contact-us">Contact Us</NavLink>
                   <NavTag href="http://localhost:3001/login">LOGIN/Register</NavTag>
                 </Nav>

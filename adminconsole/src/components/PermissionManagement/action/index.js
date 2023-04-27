@@ -56,7 +56,7 @@ export const setCurrentPermissions = (role, data) => async (dispatch) => {
   // to fetch user allowed permissions while login
   export const permissionOfLogin = () => async (dispatch) => {
     let { data } = await postData('/profile/permissions');
-  console.log('data', data)
+  // console.log('data', data)
     dispatch({
       type: 'GET_LOGIN',
       permission: data.data.permission,

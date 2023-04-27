@@ -1,7 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize-config');
 
-
 const permission = sequelize.define('permission', {
   id: {
     type: DataTypes.UUID,

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import NavBar from '../Main/NavBar';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllTruckData,dltTruck } from './action';
+import { getAllTruckData, dltTruck } from './action';
 import DataTable, { createTheme } from 'react-data-table-component';
 
 const ListTruck = () => {
@@ -38,6 +38,10 @@ const ListTruck = () => {
     },
     'dark'
   );
+  const { grantedPermissions } = useSelector((state) => state.auth);
+  console.log('grantedPermissions', grantedPermissions);
+  let array = grantedPermissions?.filter((item) => item.menu === 'Truck');
+  let permissionAllowed = array?.map((e) => e.subMenu);
   const columns = [
     {
       name: 'brand',
@@ -71,18 +75,22 @@ const ListTruck = () => {
       selector: (row) => (
         <div>
           {' '}
-          <Link className="btn btn-info" to={`/edit-trucks/${row.id}`}>
-            Edit
-          </Link>
-          <button
-            className="btn btn-warning"
-            onClick={() => {
-              dispatch(dltTruck(row.id));
-            }}
-            style={{ marginLeft:"5px" }}
-          >
-            delete
-          </button>
+          {permissionAllowed?.includes('Edit') ? (
+            <Link className="btn btn-info" to={`/edit-trucks/${row.id}`}>
+              Edit
+            </Link>
+          ) : null}
+          {permissionAllowed?.includes('Delete') ? (
+            <button
+              className="btn btn-warning"
+              onClick={() => {
+                dispatch(dltTruck(row.id));
+              }}
+              style={{ marginLeft: '5px' }}
+            >
+              delete
+            </button>
+          ) : null}
         </div>
       ),
     },
@@ -93,7 +101,7 @@ const ListTruck = () => {
       <div className="row">
         <NavBar />
         <div className="col-sm p-3 min-vh-100">
-          <div className='mb-3'> 
+          <div className="mb-3">
             <Link to="/add-trucks">
               <button className="btn btn-info add-btn">Add Truck</button>
             </Link>

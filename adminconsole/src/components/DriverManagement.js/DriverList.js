@@ -1,8 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import NavBar from '../Main/NavBar';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllDrivers } from './action';
 
 const DriverList = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllDrivers());
+  }, []);
+
+  const { driverData } = useSelector((e) => e.driver);
+  console.log('driverData', driverData);
   return (
     <div className="container-fluid">
       <div className="row">

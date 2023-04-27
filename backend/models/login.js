@@ -25,6 +25,10 @@ const login = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    token: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     designationId: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -44,8 +48,8 @@ login.hashPassword = async function (pass, salt) {
   return await bcrypt.hash(pass, salt);
 };
 login.verifyPassword = async function (pass, hash, salt) {
-  console.log('pass', pass)
-  console.log('hash', hash)
+  console.log('pass', pass);
+  console.log('hash', hash);
   const hashPassword = await bcrypt.hash(pass, salt);
   // if (hashPassword === hash) return true;
   // else return false;

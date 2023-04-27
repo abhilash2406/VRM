@@ -8,6 +8,7 @@ router.use('/designations', require('../api/designationManagement/index'));
 router.use('/permissions', require('../api/permissionManagement/index'));
 router.use('/gallery', require('../api/galleryManagement/index'));
 router.use('/trucks', require('../api/truckManagement/index'));
-
+router.use('/drivers', require('../api/driverManagement/index'));
+router.use('/routes', require('../api/routeManagement/index'));
 
 module.exports = router;

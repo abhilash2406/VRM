@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {
+  Map,
+  GoogleApiWrapper,
+  Polyline,
+  Marker,
+  DirectionsService,
+} from 'google-maps-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setRoute } from './action';
 
-// import GoogleMapReact, { Marker } from 'google-map-react';
-import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
-import { useDispatch } from 'react-redux';
-// import { routeSubmit } from '../actions';
+import { Link } from 'react-router-dom';
 
 const AddRoutes = (props) => {
+  const token = localStorage.getItem('token');
   let LocationData;
   const dispatch = useDispatch();
   const [formValues, setFormValues] = useState({
@@ -17,9 +24,9 @@ const AddRoutes = (props) => {
     locations: [{ id: 1, location: '', latitude: 0, longitude: 0 }],
   });
   const mapStyles = {
-    width: '32%',
+    width: '50%',
     height: '62%',
-    // marginLeft: '30%',
+    marginLeft: '26%',
   };
   const [markers, setMarkers] = useState([]);
   console.log('markers', markers);
@@ -46,6 +53,19 @@ const AddRoutes = (props) => {
       console.error(error);
     }
   };
+
+  // const [directions, setDirections] = useState({});
+  // console.log(directions)
+
+  // const directionsCallback = (response, status) => {
+  //   if (status === 'OK') {
+  //     setDirections({
+  //       directions: response,
+  //     });
+  //   } else {
+  //     console.log('Directions request failed due to ' + status);
+  //   }
+  // };
 
   const handleToChange = async (e) => {
     const { value } = e.target;
@@ -114,7 +134,7 @@ const AddRoutes = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formValues);
-    // dispatch(routeSubmit(formValues));
+    dispatch(setRoute(formValues));
   };
 
   const handleRemoveLocation = (id) => {
@@ -130,96 +150,138 @@ const AddRoutes = (props) => {
     (data) =>
       (waypoints = [...waypoints, { lat: data.latitude, lng: data.longitude }])
   );
-  // const LocationLat = LocationData.latitude;
-  // const LocationLng = LocationData.longitude;
 
-  console.log(waypoints);
+  console.log('waypoints', waypoints);
+  // // const { route } = useSelector((e) => e.lib);
+  // useEffect(() => {
+  //   return () => {
+  //     dispatch({ type: 'RESET_ROUTE' });
+  //   };
+  // }, [dispatch]);
 
   return (
-    <form onSubmit={handleSubmit} className="form-container">
-      <div>
-        <h1>
-          <b>Route Details</b>
-        </h1>
-      </div>
-      <div>
-        <label>From</label>
-        <input
-          type="text"
-          // value={formValues.title}
-          onChange={handleTitleChange}
-        />
-      </div>
-      <div>
-        <label>To</label>
-        <input
-          type="text"
-          // value={formValues.title}
-          onChange={handleToChange}
-        />
-      </div>
-      <div>
-        <label>Country</label>
-        <input type="text" value={formValues.country} disabled />
-      </div>
-      <div>
-        <label>State/Province</label>
-        <input type="text" value={formValues.state} disabled />
-      </div>
-      <div className="LOCATIONS">
-        {formValues.locations.map((location, index) => (
-          <div key={location.id} className="LOCATION">
-            <div
-              className="LOCATION_HEADER"
-              style={{ display: 'flex', flexDirection: 'row' }}
-            >
-              <label>Location {index + 1}</label>
-              {formValues.locations.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => handleRemoveLocation(location.id)}
-                  className="REMOVE_LOCATION"
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-            <input
-              type="text"
-              // value={location.location}
-              onChange={(e) => handleLocationChange(location.id, e)}
-            />
-          </div>
-        ))}
-        <button type="button" onClick={handleAddLocation}>
-          Add Location
-        </button>
-      </div>
-      <button type="submit">Submit</button>
+    <div className="mx-4">
+      <h1>Add Routes</h1>
+      <form onSubmit={handleSubmit} className="form-container">
+        <div className="form-group mb-4 w-75">
+          <label>From</label>
+          <input
+            type="text"
+            className="form-control"
+            // value={formValues.title}
+            onChange={handleTitleChange}
+            required
+          />
+        </div>
+        <div className="form-group mb-4 w-75">
+          <label>To</label>
+          <input
+            type="text"
+            className="form-control"
+            // value={formValues.title}
+            onChange={handleToChange}
+            required
+          />
+        </div>
+        <div className="form-group mb-4 w-75">
+          <label>Country</label>
 
-      <div style={{ height: '400px', width: '100%' }}>
-        <Map
-          google={props.google}
-          zoom={4}
-          style={mapStyles}
-          initialCenter={{
-            lat: 8.5241,
-            lng: 76.9366,
-          }}
-          // center={{ LocationLat, LocationLng }}
-          streetView={true}
-        >
-          {waypoints.map((waypoint, index) => (
-            <Marker
-              key={index}
-              position={{ lat: waypoint.lat, lng: waypoint.lng }}
-              name={`Marker ${index + 1}`}
-              stopover={true}
-            />
+          <input
+            type="text"
+            className="form-control"
+            value={formValues.country}
+            disabled
+            required
+          />
+        </div>
+        <div className="form-group mb-4 w-75">
+          <label>State/Province</label>
+          <input
+            type="text"
+            className="form-control"
+            value={formValues.state}
+            disabled
+            required
+          />
+        </div>
+        <div className="form-group mb-4 w-75">
+          {formValues.locations.map((location, index) => (
+            <div key={location.id} className="LOCATION">
+              <div
+                className="LOCATION_HEADER"
+                style={{ display: 'flex', flexDirection: 'row' }}
+              >
+                <label>Location {index + 1}</label>
+                {formValues.locations.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveLocation(location.id)}
+                    className=" btn btn-info mx-2"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+              <input
+                type="text"
+                className="form-control"
+                // value={location.location}
+                onChange={(e) => handleLocationChange(location.id, e)}
+                required
+              />
+            </div>
           ))}
-        </Map>
-      </div>
-    </form>
+          <button
+            type="button"
+            className="btn btn-dark mt-3"
+            onClick={handleAddLocation}
+          >
+            Add Location
+          </button>
+        </div>
+        <button type="submit" className="btn btn-warning">
+          Submit
+        </button>
+        <Link to={'/routes'} className="btn btn-danger">
+          back
+        </Link>
+
+        <div style={{ height: '400px', width: '100%' }}>
+          <Map
+            google={props.google}
+            zoom={4}
+            style={mapStyles}
+            initialCenter={{
+              lat: 8.5241,
+              lng: 76.9366,
+            }}
+            // center={{ LocationLat, LocationLng }}
+            streetView={true}
+          >
+            {waypoints.map((waypoint, index) => (
+              <Marker
+                key={index}
+                position={{ lat: waypoint.lat, lng: waypoint.lng }}
+                name={`Marker ${index + 1}`}
+                stopover={true}
+              />
+            ))}
+           
+            <Polyline
+              path={waypoints.map((waypoint) => ({
+                lat: waypoint.lat,
+                lng: waypoint.lng,
+              }))}
+              options={{
+                strokeColor: '#0000FF',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+              }}
+            />
+          </Map>
+        </div>
+      </form>
+    </div>
   );
 };
 

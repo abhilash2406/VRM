@@ -30,6 +30,7 @@ const CardDetails = () => {
   const elements = useElements();
   const dispatch = useDispatch();
   const { userdata } = useSelector((state) => state.auth);
+  console.log('userData', userdata)
 
   const handleSubmit = async (event) => {
     event.preventDefault();

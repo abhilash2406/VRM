@@ -31,8 +31,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 require('./models/index');
 require('./config/sequelize-config');
-app.use('/', indexRouter);
 
+app.all('/*', [require('./middlewares/auth'), indexRouter]);
+
+// app.use('/',indexRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

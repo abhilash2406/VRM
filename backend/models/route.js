@@ -1,14 +1,18 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize-config');
 
-
 const route = sequelize.define('route', {
   id: {
     type: DataTypes.UUID,
     defaultValue: Sequelize.UUIDV4,
     primaryKey: true,
   },
-  title: {
+
+  from: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  to: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -20,16 +24,19 @@ const route = sequelize.define('route', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  location: {
-    type: DataTypes.ARRAY(DataTypes.STRING),
-    allowNull: false,
-  },
-  longitude: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  latitude: {
-    type: DataTypes.STRING,
+  locations: {
+    type: DataTypes.ARRAY(
+      DataTypes.JSON({
+        longitude: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        latitude: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+      })
+    ),
     allowNull: false,
   },
 

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import NavBar from './NavBar';
 import Modal from 'react-modal';
 import { Link, useNavigate } from 'react-router-dom';
-import { uploadToGallery } from '../../action';
+import { setSuccessMessage, uploadToGallery } from '../../action';
 import { useDispatch, useSelector } from 'react-redux';
 import { retrieveImgs, dltFromGallery } from '../../action';
 import { deleteData } from '../../services';
@@ -39,10 +39,14 @@ const Gallery = () => {
   // console.log('files', files);
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    const formData = new FormData();
-    formData.append('image', selectedFile);
-    dispatch(uploadToGallery(formData));
+    if (!selectedFile) {
+      dispatch(setSuccessMessage('please select image'));
+    } else {
+      const formData = new FormData();
+      formData.append('image', selectedFile);
+      dispatch(uploadToGallery(formData));
+      dispatch(retrieveImgs());
+    }
   };
 
   const handleImageClick = (event) => {
@@ -53,6 +57,10 @@ const Gallery = () => {
   const handleCloseModal = () => {
     setModalIsOpen(false);
   };
+  const { grantedPermissions } = useSelector((state) => state.auth);
+  console.log('grantedPermissions', grantedPermissions);
+  let array = grantedPermissions?.filter((item) => item.menu === 'Gallery');
+  let permissionAllowed = array?.map((e) => e.subMenu);
 
   return (
     <div className="container-fluid">
@@ -89,15 +97,17 @@ const Gallery = () => {
                     alt=""
                     onClick={handleImageClick}
                   />
-                  <button
-                    className="btn btn-info"
-                    onClick={() => {
-                      dispatch(dltFromGallery(image.id));
-                    }}
-                    style={{ margin: '0% 4% 0% 0%' }}
-                  >
-                    delete
-                  </button>
+                  {permissionAllowed?.includes('Add') ? (
+                    <button
+                      className="btn btn-info"
+                      onClick={() => {
+                        dispatch(dltFromGallery(image.id));
+                      }}
+                      style={{ margin: '0% 4% 0% 0%' }}
+                    >
+                      delete
+                    </button>
+                  ) : null}
                 </div>
               ))}
             </div>

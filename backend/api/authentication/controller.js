@@ -12,6 +12,7 @@ const Brand = require('../../models/brand');
 const TruckModel = require('../../models/truckModel');
 const Variant = require('../../models/variant');
 const trucks = require('../../models/truck');
+const { Op } = require('sequelize');
 
 exports.Login = async (req, res, next) => {
   try {
@@ -34,6 +35,10 @@ exports.Login = async (req, res, next) => {
     const refreshToken = login.generateAuthToken(user);
 
     const currentUser = await users.findOne({ where: { loginId: user.id } });
+    const Cuser = await login.findByPk(user.id); // assuming `userId` is the ID of the user you want to update
+    await Cuser.update({
+      token: accessToken,
+    });
     const currentDesignation = await designations.findOne({
       where: { id: user.designationId },
     });
@@ -59,10 +64,10 @@ exports.Login = async (req, res, next) => {
 
 exports.addUsers = async (req, res, next) => {
   try {
-    var userExist = await login.findOne({ where: { email: req.body.email } });
+    const userExist = await login.findOne({ where: { email: req.body.email } });
 
     if (userExist) {
-      res.send({ success: false, message: 'Admin already exist' });
+      res.send({ success: false, message: 'user already exist' });
     } else {
       // const imagePath = req.file.path.replace(/^public/, '');
       // req.body.image = imagePath;
@@ -197,15 +202,13 @@ exports.googleSignUp = async (req, res, next) => {
   }
 };
 
+//driver sign up
+
 exports.signUpUser = async (req, res, next) => {
   console.log('req.body', req.body);
-  const userPhotoPath = req.files['userPhoto'][0].path.replace(/^public/, '');
-  const licensePhotoPath = req.files['licensePhoto'][0].path.replace(
-    /^public/,
-    ''
-  );
-  const truckPhotoPath = req.files['truckPhoto'][0].path.replace(/^public/, '');
-  const rcPhotoPath = req.files['rcPhoto'][0].path.replace(/^public/, '');
+  console.log('req.files', req.files);
+
+  
 
   const hashing = async (password) => {
     const salt = await login.generateSalt();
@@ -218,44 +221,48 @@ exports.signUpUser = async (req, res, next) => {
     where: { designation: 'Driver' },
   });
 
-  const loginDetails = await login.create({
-    email: req.body.email,
-    password: newPassword,
-    salt,
-    designationId: designationDetails.id,
-  });
-
-  await users.create({
-    name: req.body.first_name,
-    phoneNumber: req.body.phoneNumber,
-    signed: 'Unsigned',
-    loginId: loginDetails.id,
-  });
-
-  if (req.body.brand && req.body.model) {
-    const truck_exist = await trucks.findAll({
-      where: {
-        [Op.or]: [
-          {
-            VIN: {
-              [Op.like]: `%${req.body.VIN}%`,
-            },
-          },
-          {
-            RCNo: {
-              [Op.like]: `%${req.body.RCNo}%`,
-            },
-          },
-        ],
-      },
+  const userExist = await login.findOne({ where: { email: req.body.email } });
+  if (userExist) {
+    res.send({ success: false, message: 'User already exist' });
+  } else {
+    const loginDetails = await login.create({
+      email: req.body.email,
+      password: newPassword,
+      salt,
+      designationId: designationDetails.id,
     });
 
-    if (truck_exist.length) {
-      res.send({
-        success: false,
-        message: 'this truck is already added',
+    await users.create({
+      name: req.body.first_name,
+      phoneNumber: req.body.phoneNumber,
+      signed: 'Unsigned',
+      loginId: loginDetails.id,
+    });
+
+    if (req.body.brand && req.body.model) {
+      const truck_exist = await trucks.findAll({
+        where: {
+          [Op.or]: [
+            {
+              VIN: {
+                [Op.like]: `%${req.body.VIN}%`,
+              },
+            },
+            {
+              RCNo: {
+                [Op.like]: `%${req.body.RCNo}%`,
+              },
+            },
+          ],
+        },
       });
-    } else {
+
+      // if (truck_exist.length) {
+      //   res.send({
+      //     success: false,
+      //     message: 'this truck is already added',
+      //   });
+      // } else {
       const truckBrand = await Brand.findOne({
         where: {
           brandId: req.body.brand,
@@ -282,8 +289,8 @@ exports.signUpUser = async (req, res, next) => {
         chassisNo: req.body.chassisNo,
         RCNo: req.body.RCNo,
         yrManufacture: req.body.yrManufacture,
-        rcPhoto: rcPhotoPath,
-        truckPhoto: truckPhotoPath,
+        rcPhoto: req.files['rcPhoto'][0].path.replace(/^public/, ''),
+        truckPhoto: req.files['truckPhoto'][0].path.replace(/^public/, ''),
         condition: 'working',
         isActive: true,
         status: req.body.status,
@@ -292,8 +299,8 @@ exports.signUpUser = async (req, res, next) => {
       const jsonString = JSON.stringify(req.body.licenseType);
       const driver = await drivers.create({
         licenseNo: req.body.licenseNo,
-        licensePhoto: licensePhotoPath,
-        userPhoto: userPhotoPath,
+        licensePhoto: req.files['licensePhoto'][0].path.replace(/^public/, ''),
+        userPhoto: req.files['userPhoto'][0].path.replace(/^public/, ''),
         licenseType: jsonString,
         shift: req.body.shift,
         dailyWage: req.body.dailyWage,
@@ -302,37 +309,49 @@ exports.signUpUser = async (req, res, next) => {
         truckId: truckdet.id,
         status: 'pending',
       });
+      // }
+
+      const userData = {
+        name: req.body.first_name,
+        email: req.body.email,
+        phn: req.body.phoneNumber,
+        wage: req.body.dailywage,
+        driver: driver.id,
+      };
+      const { url, result } = await documentSign(req);
+      res.send({
+        success: true,
+        url: url,
+        data: userData,
+      });
+    } else {
+      const jsonString = JSON.stringify(req.body.licenseType);
+      const driver = await drivers.create({
+        licenseNo: req.body.licenseNo,
+        licensePhoto: req.files['licensePhoto'][0].path.replace(/^public/, ''),
+        userPhoto: req.files['userPhoto'][0].path.replace(/^public/, ''),
+        licenseType: jsonString,
+        shift: req.body.shift,
+        dailyWage: req.body.dailyWage,
+        bata: req.body.bata,
+        loginId: loginDetails.id,
+        status: 'pending',
+      });
+      const userData = {
+        name: req.body.first_name,
+        email: req.body.email,
+        phn: req.body.phoneNumber,
+        wage: req.body.dailyWage,
+        driver: driver.id,
+      };
+      const { url, result } = await documentSign(req);
+      res.send({
+        success: true,
+        url: url,
+        data: userData,
+      });
     }
-  } else {
-    const jsonString = JSON.stringify(req.body.licenseType);
-    const driver = await drivers.create({
-      licenseNo: req.body.licenseNo,
-      licensePhoto: licensePhotoPath,
-      userPhoto: userPhotoPath,
-      licenseType: jsonString,
-      shift: req.body.shift,
-      dailyWage: req.body.dailyWage,
-      bata: req.body.bata,
-      loginId: loginDetails.id,
-      truckId: truckdet.id,
-      status: 'pending',
-    });
   }
-
-  const userData = {
-    name: req.body.first_name,
-    email: req.body.email,
-    phn: req.body.phoneNumber,
-    wage: req.body.dailywage,
-    driver: loginDetails.id,
-  };
-
-  const { url, result } = await documentSign(req);
-  res.send({
-    success: true,
-    url: url,
-    data: userData,
-  });
 };
 
 //docusign functions
@@ -451,19 +470,17 @@ exports.proceedPayment = async (req, res, next) => {
     console.log('bookingData', userdata);
     console.log('id', id);
 
-   
-
     const customer = await Stripe.customers.create({
-      name: userdata.guest_name,
-      email: userdata.guest_email,
-      phone: userdata.guest_no,
+      name: userdata.first_name,
+      email: userdata.email,
+      phone: userdata.PhoneNumber,
     });
 
     // console.log('customer', customer);
 
     const intent = await Stripe.paymentIntents.create({
       payment_method: id,
-      amount: userdata.dailywage * 100,
+      amount: userdata.dailyWage * 100,
       currency: 'inr',
       confirm: true,
       payment_method_types: ['card'],

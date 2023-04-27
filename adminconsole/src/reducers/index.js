@@ -181,12 +181,29 @@ const truckReducer = (state = truckInitials, action) => {
         ...state,
         truckData: action.payload,
       };
-      case 'GET_SELECTED_TRUCKDATA':
-        return {
-          ...state,
-          truckDetails: action.payload,
-        };
-  
+    case 'GET_SELECTED_TRUCKDATA':
+      return {
+        ...state,
+        truckDetails: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
+//driver reducer
+const driverInitials = {
+  driverData: [],
+};
+
+const driverReducer = (state = driverInitials, action) => {
+  switch (action.type) {
+    case 'GET_DRIVER_DATA':
+      return {
+        ...state,
+        driverData: action.payload,
+      };
 
     default:
       return state;
@@ -199,4 +216,5 @@ export default combineReducers({
   user: userReducer,
   permissions: permissionReducer,
   truck: truckReducer,
+  driver: driverReducer,
 });

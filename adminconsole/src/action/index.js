@@ -92,6 +92,7 @@ export const readFeedback = (id) => async (dispatch) => {
 export const uploadToGallery = (image) => async (dispatch) => {
   console.log('imgs', image);
   const { data } = await postData('/gallery', image);
+  dispatch(retrieveImgs())
 };
 
 // fetch images

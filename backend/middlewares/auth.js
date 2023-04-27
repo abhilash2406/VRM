@@ -1,65 +1,71 @@
 // // authentication middleware
 
-// const jwt = require('jsonwebtoken');
-// const login = require('../models/login');
+const jwt = require('jsonwebtoken');
+const login = require('../models/login');
+const { Op } = require('sequelize');
 
-// module.exports = async (req, res, next) => {
-//   try {
-//     if (req.originalUrl.startsWith('/auth')) return next();
-//     const token = req.header('Authorization')
-//       ? req.header('Authorization').replace('Bearer ', '')
-//       : null;
-//     if (!token) {
-//       return res.json({
-//         success: false,
-//         message: 'Unauthorized Access',
-//       });
-//     }
+module.exports = async (req, res, next) => {
+  try {
+    if (
+      req.originalUrl.startsWith('/auth') ||
+      req.originalUrl.startsWith('/contact') ||
+      req.originalUrl.startsWith('/gallery')
+    )
+      return next();
+    const token = req.header('Authorization')
+      ? req.header('Authorization').replace('Bearer ', '')
+      : null;
+    if (!token) {
+      return res.send({
+        success: false,
+        message: 'Unauthorized Access',
+      });
+    }
 
-//     const access_Token = await admin.findOne({ token: token });
-//     if (!access_Token) {
-//       return res.json({
-//         success: false,
-//         msg: 'Invalid or Expired Token',
-//       });
-//     }
+    const access_Token = await login.findOne({ where: { token: token } });
+    if (!access_Token) {
+      return res.send({
+        success: false,
+        msg: 'Invalid or Expired Token',
+      });
+    }
 
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     if (!decoded) {
-//       return res.json({
-//         success: false,
-//         message: 'Invalid token',
-//       });
-//     }
-//     if (decoded.exp < Date.now()) {
-//       return res.json({
-//         success: false,
-//         message: 'Token expired',
-//       });
-//     }
-//     const isAdminExists = await admin.findById(decoded.id);
-//     if (!isAdminExists) {
-//       return res.json({
-//         success: false,
-//         message: 'Access Denied',
-//       });
-//     }
-//     let matchValidity = isAdminExists.password
-//       .concat(isAdminExists._id)
-//       .concat(isAdminExists.email);
-//     if (matchValidity != decoded.validity) {
-//       return res.json({
-//         success: false,
-//         message: 'Access Denied',
-//       });
-//     }
-//     req.user = decoded;
-//     return next();
-//   } catch (ex) {
-//     console.log('error', ex);
-//     res.json({
-//       success: false,
-//       message: 'Invalid Token',
-//     });
-//   }
-// };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded) {
+      return res.send({
+        success: false,
+        message: 'Invalid token',
+      });
+    }
+    if (decoded.exp < Date.now()) {
+      return res.send({
+        success: false,
+        message: 'Token expired',
+      });
+    }
+    const isAdminExists = await login.findOne({ where: { id: decoded.id } });
+    if (!isAdminExists) {
+      return res.send({
+        success: false,
+        message: 'Access Denied',
+      });
+    }
+    let matchValidity = isAdminExists.password
+      .concat(isAdminExists.id)
+      .concat(isAdminExists.email);
+    if (matchValidity != decoded.validity) {
+      return res.json({
+        success: false,
+        message: 'Access Denied',
+      });
+    }
+    req.user = decoded;
+    return next();
+  } catch (ex) {
+    console.log('error', ex);
+    res.json({
+      success: false,
+      message: 'Invalid Token',
+    });
+  }
+};

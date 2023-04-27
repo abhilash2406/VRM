@@ -75,7 +75,7 @@ const Login = () => {
                 // on submit values
                 onSubmit={(values, { resetForm }) => {
                   resetForm({ values: '' });
-                  console.log('values', values);
+                
                   dispatch(setLogin(values, () => navigate('/dashboard')));
                 }}
               >

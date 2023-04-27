@@ -46,8 +46,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />;
           <Route path="/contact-us" element={<ContactUs />} />;
-          {/* <Route path="/login" element={<LoginPage />} />; */}
-          <Route path="/gallery" element={<Gallery />} />;
+          <Route path="/image-gallery" element={<Gallery />} />;
         </Routes>
       </BrowserRouter>
     </div>

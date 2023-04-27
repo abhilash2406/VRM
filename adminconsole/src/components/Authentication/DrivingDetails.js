@@ -102,6 +102,8 @@ const DrivingDetails = () => {
   };
 
   const validationSchema1 = Yup.object().shape({
+    licenseType: Yup.string().required('License is required'),
+
     licenseNo: Yup.string().required('License number is required'),
     shift: Yup.string().required('shift is required'),
     dailyWage: Yup.string().required('dailyWage is required'),
@@ -109,6 +111,8 @@ const DrivingDetails = () => {
   });
 
   const validationSchema2 = Yup.object().shape({
+    licenseType: Yup.string().required('License is required'),
+
     licenseNo: Yup.string().required('License number is required'),
     shift: Yup.string().required('shift is required'),
     dailyWage: Yup.string().required('dailyWage is required'),
@@ -182,7 +186,7 @@ const DrivingDetails = () => {
                 formData.append('email', driverData.email);
                 formData.append('phoneNumber', driverData.phoneNumber);
                 formData.append('password', driverData.password);
-                formData.append('licenseType', selectedOptions);
+                formData.append('licenseType', values.licenseType);
                 formData.append('licenseNo', values.licenseNo);
                 formData.append('shift', values.shift);
                 formData.append('dailyWage', values.dailyWage);
@@ -206,7 +210,7 @@ const DrivingDetails = () => {
                 formData.append('email', driverData.email);
                 formData.append('phoneNumber', driverData.phoneNumber);
                 formData.append('password', driverData.password);
-                formData.append('licenseType', selectedOptions);
+                formData.append('licenseType', values.licenseType);
                 formData.append('licenseNo', values.licenseNo);
                 formData.append('shift', values.shift);
                 formData.append('dailyWage', values.dailyWage);
@@ -215,7 +219,7 @@ const DrivingDetails = () => {
                 formData.append('bata', values.bata);
               }
               // resetForm({ values: '' });
-              dispatch(getUserData(values, () => navigate('/success')));
+              dispatch(getUserData(formData, () => navigate('/success')));
             }}
           >
             {({
@@ -250,14 +254,24 @@ const DrivingDetails = () => {
                     </div>
                     <div className="w-75">
                       <label style={{ fontWeight: '700' }}>owned license</label>
-                      <SELECT
-                        id="multi-select"
-                        options={options}
-                        value={selectedOptions}
-                        onChange={handleSelectChange}
-                        isMulti
-                      />
-                      {error && <div className="error">{error}</div>}
+                      <select
+                        name="licenseType"
+                        value={values.licenseType}
+                        onChange={handleChange}
+                        className="form-control"
+                        onBlur={handleBlur}
+                        style={{ display: 'block' }}
+                      >
+                        <option value="">Select your license</option>
+
+                        <option value="two_wheeler">Two wheeler</option>
+                        <option value="four_wheeler">Four wheeler</option>
+
+                        <option value="heavy_vehicle">Heavy Vehicle</option>
+                      </select>
+                      {errors.licenseType && touched.licenseType ? (
+                        <div>{errors.licenseType}</div>
+                      ) : null}
                     </div>
                     <div className="form-group mb-4 w-75">
                       <label htmlFor="license" style={{ fontWeight: '700' }}>
