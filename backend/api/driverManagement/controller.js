@@ -120,3 +120,20 @@ exports.addDrivers = async (req, res, next) => {
   }
 };
 
+//delete
+exports.dltDriver = async (req, res) => {
+    const id = req.params.id;
+    try {
+      const drv = await drivers.findByPk(id);
+      await drv.destroy();
+      return res.send({
+        success: true,
+        message: 'driver deleted successfully',
+      });
+    } catch (err) {
+      return es.send({
+        success: false,
+        message: err.message,
+      });
+    }
+  };

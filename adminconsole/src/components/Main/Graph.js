@@ -1,6 +1,6 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-// import '../components/styles/dashboard.css';
+
 
 const Graph = ({ data }) => {
   const graphData = {
