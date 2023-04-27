@@ -8,6 +8,10 @@ const { docusign } = require('../../config');
 const fs = require('fs');
 const path = require('path');
 const session = require('express-session');
+const Brand = require('../../models/brand');
+const TruckModel = require('../../models/truckModel');
+const Variant = require('../../models/variant');
+const trucks = require('../../models/truck');
 
 exports.Login = async (req, res, next) => {
   try {
@@ -194,65 +198,141 @@ exports.googleSignUp = async (req, res, next) => {
 };
 
 exports.signUpUser = async (req, res, next) => {
-
   console.log('req.body', req.body);
-  // const userPhotoPath = req.files['userPhoto'][0].path.replace(/^public/, '');
-  // const licensePhotoPath = req.files['licensePhoto'][0].path.replace(
-  //   /^public/,
-  //   ''
-  // );
+  const userPhotoPath = req.files['userPhoto'][0].path.replace(/^public/, '');
+  const licensePhotoPath = req.files['licensePhoto'][0].path.replace(
+    /^public/,
+    ''
+  );
+  const truckPhotoPath = req.files['truckPhoto'][0].path.replace(/^public/, '');
+  const rcPhotoPath = req.files['rcPhoto'][0].path.replace(/^public/, '');
 
-  // const hashing = async (password) => {
-  //   const salt = await login.generateSalt();
-  //   let newPassword = await login.hashPassword(password, salt);
-  //   return { salt, newPassword };
-  // };
+  const hashing = async (password) => {
+    const salt = await login.generateSalt();
+    let newPassword = await login.hashPassword(password, salt);
+    return { salt, newPassword };
+  };
 
-  // let { salt, newPassword } = await hashing(req.body.password);
-  // const designationDetails = await designations.findOne({
-  //   where: { designation: 'Driver' },
-  // });
+  let { salt, newPassword } = await hashing(req.body.password);
+  const designationDetails = await designations.findOne({
+    where: { designation: 'Driver' },
+  });
 
-  // const loginDetails = await login.create({
-  //   email: req.body.email,
-  //   password: newPassword,
-  //   salt,
-  //   designationId: designationDetails.id,
-  // });
+  const loginDetails = await login.create({
+    email: req.body.email,
+    password: newPassword,
+    salt,
+    designationId: designationDetails.id,
+  });
 
-  // await users.create({
-  //   name: req.body.first_name,
-  //   phoneNumber: req.body.phoneNumber,
-  //   signed: 'Unsigned',
-  //   loginId: loginDetails.id,
-  // });
-  // const jsonString = JSON.stringify(req.body.licenseType);
+  await users.create({
+    name: req.body.first_name,
+    phoneNumber: req.body.phoneNumber,
+    signed: 'Unsigned',
+    loginId: loginDetails.id,
+  });
 
-  // await drivers.create({
-  //   licenseNo: req.body.licenseNo,
-  //   licensePhoto: licensePhotoPath,
-  //   userPhoto: userPhotoPath,
-  //   licenseType: jsonString,
-  //   shift: req.body.shift,
-  //   dailyWage: req.body.dailyWage,
-  //   bata: req.body.bata,
-  //   loginId: loginDetails.id,
+  if (req.body.brand && req.body.model) {
+    const truck_exist = await trucks.findAll({
+      where: {
+        [Op.or]: [
+          {
+            VIN: {
+              [Op.like]: `%${req.body.VIN}%`,
+            },
+          },
+          {
+            RCNo: {
+              [Op.like]: `%${req.body.RCNo}%`,
+            },
+          },
+        ],
+      },
+    });
 
-  //   status: 'pending',
-  // });
+    if (truck_exist.length) {
+      res.send({
+        success: false,
+        message: 'this truck is already added',
+      });
+    } else {
+      const truckBrand = await Brand.findOne({
+        where: {
+          brandId: req.body.brand,
+        },
+      });
 
-  // const userData = {
-  //   name: req.body.first_name,
-  //   email: req.body.email,
-  //   phn: req.body.phoneNumber,
-  // };
+      const truckModel = await TruckModel.findOne({
+        where: {
+          modelId: req.body.model,
+        },
+      });
 
-  // const { url, result } = await documentSign(req);
-  // res.send({
-  //   success: true,
-  //   url: url,
-  //   data: userData,
-  // });
+      const truckVariant = await Variant.findOne({
+        where: {
+          id: req.body.variant,
+        },
+      });
+      const truckdet = await trucks.create({
+        brand: truckBrand.name,
+        model: truckModel.name,
+        variant: truckVariant.name,
+        VIN: req.body.VIN,
+        engineNo: req.body.engineNo,
+        chassisNo: req.body.chassisNo,
+        RCNo: req.body.RCNo,
+        yrManufacture: req.body.yrManufacture,
+        rcPhoto: rcPhotoPath,
+        truckPhoto: truckPhotoPath,
+        condition: 'working',
+        isActive: true,
+        status: req.body.status,
+      });
+
+      const jsonString = JSON.stringify(req.body.licenseType);
+      const driver = await drivers.create({
+        licenseNo: req.body.licenseNo,
+        licensePhoto: licensePhotoPath,
+        userPhoto: userPhotoPath,
+        licenseType: jsonString,
+        shift: req.body.shift,
+        dailyWage: req.body.dailyWage,
+        bata: req.body.bata,
+        loginId: loginDetails.id,
+        truckId: truckdet.id,
+        status: 'pending',
+      });
+    }
+  } else {
+    const jsonString = JSON.stringify(req.body.licenseType);
+    const driver = await drivers.create({
+      licenseNo: req.body.licenseNo,
+      licensePhoto: licensePhotoPath,
+      userPhoto: userPhotoPath,
+      licenseType: jsonString,
+      shift: req.body.shift,
+      dailyWage: req.body.dailyWage,
+      bata: req.body.bata,
+      loginId: loginDetails.id,
+      truckId: truckdet.id,
+      status: 'pending',
+    });
+  }
+
+  const userData = {
+    name: req.body.first_name,
+    email: req.body.email,
+    phn: req.body.phoneNumber,
+    wage: req.body.dailywage,
+    driver: loginDetails.id,
+  };
+
+  const { url, result } = await documentSign(req);
+  res.send({
+    success: true,
+    url: url,
+    data: userData,
+  });
 };
 
 //docusign functions
@@ -353,7 +433,7 @@ function makeEnvelope(req) {
 function makeRecipientViewRequest(name, email) {
   let viewRequest = new Docusign.RecipientViewRequest();
 
-  viewRequest.returnUrl = 'http://localhost:3001/success';
+  viewRequest.returnUrl = 'http://localhost:3001/payment';
   viewRequest.authenticationMethod = 'none';
 
   // Recipient info must match embedded recipient info we use to create the envelope
@@ -366,25 +446,24 @@ function makeRecipientViewRequest(name, email) {
 
 exports.proceedPayment = async (req, res, next) => {
   try {
-    let { id, bookingDetails } = req.body;
+    let { id, userdata } = req.body;
 
-    console.log('bookingData', bookingDetails);
+    console.log('bookingData', userdata);
     console.log('id', id);
 
-    const eventData = await event.findByPk(bookingDetails.eventId);
-    console.log('event', eventData.price);
+   
 
     const customer = await Stripe.customers.create({
-      name: bookingDetails.guest_name,
-      email: bookingDetails.guest_email,
-      phone: bookingDetails.guest_no,
+      name: userdata.guest_name,
+      email: userdata.guest_email,
+      phone: userdata.guest_no,
     });
 
     // console.log('customer', customer);
 
     const intent = await Stripe.paymentIntents.create({
       payment_method: id,
-      amount: eventData.price * 100,
+      amount: userdata.dailywage * 100,
       currency: 'inr',
       confirm: true,
       payment_method_types: ['card'],
@@ -392,21 +471,6 @@ exports.proceedPayment = async (req, res, next) => {
 
     const paymentIntent = await Stripe.paymentIntents.confirm(intent.id, {
       payment_method: id,
-    });
-
-    const Bookings = await booking.create({
-      date_of_booking: bookingDetails.booking_date,
-      total_amount: eventData.price,
-      paymentMethod: bookingDetails.paymentMethod,
-      event_id: bookingDetails.eventId,
-    });
-    console.log('Bookings', Bookings);
-    const Guest = await guest.create({
-      name: bookingDetails.guest_name,
-      email: bookingDetails.guest_email,
-      phone: bookingDetails.guest_no,
-      cus_id: customer.id.toString(),
-      booking_id: Bookings.id,
     });
 
     return res.json({

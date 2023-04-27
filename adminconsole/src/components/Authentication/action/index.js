@@ -114,4 +114,5 @@ export const getDriverData = (props, navigate) => (dispatch) => {
 // make payment using stripe
 export const makePayment = (userdata) => async (dispatch) => {
   console.log('userdata', userdata);
+  const { data } = await postData('/auth/payment', userdata);
 };

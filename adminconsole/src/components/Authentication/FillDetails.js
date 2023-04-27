@@ -197,7 +197,7 @@ const FillDetails = () => {
 
                     <div className="text-center text-lg-start mt-4 pt-2">
                       <button type="submit" className="btn btn-primary">
-                        Register
+                        Next
                       </button>
                     </div>
                   </form>
