@@ -5,7 +5,7 @@ const { upload } = require('../../middlewares/uploader');
 
 router
   .route('/')
-  .delete(controller.dltDriver)
+
   .get(controller.getDriverDatas)
   .post(
     upload.fields([
@@ -14,4 +14,6 @@ router
     ]),
     controller.addDrivers
   );
+
+router.route('/:id').delete(controller.dltDriver);
 module.exports = router;
