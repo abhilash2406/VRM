@@ -337,7 +337,7 @@ const AddDrivers = () => {
                     </div>
 
                     <div>
-                      <label>Do you have truck?</label>
+                      <label>Assign a truck to driver?</label>
                       <input
                         type="checkbox"
                         checked={isChecked1}

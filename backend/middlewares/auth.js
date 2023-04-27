@@ -1,7 +1,7 @@
 // // authentication middleware
 
 // const jwt = require('jsonwebtoken');
-// const admin = require('../models/admin');
+// const login = require('../models/login');
 
 // module.exports = async (req, res, next) => {
 //   try {
