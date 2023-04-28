@@ -2,9 +2,9 @@
     "development": {
       "database": {
         "username": "postgres",
-        "password": "root@123",
-        "database": "truck_management",
-        "host": "localhost",
+        "password": "postgres",
+        "database": "truck-mgt-test",
+        "host": "192.168.1.216",
         "dialect": "postgres",
         "port": "5432",
         "logging": false
@@ -32,9 +32,9 @@
     "local": {
       "database": {
         "username": "postgres",
-        "password": "root@123",
-        "database": "truck_management",
-        "host": "localhost",
+        "password": "postgres",
+        "database": "truck-mgt-test",
+        "host": "192.168.1.216",
         "dialect": "postgres",
         "port": "5432",
         "logging": false

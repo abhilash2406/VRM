@@ -37,6 +37,7 @@ const Dashboard = () => {
       <div className="row">
         <NavBar />
         <div className="col-sm p-3 min-vh-100">
+          <section>
           <div className="d-flex flex-column">
             <div className="d-flex">
               <div className="card" style={{ width: '15rem' }}>
@@ -68,6 +69,7 @@ const Dashboard = () => {
 
             <Graph data={tripsData} />
           </div>
+          </section>
         </div>
       </div>
     </div>

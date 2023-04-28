@@ -89,12 +89,13 @@ export const readFeedback = (id) => async (dispatch) => {
 };
 
 // image upload
-export const uploadToGallery = (image) => async (dispatch) => {
+export const uploadToGallery = (image,navigate) => async (dispatch) => {
   console.log('imgs', image);
   const { data } = await postData('/gallery', image);
   if (data.success) {
-    dispatch(retrieveImgs());
     dispatch(setSuccessMessage(data.message));
+    // dispatch(retrieveImgs());
+    navigate()
   } else {
     dispatch(setErrorMessage(data.message));
   }

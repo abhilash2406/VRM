@@ -119,7 +119,7 @@ const Registration = () => {
                   </form>
                 )}
               </Formik>
-              <a href="http://localhost:3000" className='btn btn-info'>back</a>
+              <Link to={'/login'} className='btn btn-info'>back</Link>
             </div>
           </div>
         </div>

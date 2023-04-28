@@ -44,7 +44,7 @@ const Gallery = () => {
     } else {
       const formData = new FormData();
       formData.append('image', selectedFile);
-      dispatch(uploadToGallery(formData));
+      dispatch(uploadToGallery(formData, () => navigate('/gallery')));
       dispatch(retrieveImgs());
     }
   };

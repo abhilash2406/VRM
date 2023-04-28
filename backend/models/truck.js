@@ -70,7 +70,7 @@ const truck = sequelize.define('truck', {
 });
 
 truck.associate = (models) => {
-  truck.belongsTo(models.login, { foreignKey: 'createdBy' });
+  truck.belongsTo(models.users, { foreignKey: 'createdBy' });
 };
 
 module.exports = truck;
