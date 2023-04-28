@@ -91,18 +91,14 @@ const DrivingDetails = () => {
     licenseType: Yup.string().required('License is required'),
 
     licenseNo: Yup.string().required('License number is required'),
-    shift: Yup.string().required('shift is required'),
-    dailyWage: Yup.string().required('dailyWage is required'),
-    bata: Yup.string().required('bata is required'),
+  
   });
 
   const validationSchema2 = Yup.object().shape({
     licenseType: Yup.string().required('License is required'),
 
     licenseNo: Yup.string().required('License number is required'),
-    shift: Yup.string().required('shift is required'),
-    dailyWage: Yup.string().required('dailyWage is required'),
-    bata: Yup.string().required('bata is required'),
+   
     variant: Yup.string().required('variant is required'),
     VIN: Yup.string()
       .matches(
@@ -145,9 +141,7 @@ const DrivingDetails = () => {
               // initial values
               licenseType: '',
               licenseNo: '',
-              shift: '',
-              dailyWage: '',
-              bata: '',
+            
               brand: '',
               model: '',
               variant: '',
@@ -174,12 +168,9 @@ const DrivingDetails = () => {
                 formData.append('password', driverData.password);
                 formData.append('licenseType', values.licenseType);
                 formData.append('licenseNo', values.licenseNo);
-                formData.append('shift', values.shift);
-                formData.append('dailyWage', values.dailyWage);
-                formData.append('licensePhoto', licenseImg);
+                   formData.append('licensePhoto', licenseImg);
                 formData.append('userPhoto', userImg);
-                formData.append('bata', values.bata);
-                formData.append('brand', branid);
+           formData.append('brand', branid);
                 formData.append('model', modelid);
                 formData.append('variant', values.variant);
                 formData.append('VIN', values.VIN);
@@ -198,11 +189,9 @@ const DrivingDetails = () => {
                 formData.append('password', driverData.password);
                 formData.append('licenseType', values.licenseType);
                 formData.append('licenseNo', values.licenseNo);
-                formData.append('shift', values.shift);
-                formData.append('dailyWage', values.dailyWage);
                 formData.append('licensePhoto', licenseImg);
                 formData.append('userPhoto', userImg);
-                formData.append('bata', values.bata);
+                
               }
               // resetForm({ values: '' });
               dispatch(getUserData(formData, () => navigate('/success')));
@@ -293,62 +282,7 @@ const DrivingDetails = () => {
                         placeholder="Upload license"
                       />
                     </div>
-                    <div className="form-group mb-4 w-75">
-                      <select
-                        name="shift"
-                        value={values.shift}
-                        onChange={handleChange}
-                        className="form-control"
-                        onBlur={handleBlur}
-                        style={{ display: 'block' }}
-                      >
-                        <option value="">Select an shift</option>
-
-                        <option value="morning">morning</option>
-                        <option value="night">night</option>
-                      </select>
-                      {errors.shift && touched.shift ? (
-                        <div>{errors.shift}</div>
-                      ) : null}
-                    </div>
-                    <div className="form-group mb-4 w-75">
-                      <label htmlFor="first_name" style={{ fontWeight: '700' }}>
-                        Enter dailyWage
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="dailyWage"
-                        name="dailyWage"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.dailyWage}
-                        placeholder="Enter Your dailyWage"
-                      />
-
-                      {errors.dailyWage && touched.dailyWage ? (
-                        <div>{errors.dailyWage}</div>
-                      ) : null}
-                    </div>
-                    <div className="form-group mb-4 w-75">
-                      <label htmlFor="first_name" style={{ fontWeight: '700' }}>
-                        Enter bata
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="bata"
-                        name="bata"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.bata}
-                        placeholder="Enter Your bata"
-                      />
-
-                      {errors.bata && touched.bata ? (
-                        <div>{errors.bata}</div>
-                      ) : null}
-                    </div>
+               
 
                     <div>
                       <label>Do you have truck?</label>
@@ -373,6 +307,7 @@ const DrivingDetails = () => {
                         <button type="submit" className="btn btn-dark">
                           Register
                         </button>{' '}
+                        <Link to={'/fill-details'} className='btn btn-warning'>back</Link>
                       </div>
                     </div>
                   </div>

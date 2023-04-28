@@ -21,7 +21,7 @@ const Container = styled.div`
 const Success = () => {
   return (
     <Container>
-      <h2>Registered Successful</h2>
+      <h2>Registered successfully</h2>
     
       <Link to={'/login'}>Back to </Link>
     </Container>

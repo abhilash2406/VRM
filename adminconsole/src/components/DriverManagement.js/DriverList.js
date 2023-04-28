@@ -1,9 +1,10 @@
+//driver list
+
 import React, { useEffect, useState } from 'react';
 import NavBar from '../Main/NavBar';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllDrivers, dltDriver } from './action';
-import Card from 'react-bootstrap/Card';
 
 const DriverList = () => {
   const dispatch = useDispatch();
@@ -19,34 +20,29 @@ const DriverList = () => {
   const { driverData } = useSelector((e) => e.driver);
   console.log('driverData', driverData);
 
-  const Data = driverData.map((data, index) => {
+  const tableData = driverData.map((data, index) => {
     return (
-      <div className="card border-0" style={{ width: '18rem' }} key={index}>
-        <img
-          className="card-img-top"
-          src={`http://localhost:5000/${data.userPhoto}`}
-          alt="Card imag cap"
-        />
-        <div className="card-body ">
-          <h3 className="card-title font-weight-bold">{data.user.name}</h3>
-          <label>phone number-</label>{' '}
-          <Card.Text>{data.user.phoneNumber}</Card.Text>
-          <label>shift time-</label> <Card.Text>{data.shift}</Card.Text>
-          <label>Time-</label> <Card.Text>{data.user.login.email}</Card.Text>
-        </div>
-        <Link className="btn btn-dark" to={`/book-event/${data.id}`}>
-          view
-        </Link>
-        <button
-          className="btn btn-warning"
-          onClick={() => {
-            dispatch(dltDriver(data.id));
-          }}
-          style={{ margin: '2% 4% 0% 0%' }}
-        >
-          delete
-        </button>
-      </div>
+      <tr>
+        <td>
+          {' '}
+          <img
+            style={{ width: '80px' }}
+            className="card-img-top"
+            src={`http://localhost:5000/${data.userPhoto}`}
+            alt="Card imag cap"
+          />
+        </td>
+        <td>{data.user.name}</td>
+        <td>{data.user.phoneNumber}</td>
+        <td>{data.user.login.email}</td>
+        <td>{data.status}</td>
+
+        <td>
+          <Link className="btn btn-info" to={`/view-data/${data.id}`}>
+            view
+          </Link>
+        </td>
+      </tr>
     );
   });
 
@@ -60,14 +56,21 @@ const DriverList = () => {
               <button className="btn btn-info add-btn">Add driver</button>
             </Link>
           ) : null}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-evenly',
-              margin: '2% 0% 0% 0%',
-            }}
-          >
-            {Data}
+          <div className="d-flex justify-content-around">
+            {' '}
+            <table class="table table-dark mt-5">
+              <thead>
+                <tr>
+                  <th scope="col">photo</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Phone</th>
+                  <th scope="col">email</th>
+                  <th scope="col">status</th>
+                  <th scope="col">view</th>
+                </tr>
+              </thead>
+              <tbody>{tableData}</tbody>
+            </table>
           </div>
         </div>
       </div>

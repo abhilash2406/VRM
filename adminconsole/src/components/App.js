@@ -21,6 +21,7 @@ import FillDetails from './Authentication/FillDetails';
 import DrivingDetails from './Authentication/DrivingDetails';
 import AddDrivers from './DriverManagement.js/AddDrivers';
 import CardDetails from './Authentication/CardDetails';
+import ViewDriver from './DriverManagement.js/ViewDriver';
 import StripePayment from './Authentication/StripePayment';
 import Success from './Authentication/Success';
 import { PrivateRoute } from './PrivateRouting';
@@ -186,6 +187,14 @@ const App = () => {
             element={
               <PrivateRoute>
                 <AddDrivers />
+              </PrivateRoute>
+            }
+          />
+           <Route
+            path="/view-data/:id"
+            element={
+              <PrivateRoute>
+                <ViewDriver />
               </PrivateRoute>
             }
           />

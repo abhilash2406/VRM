@@ -21,7 +21,11 @@ const Dashboard = () => {
   const { feedbacks } = useSelector((e) => e.user);
   const { truckData } = useSelector((e) => e.truck);
   const { routeData } = useSelector((e) => e.routes);
+  const { grantedPermissions } = useSelector((state) => state.auth);
 
+  let array = grantedPermissions?.filter((item) => item.menu === 'Dashboard');
+
+  let permissionAllowed = array?.map((e) => e.subMenu);
 
   const [tripsData, setTripsData] = useState([]);
   useEffect(() => {
@@ -38,37 +42,42 @@ const Dashboard = () => {
         <NavBar />
         <div className="col-sm p-3 min-vh-100">
           <section>
-          <div className="d-flex flex-column">
-            <div className="d-flex">
-              <div className="card" style={{ width: '15rem' }}>
-                <div className="card-body">
-                  <h5 className="card-title">No of user messages</h5>
-                  <p className="card-text">{feedbacks.length}</p>
+            <div className="d-flex flex-column">
+              <div className="d-flex">
+                {permissionAllowed?.includes('no_of_messages') ? (
+                  <div className="card" style={{ width: '15rem' }}>
+                    <div className="card-body">
+                      <h5 className="card-title">No of user messages</h5>
+                      <p className="card-text">{feedbacks.length}</p>
+                    </div>
+                  </div>
+                ) : null}
+                {permissionAllowed?.includes('no_of_drivers') ? (
+                  <div className="card" style={{ width: '15rem' }}>
+                    <div className="card-body">
+                      <h5 className="card-title">No of drivers</h5>
+                      <p className="card-text">{feedbacks.length}</p>
+                    </div>
+                  </div>
+                ) : null}
+                <div className="card" style={{ width: '15rem' }}>
+                  <div className="card-body">
+                    <h5 className="card-title">No of trucks</h5>
+                    <p className="card-text">{truckData.length}</p>
+                  </div>
                 </div>
+                {permissionAllowed?.includes('no_of_routes') ? (
+                  <div className="card" style={{ width: '15rem' }}>
+                    <div className="card-body">
+                      <h5 className="card-title">No of routes</h5>
+                      <p className="card-text">{routeData.length}</p>
+                    </div>
+                  </div>
+                ) : null}
               </div>
 
-              <div className="card" style={{ width: '15rem' }}>
-                <div className="card-body">
-                  <h5 className="card-title">No of drivers</h5>
-                  <p className="card-text">{feedbacks.length}</p>
-                </div>
-              </div>
-              <div className="card" style={{ width: '15rem' }}>
-                <div className="card-body">
-                  <h5 className="card-title">No of trucks</h5>
-                  <p className="card-text">{truckData.length}</p>
-                </div>
-              </div>
-              <div className="card" style={{ width: '15rem' }}>
-                <div className="card-body">
-                  <h5 className="card-title">No of routes</h5>
-                  <p className="card-text">{routeData.length}</p>
-                </div>
-              </div>
+              <Graph data={tripsData} />
             </div>
-
-            <Graph data={tripsData} />
-          </div>
           </section>
         </div>
       </div>

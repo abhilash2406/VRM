@@ -4,10 +4,12 @@ const designations = require('../../models/designation');
 const permissionSetting = require('../../models/permissionSetting');
 const permissions = require('../../models/permission');
 const drivers = require('../../models/driver');
+const transactions = require('../../models/transaction');
 const transporter = require('../../modules/mail');
 const Docusign = require('docusign-esign');
-const { docusign } = require('../../config');
+const { docusign, stripe } = require('../../config');
 const fs = require('fs');
+const moment = require('moment');
 const path = require('path');
 const session = require('express-session');
 const Brand = require('../../models/brand');
@@ -15,6 +17,7 @@ const TruckModel = require('../../models/truckModel');
 const Variant = require('../../models/variant');
 const trucks = require('../../models/truck');
 const { Op } = require('sequelize');
+const Stripe = require('stripe')(stripe.secret_key);
 
 exports.Login = async (req, res, next) => {
   try {
@@ -260,7 +263,7 @@ exports.signUpUser = async (req, res, next) => {
       designationId: designationDetails.id,
     });
 
-    await users.create({
+    const user = await users.create({
       name: req.body.first_name,
       phoneNumber: req.body.phoneNumber,
       signed: 'Unsigned',
@@ -322,18 +325,16 @@ exports.signUpUser = async (req, res, next) => {
         condition: 'working',
         isActive: true,
         status: req.body.status,
+        createdBy: user.id,
       });
 
-      
       const driver = await drivers.create({
         licenseNo: req.body.licenseNo,
         licensePhoto: req.files['licensePhoto'][0].path.replace(/^public/, ''),
         userPhoto: req.files['userPhoto'][0].path.replace(/^public/, ''),
         licenseType: req.body.licenseType,
-        shift: req.body.shift,
-        dailyWage: req.body.dailyWage,
-        bata: req.body.bata,
-        userId: users.id,
+
+        userId: user.id,
         truckId: truckdet.id,
         status: 'pending',
       });
@@ -343,9 +344,11 @@ exports.signUpUser = async (req, res, next) => {
         name: req.body.first_name,
         email: req.body.email,
         phn: req.body.phoneNumber,
-        wage: req.body.dailywage,
+        wage: 1000,
         driver: driver.id,
       };
+      console.log('userData', userData);
+
       const { url, result } = await documentSign(req);
       res.send({
         success: true,
@@ -353,16 +356,13 @@ exports.signUpUser = async (req, res, next) => {
         data: userData,
       });
     } else {
-      const jsonString = JSON.stringify(req.body.licenseType);
       const driver = await drivers.create({
         licenseNo: req.body.licenseNo,
         licensePhoto: req.files['licensePhoto'][0].path.replace(/^public/, ''),
         userPhoto: req.files['userPhoto'][0].path.replace(/^public/, ''),
-        licenseType: jsonString,
-        shift: req.body.shift,
-        dailyWage: req.body.dailyWage,
-        bata: req.body.bata,
-        userId: users.id,
+        licenseType: req.body.licenseType,
+
+        userId: user.id,
         status: 'pending',
       });
       const userData = {
@@ -372,7 +372,16 @@ exports.signUpUser = async (req, res, next) => {
         wage: req.body.dailyWage,
         driver: driver.id,
       };
+      console.log('userData', userData);
+
       const { url, result } = await documentSign(req);
+      let mailOptions = {
+        to: req.body.email,
+        subject: 'Successfully Registered',
+        text: `Your profile naming ${req.body.first_name} is registered successfully in GOGO-X portal `,
+      };
+      const info = await transporter.sendMail(mailOptions);
+
       res.send({
         success: true,
         url: url,
@@ -493,22 +502,31 @@ function makeRecipientViewRequest(name, email) {
 
 exports.proceedPayment = async (req, res, next) => {
   try {
-    let { id, userdata } = req.body;
+    let { id, userData } = req.body;
 
-    console.log('bookingData', userdata);
     console.log('id', id);
+    console.log('userData', userData);
 
     const customer = await Stripe.customers.create({
-      name: userdata.first_name,
-      email: userdata.email,
-      phone: userdata.PhoneNumber,
+      name: userData.name,
+      email: userData.email,
+      phone: userData.phn,
     });
 
     // console.log('customer', customer);
+    const date = new Date(); // Create a new Date object
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    const transc = await transactions.create({
+      amount: 1000,
+      type: 'card',
+      date: formattedDate,
+      driverId: userData.driver,
+    });
+    // console.log('transc', transc);
 
     const intent = await Stripe.paymentIntents.create({
       payment_method: id,
-      amount: userdata.dailyWage * 100,
+      amount: 10 * 100,
       currency: 'inr',
       confirm: true,
       payment_method_types: ['card'],
@@ -518,7 +536,9 @@ exports.proceedPayment = async (req, res, next) => {
       payment_method: id,
     });
 
-    return res.json({
+    // console.log(paymentIntent);
+
+    return res.send({
       success: true,
       data: paymentIntent,
     });

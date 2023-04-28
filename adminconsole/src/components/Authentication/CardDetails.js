@@ -1,4 +1,5 @@
 import React from 'react';
+import Cookies from 'js-cookie';
 import {
   CardElement,
   useStripe,
@@ -29,8 +30,12 @@ const CardDetails = () => {
   const stripe = useStripe();
   const elements = useElements();
   const dispatch = useDispatch();
-  const { userdata } = useSelector((state) => state.auth);
-  console.log('userData', userdata)
+
+  const jsonString = Cookies.get('myCookie');
+
+  // Parse the JSON string back into an object
+  const userData = JSON.parse(jsonString);
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -43,7 +48,7 @@ const CardDetails = () => {
     if (!error) {
       const { id } = paymentMethod;
       dispatch(
-        makePayment({ id: id, userdata: userdata }, () => navigate('/success'))
+        makePayment({ id: id, userData: userData }, () => navigate('/success'))
       );
     } else {
       console.log(error.message);

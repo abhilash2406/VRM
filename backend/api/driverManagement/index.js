@@ -15,5 +15,5 @@ router
     controller.addDrivers
   );
 
-router.route('/:id').delete(controller.dltDriver);
+router.route('/:id').get(controller.viewDriver);
 module.exports = router;

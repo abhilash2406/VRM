@@ -11,6 +11,8 @@ router.use('/trucks', require('../api/truckManagement/index'));
 router.use('/drivers', require('../api/driverManagement/index'));
 router.use('/routes', require('../api/routeManagement/index'));
 router.use('/trips', require('../api/tripManagement/index'));
+router.use('/transactions', require('../api/transactionManagement/index'));
+
 
 
 module.exports = router;

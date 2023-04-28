@@ -11,7 +11,6 @@ export const getAllDrivers = () => async (dispatch) => {
   });
 };
 
-
 // add driver
 export const addDrivers = (props, navigate) => async (dispatch) => {
   const { data } = await postData('/drivers', props);
@@ -23,15 +22,16 @@ export const addDrivers = (props, navigate) => async (dispatch) => {
   }
 };
 
-// delete driver
-export const dltDriver = (id) => async (dispatch) => {
-    console.log('id', id)
-    const { data } = await deleteData(`/drivers/${id}`);
-    if (data.success) {
-      dispatch(setSuccessMessage(data.message));
-      dispatch(getAllDrivers());
-    } else {
-      dispatch(setErrorMessage(data.message));
-    }
-  };
-  
+// get driver data
+export const getDriverData = (id) => async (dispatch) => {
+  console.log('hy', id);
+  const { data } = await getData(`/drivers/${id}`);
+  if (data.success) {
+    dispatch({
+      type: 'SET_DRIVER_DATA',
+      payload: data.data,
+    });
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};

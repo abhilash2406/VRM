@@ -22,7 +22,7 @@ const Trips = () => {
   const tableData = trips.map((trp, index) => {
     return (
       <tr>
-        <th scope="row">1</th>
+       
         <td>{trp.driver.user.name}</td>
         <td>{trp.route.from}</td>
         <td>{trp.route.to}</td>
@@ -44,7 +44,7 @@ const Trips = () => {
             <table class="table table-dark mt-5">
               <thead>
                 <tr>
-                  <th scope="col">id</th>
+               
                   <th scope="col">Driver</th>
                   <th scope="col">From</th>
                   <th scope="col">To</th>

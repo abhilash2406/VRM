@@ -92,8 +92,10 @@ export const setGsignUp = (props, navigate) => async (dispatch) => {
 export const getUserData = (props, navigate) => async (dispatch) => {
   console.log('props', props);
   await postData('/auth/userdata', props).then((e) => {
+    console.log('data', e.data);
     if (e.data.success) {
-      console.log('data', e.data);
+      const jsonString = JSON.stringify(e.data.data);
+      Cookies.set('myCookie', jsonString);
       dispatch({
         type: 'SET_USERDATA',
         payload: e.data.data,
@@ -114,7 +116,15 @@ export const getDriverData = (props, navigate) => (dispatch) => {
 };
 
 // make payment using stripe
-export const makePayment = (userdata) => async (dispatch) => {
-  console.log('userdata', userdata);
-  const { data } = await postData('/auth/payment', userdata);
+export const makePayment = (userData,navigate) => async (dispatch) => {
+  console.log('userData', userData);
+  const { data } = await postData('/auth/payment', userData);
+  if (data.success) {
+    console.log(data.data);
+    navigate();
+
+    window.location.href = data.next_action.use_stripe_sdk.stripe_js;
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
 };

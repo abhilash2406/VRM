@@ -78,11 +78,17 @@ const NavBar = () => {
               <i className="bi-house fs-3"></i> Dashboard
             </Link>
           </li>
-          <li className="nav-item my-1 ">
-            <Link to={'/add-user'} className="nav-link text-white fw-bold fs-4">
-              <i className="bi-person fs-3"></i> Add users
-            </Link>
-          </li>
+          {userRole === 'Admin' ? (
+            <li className="nav-item my-1 ">
+              <Link
+                to={'/add-user'}
+                className="nav-link text-white fw-bold fs-4"
+              >
+                <i className="bi-person fs-3"></i> Add users
+              </Link>
+            </li>
+          ) : null}
+
           <li className="nav-item my-1 ">
             <Link to={'/trucks'} className="nav-link text-white fw-bold fs-4">
               <i className="bi-truck fs-3"></i> Trucks
@@ -93,11 +99,17 @@ const NavBar = () => {
               <i className="bi-speedometer2 fs-3"></i> Routes
             </Link>
           </li>
-          <li className="nav-item my-1">
-            <Link to={'/drivers'} className="nav-link text-white fw-bold fs-4">
-              <i className="bi-people fs-3"></i> Driver
-            </Link>
-          </li>
+          {userRole === 'Admin' ? (
+            <li className="nav-item my-1">
+              <Link
+                to={'/drivers'}
+                className="nav-link text-white fw-bold fs-4"
+              >
+                <i className="bi-people fs-3"></i> Driver
+              </Link>
+            </li>
+          ) : null}
+
           <li className="nav-item my-1">
             <Link to={'/trips'} className="nav-link text-white fw-bold fs-4">
               <i className="bi-speedometer2 fs-3"></i> Trips
@@ -136,14 +148,16 @@ const NavBar = () => {
             </li>
           ) : null}
 
-          <li className="nav-item my-1">
-            <Link
-              to={'/feedbacks'}
-              className="nav-link text-white fw-bold fs-4"
-            >
-              <i className=" bi bi-book fs-3"></i> Feedbacks
-            </Link>
-          </li>
+          {userRole === 'Admin' || userRole === 'Manager' ? (
+            <li className="nav-item my-1">
+              <Link
+                to={'/feedbacks'}
+                className="nav-link text-white fw-bold fs-4"
+              >
+                <i className=" bi bi-book fs-3"></i> Feedbacks
+              </Link>
+            </li>
+          ) : null}
         </ul>
       </div>
     </div>

@@ -13,7 +13,7 @@ import { setRoute } from './action';
 import { Link } from 'react-router-dom';
 
 const AddRoutes = (props) => {
-  const token = localStorage.getItem('token');
+  
   let LocationData;
   const dispatch = useDispatch();
   const [formValues, setFormValues] = useState({
@@ -29,16 +29,16 @@ const AddRoutes = (props) => {
     marginLeft: '26%',
   };
   const [markers, setMarkers] = useState([]);
-  console.log('markers', markers);
+  
 
   const handleTitleChange = async (e) => {
     const { value } = e.target;
-    console.log('value', value);
+    
     try {
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${value}&key=AIzaSyD1n-Lml-bCOkTnNZs3uZNqq5IEyo7VQRY`
       );
-      console.log('response', response);
+    
       const addressComponents = response.data.results[0].address_components;
       const countryObj = addressComponents.find((component) =>
         component.types.includes('country')
@@ -74,7 +74,7 @@ const AddRoutes = (props) => {
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${value}&key=AIzaSyD1n-Lml-bCOkTnNZs3uZNqq5IEyo7VQRY`
       );
-      console.log('response', response);
+      
       setFormValues({ ...formValues, to: value });
     } catch (error) {
       console.error(error);

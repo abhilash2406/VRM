@@ -27,8 +27,11 @@ const permission = require('../permission');
       { menu: 'Trip', subMenu: 'Edit' },
       { menu: 'Trip', subMenu: 'List' },
       { menu: 'Trip', subMenu: 'Delete' },
-      { menu: 'Dashboard', subMenu: 'List' },
-
+      { menu: 'Dashboard', subMenu: 'Graph' },
+      { menu: 'Dashboard', subMenu: 'no_of_trucks' },
+      { menu: 'Dashboard', subMenu: 'no_of_drivers' },
+      { menu: 'Dashboard', subMenu: 'no_of_routes' },
+      { menu: 'Dashboard', subMenu: 'no_of_messages' },
     ];
 
     await permission.bulkCreate(permissionData);

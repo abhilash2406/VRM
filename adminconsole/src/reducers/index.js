@@ -7,7 +7,7 @@ const authInitials = {
   grantedPermissions: [],
   role: '',
   usermail: '',
-  userdata: [],
+  userdata: {},
   driverData: [],
 };
 const authReducer = (state = authInitials, action) => {
@@ -195,6 +195,7 @@ const truckReducer = (state = truckInitials, action) => {
 //driver reducer
 const driverInitials = {
   driverData: [],
+  viewDriver: [],
 };
 
 const driverReducer = (state = driverInitials, action) => {
@@ -203,6 +204,11 @@ const driverReducer = (state = driverInitials, action) => {
       return {
         ...state,
         driverData: action.payload,
+      };
+    case 'SET_DRIVER_DATA':
+      return {
+        ...state,
+        viewDriver: action.payload,
       };
 
     default:
@@ -213,7 +219,7 @@ const driverReducer = (state = driverInitials, action) => {
 //route reducer
 const routeInitials = {
   routeData: [],
-  trips:[]
+  trips: [],
 };
 
 const routeReducer = (state = routeInitials, action) => {
@@ -223,10 +229,28 @@ const routeReducer = (state = routeInitials, action) => {
         ...state,
         routeData: action.payload,
       };
-      case 'GET_ALL_TRIPS':
+    case 'GET_ALL_TRIPS':
       return {
         ...state,
         trips: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
+//transaction reducer
+const transactionInitials = {
+  transactions: [],
+};
+
+const transactionReducer = (state = transactionInitials, action) => {
+  switch (action.type) {
+    case 'GET_ALL_TRANSACTIONS':
+      return {
+        ...state,
+        transactions: action.payload,
       };
 
     default:
@@ -242,4 +266,5 @@ export default combineReducers({
   truck: truckReducer,
   driver: driverReducer,
   routes: routeReducer,
+  transc: transactionReducer,
 });

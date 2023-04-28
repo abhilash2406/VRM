@@ -2,6 +2,7 @@ const drivers = require('../../models/driver');
 const trucks = require('../../models/truck');
 const users = require('../../models/users');
 const login = require('../../models/login');
+const routes = require('../../models/route')
 const designations = require('../../models/designation');
 const transporter = require('../../modules/mail');
 const { Op } = require('sequelize');
@@ -22,12 +23,12 @@ exports.getDriverDatas = async (req, res, next) => {
       ],
     });
 
-    console.log('data', data);
+    
 
     res.send({
       success: true,
       message: 'data fetched ',
-        data: data,
+      data: data,
     });
   } catch (e) {
     res.send({
@@ -37,6 +38,7 @@ exports.getDriverDatas = async (req, res, next) => {
   }
 };
 
+// add driver by admin
 exports.addDrivers = async (req, res, next) => {
   try {
     // console.log('req.body', req.body);
@@ -52,7 +54,7 @@ exports.addDrivers = async (req, res, next) => {
           licenseNo: req.body.licenseNo,
         },
       });
-      console.log('driver_exist', driver_exist);
+
       if (driver_exist.length !== 0) {
         res.send({
           success: false,
@@ -82,7 +84,7 @@ exports.addDrivers = async (req, res, next) => {
           phoneNumber: req.body.phoneNumber,
           loginId: log.id,
         });
-        // console.log(data)
+       
 
         const driver = await drivers.create({
           licenseNo: req.body.licenseNo,
@@ -99,7 +101,7 @@ exports.addDrivers = async (req, res, next) => {
           status: 'approved',
         });
 
-        console.log(driver);
+        
         let mailOptions = {
           to: req.body.email,
           subject: 'Successfully Registered',
@@ -120,20 +122,40 @@ exports.addDrivers = async (req, res, next) => {
   }
 };
 
-//delete
-exports.dltDriver = async (req, res) => {
-    const id = req.params.id;
-    try {
-      const drv = await drivers.findByPk(id);
-      await drv.destroy();
-      return res.send({
-        success: true,
-        message: 'driver deleted successfully',
-      });
-    } catch (err) {
-      return es.send({
-        success: false,
-        message: err.message,
-      });
-    }
-  };
+//view
+exports.viewDriver = async (req, res) => {
+  console.log("y")
+  const id = req.params.id;
+  try {
+    const drv = await drivers.findOne({
+      where: { id: id },
+      include: [
+        {
+          model: users,
+          include: [
+            {
+              model: login,
+            },
+          ],
+        },
+        {
+          model: trucks,
+        },
+        {
+          model: routes,
+        },
+      ],
+    });
+
+    return res.send({
+      success: true,
+      message: 'driver fetch successfully',
+      data: drv,
+    });
+  } catch (err) {
+    return res.send({
+      success: false,
+      message: err.message,
+    });
+  }
+};
