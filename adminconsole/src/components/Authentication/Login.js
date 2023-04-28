@@ -158,7 +158,7 @@ const Login = () => {
                   </form>
                 )}
               </Formik>
-              <a href="http://localhost:3000">back</a>
+              <a href="http://localhost:3000" className='btn btn-info'>back</a>
             </div>
           </div>
         </div>

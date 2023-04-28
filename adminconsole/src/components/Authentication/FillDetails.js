@@ -203,7 +203,7 @@ const FillDetails = () => {
                   </form>
                 )}
               </Formik>
-              <Link to={'/signup'}>back</Link>
+              <Link to={'/signup'} className='btn btn-warning'>back</Link>
             </div>
           </div>
         </div>

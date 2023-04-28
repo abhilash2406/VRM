@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 const ContactUs = () => {
   const dispatch = useDispatch();
   return (
-    <div>
+    <div className="w-75">
       <Formik
         initialValues={{ name: '', phoneNumber: '', email: '', message: '' }}
         validationSchema={Yup.object({
@@ -22,30 +22,30 @@ const ContactUs = () => {
           resetForm();
         }}
       >
-        <Form
+        <div
           style={{
             display: 'flex',
             flexDirection: 'column',
-            width: '80%',
-            margin: '2% 0% 0% 25%',
+            width: '100%',
+            margin: '10px',
+            
+            padding: '20px',
           }}
         >
-          <div
+          <Form
             style={{
               display: 'flex',
               flexDirection: 'column',
-              width: '50%',
-              margin: '10px',
-              boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)',
-              padding: '20px',
+              width: '80%',
+              // margin: '2% 0% 0% 25%',
             }}
           >
-            <h1>Contact Us</h1>
+            <h1>Submit your feedback</h1>
 
             <label htmlFor="name">
               <b>Name</b>
             </label>
-            <Field name="name" type="text" />
+            <Field name="name" type="text" className="form-control" />
             <span className="text-danger">
               <ErrorMessage name="name" />
             </span>
@@ -54,6 +54,7 @@ const ContactUs = () => {
             </label>
             <Field
               name="phoneNumber"
+              className="form-control"
               type="string"
               style={{ margin: '0% 0% 2% 0%' }}
             />
@@ -65,6 +66,7 @@ const ContactUs = () => {
             </label>
             <Field
               name="email"
+              className="form-control"
               type="email"
               style={{ margin: '0% 0% 2% 0%' }}
             />
@@ -76,6 +78,7 @@ const ContactUs = () => {
             </label>
             <Field
               name="message"
+              className="form-control"
               as="textarea"
               style={{ margin: '0% 0% 2% 0%' }}
             />
@@ -85,9 +88,9 @@ const ContactUs = () => {
             <button type="submit" className="btn btn-dark">
               Submit
             </button>
-            <Link to="/">back</Link>
-          </div>
-        </Form>
+            <Link to="/" >back</Link>
+          </Form>
+        </div>
       </Formik>
     </div>
   );

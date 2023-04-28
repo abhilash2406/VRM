@@ -2,6 +2,7 @@ import React from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import Testimonial from './Testimonial';
+import Services from './Services';
 import Carousel from 'react-bootstrap/Carousel';
 const HomePage = () => {
   return (
@@ -37,6 +38,7 @@ const HomePage = () => {
         </Carousel.Item>
       </Carousel>
       <Testimonial />
+      <Services/>
       <Footer />
     </div>
   );

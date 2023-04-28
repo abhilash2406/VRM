@@ -6,7 +6,7 @@ exports.addRoutes = async (req, res, next) => {
     // (req.body.title = req.body.from + '-' + req.body.to),
     req.body.longitude = req.body.locations.map((data) => data.longitude);
     req.body.latitude = req.body.locations.map((data) => data.latitude);
-    console.log('req.body.location.longitude', req.body.longitude);
+   
     req.body.status = 'read';
     const data = await routes.create(req.body);
     res.send({

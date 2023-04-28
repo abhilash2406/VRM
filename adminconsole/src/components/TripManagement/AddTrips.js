@@ -11,7 +11,11 @@ import { addTrip } from './index';
 const AddTrips = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  useEffect(() => {}, []);
+  useEffect(() => {
+    dispatch(getAllTruckData());
+    dispatch(getAllDrivers());
+    dispatch(getRoutes());
+  }, []);
   const { driverData } = useSelector((e) => e.driver);
   console.log('driverData', driverData);
 
