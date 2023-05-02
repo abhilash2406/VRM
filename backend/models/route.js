@@ -9,7 +9,10 @@ const route = sequelize.define(
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     from: {
       type: DataTypes.STRING,
       allowNull: false,

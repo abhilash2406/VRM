@@ -2,14 +2,13 @@ const drivers = require('../../models/driver');
 const trucks = require('../../models/truck');
 const users = require('../../models/users');
 const login = require('../../models/login');
-const routes = require('../../models/route')
+const routes = require('../../models/route');
 const designations = require('../../models/designation');
 const transporter = require('../../modules/mail');
 const { Op } = require('sequelize');
 
 exports.getDriverDatas = async (req, res, next) => {
   try {
-    console.log('hy');
     const data = await drivers.findAll({
       include: [
         {
@@ -22,8 +21,6 @@ exports.getDriverDatas = async (req, res, next) => {
         },
       ],
     });
-
-    
 
     res.send({
       success: true,
@@ -84,7 +81,6 @@ exports.addDrivers = async (req, res, next) => {
           phoneNumber: req.body.phoneNumber,
           loginId: log.id,
         });
-       
 
         const driver = await drivers.create({
           licenseNo: req.body.licenseNo,
@@ -101,7 +97,8 @@ exports.addDrivers = async (req, res, next) => {
           status: 'approved',
         });
 
-        
+        console.log('driver', driver);
+
         let mailOptions = {
           to: req.body.email,
           subject: 'Successfully Registered',
@@ -124,7 +121,6 @@ exports.addDrivers = async (req, res, next) => {
 
 //view
 exports.viewDriver = async (req, res) => {
-  console.log("y")
   const id = req.params.id;
   try {
     const drv = await drivers.findOne({
@@ -156,6 +152,40 @@ exports.viewDriver = async (req, res) => {
     return res.send({
       success: false,
       message: err.message,
+    });
+  }
+};
+
+//get active drivers
+exports.getActDrivers = async (req, res, next) => {
+  console.log("first")
+  try {
+    const data = await drivers.findAll(
+      {
+      where: { status: 'approved' },
+      include: [
+        {
+          model: users,
+          include: [
+            {
+              model: login,
+            },
+          ],
+        },
+      ],
+    }
+    );
+    console.log('data', data);
+
+    res.send({
+      success: true,
+      message: 'data fetched ',
+      data: data,
+    });
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
     });
   }
 };

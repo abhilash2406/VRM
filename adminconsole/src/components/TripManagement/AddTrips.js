@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAllTruckData } from '../TruckManagement/action';
 import { getRoutes } from '../RouteManagement/action';
-import { getAllDrivers } from '../DriverManagement.js/action';
+import { getActiveDrivers,getAllDrivers } from '../DriverManagement.js/action';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { addTrip } from './index';
@@ -13,13 +13,13 @@ const AddTrips = () => {
   const navigate = useNavigate();
   useEffect(() => {
     dispatch(getAllTruckData());
-    dispatch(getAllDrivers());
+    dispatch(getActiveDrivers());
     dispatch(getRoutes());
   }, []);
-  const { driverData } = useSelector((e) => e.driver);
-  console.log('driverData', driverData);
+  const { activeDriver } = useSelector((e) => e.driver);
+  console.log('driverData', activeDriver);
 
-  const dOptions = driverData?.map((item, index) => (
+  const dOptions = activeDriver?.map((item, index) => (
     <option key={index} value={item.id}>
       {item.user.name}
     </option>
@@ -37,7 +37,7 @@ const AddTrips = () => {
   console.log(truckData);
   const tOptions = truckData?.map((item, index) => (
     <option key={index} value={item.id}>
-      {item.brand}
+      {item.brand}-{item.model}-{item.variant}
     </option>
   ));
 

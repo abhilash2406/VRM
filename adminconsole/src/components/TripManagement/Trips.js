@@ -3,6 +3,8 @@ import NavBar from '../Main/NavBar';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { getAllTrips } from './index';
+import DataTable, { createTheme } from 'react-data-table-component';
+
 
 const Trips = () => {
   const dispatch = useDispatch();
@@ -19,17 +21,39 @@ const Trips = () => {
 
   let permissionAllowed = array?.map((e) => e.subMenu);
 
-  const tableData = trips.map((trp, index) => {
-    return (
-      <tr>
-       
-        <td>{trp.driver.user.name}</td>
-        <td>{trp.route.from}</td>
-        <td>{trp.route.to}</td>
-        <td>{trp.truck.brand}</td>
-      </tr>
-    );
-  });
+  const columns = [
+    {
+      name: 'Driver name',
+      selector: (row) => row.driver?.user?.name,
+    },
+
+    {
+      name: 'from',
+      selector: (row) => row.route?.from,
+    },
+
+    {
+      name: 'To',
+      selector: (row) => row.route?.to,
+    },
+    {
+      name: 'Truck',
+      selector: (row) => row.truck?.brand,
+    },
+  ];
+
+  const tableData = trips
+    ? trips.map((trp, index) => {
+        return (
+          <tr>
+            <td>{trp.driver?.user?.name}</td>
+            <td>{trp.route?.from}</td>
+            <td>{trp.route?.to}</td>
+            <td>{trp.truck?.brand}</td>
+          </tr>
+        );
+      })
+    : null;
   return (
     <div className="container-fluid">
       <div className="row">
@@ -41,10 +65,15 @@ const Trips = () => {
             </Link>
           ) : null}
           <div>
+          {/* <DataTable
+              columns={columns}
+              pagination
+              theme="solarized"
+              data={trips ? trips : []}
+            /> */}
             <table class="table table-dark mt-5">
               <thead>
                 <tr>
-               
                   <th scope="col">Driver</th>
                   <th scope="col">From</th>
                   <th scope="col">To</th>

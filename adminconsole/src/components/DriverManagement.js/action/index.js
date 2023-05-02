@@ -11,6 +11,17 @@ export const getAllDrivers = () => async (dispatch) => {
   });
 };
 
+// get all drivers
+export const getActiveDrivers = () => async (dispatch) => {
+  console.log('trtrtr');
+  const { data } = await getData('/drivers/active');
+  console.log('dreiver_data', data);
+  dispatch({
+    type: 'SET_ACTIVE_DRIVER',
+    payload: data.data,
+  });
+};
+
 // add driver
 export const addDrivers = (props, navigate) => async (dispatch) => {
   const { data } = await postData('/drivers', props);

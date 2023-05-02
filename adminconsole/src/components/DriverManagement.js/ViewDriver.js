@@ -25,10 +25,10 @@ const ViewDriver = () => {
             <img
               class="rounded-circle mt-5"
               width="150px"
-              src={`http://localhost:5000/${viewDriver.userPhoto}`}
+              src={`http://localhost:5000/${viewDriver?.userPhoto}`}
             />
-            <span class="font-weight-bold">{viewDriver.user.name}</span>
-            <span class="text-black-50">{viewDriver.user.login.email}</span>
+            <span class="font-weight-bold">{viewDriver?.user?.name}</span>
+            <span class="text-black-50">{viewDriver?.user?.login?.email}</span>
             <span> </span>
           </div>
         </div>
@@ -43,7 +43,7 @@ const ViewDriver = () => {
                 <input
                   type="text"
                   class="form-control"
-                  value={viewDriver.licenseNo}
+                  value={viewDriver?.licenseNo}
                 />
               </div>
               <div class="col-md-6">
@@ -51,7 +51,7 @@ const ViewDriver = () => {
                 <input
                   type="text"
                   class="form-control"
-                  value={viewDriver.licenseType}
+                  value={viewDriver?.licenseType}
                 />
               </div>
             </div>
@@ -61,7 +61,7 @@ const ViewDriver = () => {
                 <input
                   type="text"
                   class="form-control"
-                  value={viewDriver.user.phoneNumber}
+                  value={viewDriver?.user?.phoneNumber}
                 />
               </div>
               <div class="col-md-12">
@@ -69,7 +69,7 @@ const ViewDriver = () => {
                 <input
                   type="text"
                   class="form-control"
-                  value={viewDriver.dailyWage}
+                  value={viewDriver?.dailyWage}
                 />
               </div>
               <div class="col-md-12">
@@ -77,7 +77,7 @@ const ViewDriver = () => {
                 <input
                   type="text"
                   class="form-control"
-                  value={viewDriver.bata}
+                  value={viewDriver?.bata}
                 />
               </div>
             </div>

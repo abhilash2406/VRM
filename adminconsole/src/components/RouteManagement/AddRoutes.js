@@ -135,13 +135,13 @@ const AddRoutes = (props) => {
     e.preventDefault();
     console.log(formValues);
     dispatch(setRoute(formValues));
-    setFormValues({
-      from: '',
-      to: '',
-      country: '',
-      state: '',
-      locations: [{ id: 1, location: '', latitude: 0, longitude: 0 }],
-    })
+    // setFormValues({
+    //   from: '',
+    //   to: '',
+    //   country: '',
+    //   state: '',
+    //   locations: [{ id: 1, location: '', latitude: 0, longitude: 0 }],
+    // })
   };
 
   const handleRemoveLocation = (id) => {

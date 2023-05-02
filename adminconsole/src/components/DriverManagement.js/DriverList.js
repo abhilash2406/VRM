@@ -20,7 +20,7 @@ const DriverList = () => {
   const { driverData } = useSelector((e) => e.driver);
   console.log('driverData', driverData);
 
-  const tableData = driverData.map((data, index) => {
+  const tableData = driverData?.map((data, index) => {
     return (
       <tr>
         <td>
@@ -32,10 +32,10 @@ const DriverList = () => {
             alt="Card imag cap"
           />
         </td>
-        <td>{data.user.name}</td>
-        <td>{data.user.phoneNumber}</td>
-        <td>{data.user.login.email}</td>
-        <td>{data.status}</td>
+        <td>{data?.user?.name}</td>
+        <td>{data?.user?.phoneNumber}</td>
+        <td>{data?.user?.login?.email}</td>
+        <td>{data?.status}</td>
 
         <td>
           <Link className="btn btn-info" to={`/view-data/${data.id}`}>

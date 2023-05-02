@@ -56,7 +56,7 @@ exports.getTruckVariants = async (req, res, next) => {
 };
 exports.correspondingData = async (req, res, next) => {
   try {
-    console.log(req.body);
+    // console.log(req.body);
     if (!req.body.brandId && !req.body.modelId) {
       console.log('not bid entered');
       const brand_data = await Brand.findAll({});
@@ -166,7 +166,7 @@ exports.addTrucks = async (req, res, next) => {
           loginId: who.id,
         },
       });
-      console.log('crctUser', crctUser)
+      // console.log('crctUser', crctUser)
 
       const data = await trucks.create({
         brand: truckBrand.name,
@@ -215,7 +215,7 @@ exports.getAllTruckData = async (req, res, next) => {
 // get all trucks
 exports.truckToEdit = async (req, res, next) => {
   try {
-    console.log('req.params.id', req.params.id);
+    // console.log('req.params.id', req.params.id);
     const data = await trucks.findByPk(req.params.id);
     res.send({
       success: true,
@@ -248,6 +248,7 @@ exports.dltTruck = async (req, res) => {
       });
     }
   } catch (err) {
+
     return es.send({
       success: false,
       message: err.message,

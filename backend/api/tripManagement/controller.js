@@ -42,7 +42,7 @@ exports.getTrips = async (req, res, next) => {
       { model: routes },
     ],
   });
-  console.log(data);
+  // console.log(data);
   res.send({
     success: true,
     message: 'successfully fetched',

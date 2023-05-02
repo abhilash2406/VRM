@@ -30,45 +30,112 @@ exports.Login = async (req, res, next) => {
         message: 'Invalid email or password',
       });
 
-    if (!(await login.verifyPassword(password, user.password, user.salt)))
-      return res.send({
-        success: false,
-        message: 'Invalid email or password',
-      });
-
-    const accessToken = login.generateAuthToken(user);
-    const refreshToken = login.generateAuthToken(user);
-
-    const currentUser = await users.findOne({ where: { loginId: user.id } });
-    const Cuser = await login.findByPk(user.id); // assuming `userId` is the ID of the user you want to update
-    await Cuser.update({
-      token: accessToken,
-    });
-    const currentDesignation = await designations.findOne({
+    console.log('user', user);
+    const userDesig = await designations.findOne({
       where: { id: user.designationId },
     });
+    console.log('userDesig', userDesig);
+    if (userDesig.designation === 'Driver') {
+      const getuser = await users.findOne({
+        where: {
+          loginId: user.id,
+        },
+      });
+      const currentDriv = await drivers.findOne({
+        where: {
+          userId: getuser.id,
+        },
+      });
+      console.log(currentDriv);
+      if (currentDriv.status != 'approved')
+        res.send({
+          success: false,
+          message: 'admin approval needed',
+        });
+      else {
+        if (!(await login.verifyPassword(password, user.password, user.salt)))
+          return res.send({
+            success: false,
+            message: 'Invalid email or password',
+          });
 
-    const permission_data = await permissionSetting.findAll({
-      where: { designationId: user.designationId },
-      include: permissions,
-    });
-    const mappingArray = permission_data.map((data) => {
-      return {
-        menu: data.permission.menu,
-        subMenu: data.permission.subMenu,
-      };
-    });
-    return res.send({
-      success: true,
-      message: 'Login successfully',
-      data: {
-        user: currentUser.name,
-        designation: currentDesignation.designation,
-        accessToken,
-        refreshToken,
-        permission: mappingArray,
-      },
-    });
+        const accessToken = login.generateAuthToken(user);
+        const refreshToken = login.generateAuthToken(user);
+
+        const currentUser = await users.findOne({
+          where: { loginId: user.id },
+        });
+        const Cuser = await login.findByPk(user.id); // assuming `userId` is the ID of the user you want to update
+        await Cuser.update({
+          token: accessToken,
+        });
+        const currentDesignation = await designations.findOne({
+          where: { id: user.designationId },
+        });
+
+        const permission_data = await permissionSetting.findAll({
+          where: { designationId: user.designationId },
+          include: permissions,
+        });
+        const mappingArray = permission_data.map((data) => {
+          return {
+            menu: data.permission.menu,
+            subMenu: data.permission.subMenu,
+          };
+        });
+        return res.send({
+          success: true,
+          message: 'Login successfully',
+          data: {
+            user: currentUser.name,
+            designation: currentDesignation.designation,
+            accessToken,
+            refreshToken,
+            permission: mappingArray,
+          },
+        });
+      }
+    } else {
+      if (!(await login.verifyPassword(password, user.password, user.salt)))
+        return res.send({
+          success: false,
+          message: 'Invalid email or password',
+        });
+
+      const accessToken = login.generateAuthToken(user);
+      const refreshToken = login.generateAuthToken(user);
+
+      const currentUser = await users.findOne({ where: { loginId: user.id } });
+      const Cuser = await login.findByPk(user.id); // assuming `userId` is the ID of the user you want to update
+      await Cuser.update({
+        token: accessToken,
+      });
+      const currentDesignation = await designations.findOne({
+        where: { id: user.designationId },
+      });
+
+      const permission_data = await permissionSetting.findAll({
+        where: { designationId: user.designationId },
+        include: permissions,
+      });
+      const mappingArray = permission_data.map((data) => {
+        return {
+          menu: data.permission.menu,
+          subMenu: data.permission.subMenu,
+        };
+      });
+      return res.send({
+        success: true,
+        message: 'Login successfully',
+        data: {
+          user: currentUser.name,
+          designation: currentDesignation.designation,
+          accessToken,
+          refreshToken,
+          permission: mappingArray,
+        },
+      });
+    }
   } catch (e) {
     res.send({
       success: false,

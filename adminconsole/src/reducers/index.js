@@ -196,6 +196,7 @@ const truckReducer = (state = truckInitials, action) => {
 const driverInitials = {
   driverData: [],
   viewDriver: [],
+  activeDriver: [],
 };
 
 const driverReducer = (state = driverInitials, action) => {
@@ -210,6 +211,11 @@ const driverReducer = (state = driverInitials, action) => {
         ...state,
         viewDriver: action.payload,
       };
+      case 'SET_ACTIVE_DRIVER ':
+        return {
+          ...state,
+          activeDriver: action.payload,
+        };
 
     default:
       return state;
