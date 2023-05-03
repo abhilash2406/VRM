@@ -107,6 +107,7 @@ exports.correspondingData = async (req, res, next) => {
 // add truck
 exports.addTrucks = async (req, res, next) => {
   try {
+    console.log(req.body)
     const truck_exist = await trucks.findAll({
       where: {
         [Op.or]: [

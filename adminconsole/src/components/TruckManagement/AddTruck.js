@@ -12,6 +12,7 @@ import {
   getCorrespondingData,
   getTruckDataToEdit,
 } from './action';
+import { setErrorMessage } from '../../action';
 
 const schema = Joi.object({});
 
@@ -56,11 +57,27 @@ const AddTruck = () => {
 
   const handleImage2Change = (e) => {
     const file = e.target.files[0];
-    setTruckPhoto(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setTruckPhoto(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setTruckPhoto(null);
+    }
   };
   const handleImage1Change = (e) => {
     const file = e.target.files[0];
-    setRcPhoto(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setRcPhoto(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setRcPhoto(null);
+    }
   };
 
   const {
@@ -111,7 +128,8 @@ const AddTruck = () => {
     initialValues: {
       brand: id ? truckDetails.brand : '',
       model: '',
-      variant: '',
+
+      variant: id ? truckDetails.variant : '',
       VIN: id ? truckDetails.VIN : '',
       engineNo: id ? truckDetails.engineNo : '',
       chassisNo: id ? truckDetails.chassisNo : '',
@@ -121,25 +139,33 @@ const AddTruck = () => {
       condition: id ? truckDetails.condition : '',
     },
     onSubmit: (values, { resetForm }) => {
-      const formData = new FormData();
-      formData.append('brand', branid);
-      formData.append('model', modelid);
-      formData.append('variant', values.variant);
-      formData.append('VIN', values.VIN);
-      formData.append('engineNo', values.engineNo);
-      formData.append('chassisNo', values.chassisNo);
-      formData.append('RCNo', values.RCNo);
-      formData.append('status', values.status);
-      formData.append('condition', values.condition);
+     
 
-      formData.append('yrManufacture', values.yrManufacture);
-      formData.append('truckPhoto', truckPhoto);
-      formData.append('rcPhoto', rcPhoto);
-      //   resetForm({ values: '' });
-      console.log({ ...values });
+      if (!rcPhoto) {
+        dispatch(setErrorMessage('please select rc photo'));
+      } else if (!truckPhoto) {
+        dispatch(setErrorMessage('please select truck photo'));
+      } else {
+        const formData = new FormData();
+        formData.append('brand', branid);
+        formData.append('model', modelid);
+        formData.append('variant', values.variant);
+        formData.append('VIN', values.VIN);
+        formData.append('engineNo', values.engineNo);
+        formData.append('chassisNo', values.chassisNo);
+        formData.append('RCNo', values.RCNo);
+        formData.append('status', values.status);
+        formData.append('condition', values.condition);
 
-      dispatch(addTrucks(formData, () => navigate('/trucks')));
-      resetForm();
+        formData.append('yrManufacture', values.yrManufacture);
+        formData.append('truckPhoto', truckPhoto);
+        formData.append('rcPhoto', rcPhoto);
+        // resetForm({ values: '' });
+        console.log({ ...values });
+
+        dispatch(addTrucks(formData, () => navigate('/trucks')));
+        
+      }
     },
   });
 
@@ -175,7 +201,7 @@ const AddTruck = () => {
             name="model"
             id="model"
             className="form-control"
-            // value={values.model}
+            value={id ? truckDetails.model : ''}
             onChange={(e) => getDataFromDb(e)}
             onBlur={handleBlur}
             style={{ display: 'block' }}
@@ -291,7 +317,9 @@ const AddTruck = () => {
             onChange={handleImage1Change}
             onBlur={handleBlur}
           />
-
+          {rcPhoto && (
+            <img src={rcPhoto} alt="Selected" style={{ maxWidth: '100%' }} />
+          )}
           {errors.rcPhoto && touched.rcPhoto ? (
             <div>{errors.rcPhoto}</div>
           ) : null}
@@ -364,6 +392,9 @@ const AddTruck = () => {
             onChange={handleImage2Change}
             onBlur={handleBlur}
           />
+          {truckPhoto && (
+            <img src={truckPhoto} alt="Selected" style={{ maxWidth: '100%' }} />
+          )}
           {errors.truckPhoto && touched.truckPhoto ? (
             <div>{errors.truckPhoto}</div>
           ) : null}
@@ -371,7 +402,7 @@ const AddTruck = () => {
 
         <div className="form-field col-lg-12">
           <button type="submit" className="btn btn-warning">
-            submit
+            {id ? 'update' : 'add'}
           </button>
         </div>
       </form>

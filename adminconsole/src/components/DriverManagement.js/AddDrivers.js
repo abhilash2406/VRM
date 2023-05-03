@@ -6,6 +6,7 @@ import Select from 'react-select';
 import { useFormik, Formik } from 'formik';
 import * as Yup from 'yup';
 import { addDrivers } from './action';
+import { setErrorMessage } from '../../action';
 
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -68,24 +69,30 @@ const AddDrivers = () => {
             validationSchema={validationSchema1}
             // on submit values
             onSubmit={(values, { resetForm }) => {
-              console.log('values', values);
-              const formData = new FormData();
-              formData.append('name', values.name);
-              formData.append('phoneNumber', values.phoneNumber);
-              formData.append('email', values.email);
-              formData.append('licenseType', values.licenseType);
-              formData.append('licenseNo', values.licenseNo);
-              formData.append('shift', values.shift);
-              formData.append('dailyWage', values.dailyWage);
-              formData.append('licensePhoto', licenseImg);
-              formData.append('userPhoto', userImg);
-              formData.append('bata', values.bata);
+              if (!licenseImg) {
+                dispatch(setErrorMessage('please select license photo'));
+              } else if (!userImg) {
+                dispatch(setErrorMessage('please select user photo'));
+              } else {
+                console.log('values', values);
+                const formData = new FormData();
+                formData.append('name', values.name);
+                formData.append('phoneNumber', values.phoneNumber);
+                formData.append('email', values.email);
+                formData.append('licenseType', values.licenseType);
+                formData.append('licenseNo', values.licenseNo);
+                formData.append('shift', values.shift);
+                formData.append('dailyWage', values.dailyWage);
+                formData.append('licensePhoto', licenseImg);
+                formData.append('userPhoto', userImg);
+                formData.append('bata', values.bata);
 
-              resetForm({ values: '' });
-              document.getElementById("userPhoto").value = null;
-              document.getElementById("licensePhoto").value = null;
+                resetForm({ values: '' });
+                document.getElementById('userPhoto').value = null;
+                document.getElementById('licensePhoto').value = null;
 
-              dispatch(addDrivers(formData, () => navigate('/drivers')));
+                dispatch(addDrivers(formData, () => navigate('/drivers')));
+              }
             }}
           >
             {({

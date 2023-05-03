@@ -7,6 +7,7 @@ const { upload } = require('../../middlewares/uploader');
 router.route('/brands').get(controller.getTruckBrands);
 router.route('/models').get(controller.getTruckModels);
 router.route('/variants').get(controller.getTruckVariants);
+
 router.route('/add').post(
   upload.fields([
     { name: 'rcPhoto', maxCount: 1 },
@@ -17,7 +18,7 @@ router.route('/add').post(
 );
 router.route('/get-data').post(controller.correspondingData);
 router.route('/').get(controller.getAllTruckData);
-router.route('/activeTrucks').get(controller.getActiveTrucks)
+router.route('/activeTrucks').get(controller.getActiveTrucks);
 router.route('/:id').get(controller.truckToEdit).delete(controller.dltTruck);
 
 module.exports = router;

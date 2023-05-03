@@ -30,6 +30,7 @@ export const getAllTruckVariants = () => async (dispatch) => {
 
 //add truck
 export const addTrucks = (props, navigate) => async (dispatch) => {
+  console.log(props)
   const { data } = await postData('trucks/add', props);
   if (data.success) {
     dispatch(setSuccessMessage(data.success));
@@ -78,7 +79,7 @@ export const getTruckDataToEdit = (id) => async (dispatch) => {
       type: 'GET_SELECTED_TRUCKDATA',
       payload: data.data,
     });
-    dispatch(setSuccessMessage(data.message));
+    // dispatch(setSuccessMessage(data.message));
   } else {
     dispatch(setErrorMessage(data.message));
   }
