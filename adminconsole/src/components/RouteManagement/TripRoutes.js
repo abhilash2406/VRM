@@ -70,14 +70,21 @@ const TripRoutes = () => {
       omit: permissionAllowed?.includes('Delete') ? false : true,
       selector: (row) => (
         <div>
-          <button
-            className="btn btn-danger"
-            onClick={() => {
-              dispatch(dltRoute(row.id));
-            }}
-          >
-            Delete
-          </button>
+          {permissionAllowed?.includes('Edit') ? (
+            <Link className="btn btn-info" to={`/edit-routes/${row.id}`}>
+              Edit
+            </Link>
+          ) : null}
+          {permissionAllowed?.includes('Delete') ? (
+            <button
+              className="btn btn-danger"
+              onClick={() => {
+                dispatch(dltRoute(row.id));
+              }}
+            >
+              Delete
+            </button>
+          ) : null}
         </div>
       ),
     },

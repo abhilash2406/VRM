@@ -43,7 +43,14 @@ const DriverList = () => {
           </Link>
         </td>
         <td>
-            <button
+          {permissionAllowed?.includes('Edit') ? (
+            <Link className="btn btn-info" to={`/edit-driver/${data.id}`}>
+              Edit
+            </Link>
+          ) : null}
+        </td>
+        <td>
+          <button
             className="btn btn-danger"
             onClick={() => {
               dispatch(dltDriver(data.id));
@@ -51,7 +58,7 @@ const DriverList = () => {
           >
             Delete
           </button>
-          </td>
+        </td>
       </tr>
     );
   });
@@ -77,8 +84,9 @@ const DriverList = () => {
                   <th scope="col">email</th>
                   <th scope="col">status</th>
                   <th scope="col">view</th>
+                  <th scope="col">edit</th>
+
                   <th scope="col">delete</th>
-                  
                 </tr>
               </thead>
               <tbody>{tableData}</tbody>

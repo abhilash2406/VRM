@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import NavBar from '../Main/NavBar';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllTrips,dltTrip } from './index';
+import { getAllTrips, dltTrip } from './index';
 import DataTable, { createTheme } from 'react-data-table-component';
 
 const Trips = () => {
@@ -49,15 +49,24 @@ const Trips = () => {
             <td>{trp.route?.from}</td>
             <td>{trp.route?.to}</td>
             <td>{trp.truck?.brand}</td>
+
             <td>
-            <button
-            className="btn btn-danger"
-            onClick={() => {
-              dispatch(dltTrip(trp.id));
-            }}
-          >
-            Delete
-          </button>
+              <div>
+                {' '}
+                {permissionAllowed?.includes('Edit') ? (
+                  <Link className="btn btn-info" to={`/edit-trips/${trp.id}`}>
+                    Edit
+                  </Link>
+                ) : null}
+                <button
+                  className="btn btn-danger mx-2"
+                  onClick={() => {
+                    dispatch(dltTrip(trp.id));
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
             </td>
           </tr>
         );
