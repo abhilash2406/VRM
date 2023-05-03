@@ -64,3 +64,16 @@ export const setDrvWages = (props, navigate) => async (dispatch) => {
     dispatch(setErrorMessage(data.message));
   }
 };
+
+
+//delete drivers
+
+export const dltDriver = (id) => async (dispatch) => {
+  const { data } = await deleteData(`/drivers/${id}`);
+  if (data.success) {
+    dispatch(setSuccessMessage(data.message));
+    dispatch(getAllDrivers());
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};

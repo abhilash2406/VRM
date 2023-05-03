@@ -16,11 +16,10 @@ router
     controller.addDrivers
   );
 
-router.route('/:id').get(controller.viewDriver);
+router.route('/:id').get(controller.viewDriver).delete(controller.deleteDriver);
 router.route('/active').get(controller.fetchActiveDrivers);
 router.route('/reject/:id').patch(controller.rejectDriver);
 router.route('/approve').patch(controller.approveDrivers);
 router.route('/present').get(controller.presentDrivers);
-
 
 module.exports = router;

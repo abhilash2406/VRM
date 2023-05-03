@@ -1,6 +1,7 @@
 const drivers = require('../../models/driver');
 const trucks = require('../../models/truck');
 const users = require('../../models/users');
+const trips = require('../../models/trip');
 const login = require('../../models/login');
 const routes = require('../../models/route');
 const designations = require('../../models/designation');
@@ -357,3 +358,53 @@ function makeRecipientViewRequest(name, email) {
 
   return viewRequest;
 }
+
+exports.deleteDriver = async (req, res) => {
+  const id = req.params.id;
+  console.log('id', id);
+  try {
+    const driver = await drivers.findByPk(id, {
+      include: [{ model: users, onDelete: 'cascade' }],
+    });
+
+    if (!driver) {
+      res.send({
+        success: false,
+        message: 'Driver not found',
+      });
+      return;
+    } else {
+      const trip = await trips.findOne({
+        where: { driverId: id },
+      });
+
+      console.log(trip);
+
+      const user = await users.findOne({
+        where: { id: driver.userId },
+      });
+
+      console.log(user);
+
+      const loged = await login.findOne({
+        where: { id: user.loginId },
+      });
+
+      console.log(loged);
+      await trip.destroy();
+      await user.destroy();
+      await loged.destroy();
+      await driver.destroy();
+
+      res.send({
+        success: true,
+        message: 'Driver, user, and login records deleted successfully',
+      });
+    }
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};

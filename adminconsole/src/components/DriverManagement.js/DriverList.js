@@ -42,6 +42,16 @@ const DriverList = () => {
             view
           </Link>
         </td>
+        <td>
+            <button
+            className="btn btn-danger"
+            onClick={() => {
+              dispatch(dltDriver(data.id));
+            }}
+          >
+            Delete
+          </button>
+          </td>
       </tr>
     );
   });
@@ -67,6 +77,8 @@ const DriverList = () => {
                   <th scope="col">email</th>
                   <th scope="col">status</th>
                   <th scope="col">view</th>
+                  <th scope="col">delete</th>
+                  
                 </tr>
               </thead>
               <tbody>{tableData}</tbody>
