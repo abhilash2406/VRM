@@ -75,8 +75,9 @@ const Dashboard = () => {
                   </div>
                 ) : null}
               </div>
-
-              <Graph data={tripsData} />
+              <div className='w-75'>
+                <Graph data={tripsData} />
+              </div>
             </div>
           </section>
         </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { getAllTruckData } from '../TruckManagement/action';
+import { getAllTruckData, getActiveTrucks } from '../TruckManagement/action';
 import { getRoutes } from '../RouteManagement/action';
 import { getActiveDrivers,getAllDrivers } from '../DriverManagement.js/action';
 import { useFormik } from 'formik';
@@ -12,14 +12,14 @@ const AddTrips = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   useEffect(() => {
-    dispatch(getAllTruckData());
-    dispatch(getActiveDrivers());
+    dispatch(getActiveTrucks());
+    dispatch(getAllDrivers());
     dispatch(getRoutes());
   }, []);
-  const { activeDriver } = useSelector((e) => e.driver);
-  console.log('driverData', activeDriver);
+  const { driverData } = useSelector((e) => e.driver);
+  console.log('driverData', driverData);
 
-  const dOptions = activeDriver?.map((item, index) => (
+  const dOptions = driverData?.map((item, index) => (
     <option key={index} value={item.id}>
       {item.user.name}
     </option>
@@ -33,9 +33,9 @@ const AddTrips = () => {
     </option>
   ));
 
-  const { truckData } = useSelector((e) => e.truck);
-  console.log(truckData);
-  const tOptions = truckData?.map((item, index) => (
+  const { activeTrucks } = useSelector((e) => e.truck);
+  console.log(activeTrucks);
+  const tOptions = activeTrucks?.map((item, index) => (
     <option key={index} value={item.id}>
       {item.brand}-{item.model}-{item.variant}
     </option>
@@ -65,16 +65,8 @@ const AddTrips = () => {
     onSubmit: (values, { resetForm }) => {
       resetForm({ values: '' });
 
-      //   if (id) {
-      // formData.append(
-      //   'image',
-      //   fileInputRef.current.files[0] || adminData.image
-      // );
-      // dispatch(updateAdminData(id, formData));
-      // navigate('/admin');
-      //   } else {
-      // formData.append('image', fileInputRef.current.files[0]);
-      // console.log('values', values);
+      
+      console.log('values', values);
       dispatch(addTrip(values, () => navigate('/trips')));
       //   }
     },
@@ -150,6 +142,7 @@ const AddTrips = () => {
                     Submit
                   </button>
                 </form>
+                <Link to={'/trips'} className='btn btn-dark'>back</Link>
               </div>
             </div>
           </div>

@@ -6,7 +6,6 @@ const { upload } = require('../../middlewares/uploader');
 
 router
   .route('/')
-
   .get(controller.getDriverDatas)
   .post(
     upload.fields([
@@ -18,5 +17,10 @@ router
   );
 
 router.route('/:id').get(controller.viewDriver);
-router.route('/active').get(controller.getActDrivers);
+router.route('/active').get(controller.fetchActiveDrivers);
+router.route('/reject/:id').patch(controller.rejectDriver);
+router.route('/approve').patch(controller.approveDrivers);
+router.route('/present').get(controller.presentDrivers);
+
+
 module.exports = router;

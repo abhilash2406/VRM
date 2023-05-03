@@ -33,7 +33,7 @@ export const addTrucks = (props, navigate) => async (dispatch) => {
   const { data } = await postData('trucks/add', props);
   if (data.success) {
     dispatch(setSuccessMessage(data.success));
-    navigate('/trucks');
+    navigate();
   } else {
     dispatch(setErrorMessage(data.message));
   }
@@ -90,6 +90,21 @@ export const dltTruck = (id) => async (dispatch) => {
   if (data.success) {
     dispatch(setSuccessMessage(data.message));
     dispatch(getAllTruckData());
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};
+
+
+// get active truck data
+export const getActiveTrucks = () => async (dispatch) => {
+  const { data } = await getData('/trucks/activeTrucks');
+  if (data.success) {
+    dispatch({
+      type: 'GET_ACTIVE_TRUCKS',
+      payload: data.data,
+    });
+    // dispatch(setSuccessMessage(data.message));
   } else {
     dispatch(setErrorMessage(data.message));
   }

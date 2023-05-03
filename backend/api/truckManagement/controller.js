@@ -179,13 +179,21 @@ exports.addTrucks = async (req, res, next) => {
         yrManufacture: req.body.yrManufacture,
         rcPhoto: rcPhotoPath,
         truckPhoto: truckPhotoPath,
-        condition: 'working',
-        isActive: true,
+        condition: req.body.condition,
         status: req.body.status,
+        isActive:
+          req.body.status === 'active' && req.body.condition === 'working'
+            ? true
+            : false,
+
         createdBy: crctUser.id,
       });
 
       console.log(crctUser);
+      res.send({
+        success: true,
+        message: 'truck added',
+      });
     }
   } catch (e) {
     res.send({
@@ -199,6 +207,26 @@ exports.addTrucks = async (req, res, next) => {
 exports.getAllTruckData = async (req, res, next) => {
   try {
     const data = await trucks.findAll();
+    res.send({
+      success: true,
+      message: 'data retrieved successfully',
+      data: data,
+    });
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};
+// get active trucks
+exports.getActiveTrucks = async (req, res, next) => {
+  try {
+    const data = await trucks.findAll({
+      where: {
+        isActive: true,
+      },
+    });
     res.send({
       success: true,
       message: 'data retrieved successfully',
@@ -248,7 +276,6 @@ exports.dltTruck = async (req, res) => {
       });
     }
   } catch (err) {
-
     return es.send({
       success: false,
       message: err.message,

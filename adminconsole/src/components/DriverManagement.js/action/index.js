@@ -11,15 +11,10 @@ export const getAllDrivers = () => async (dispatch) => {
   });
 };
 
-// get all drivers
+// get active drivers
 export const getActiveDrivers = () => async (dispatch) => {
-  console.log('trtrtr');
-  const { data } = await getData('/drivers/active');
-  console.log('dreiver_data', data);
-  dispatch({
-    type: 'SET_ACTIVE_DRIVER',
-    payload: data.data,
-  });
+  const { data } = await getData(`/drivers/present`);
+  console.log('data', data);
 };
 
 // add driver
@@ -27,7 +22,7 @@ export const addDrivers = (props, navigate) => async (dispatch) => {
   const { data } = await postData('/drivers', props);
   if (data.success) {
     dispatch(setSuccessMessage(data.message));
-    navigate('/drivers');
+    navigate();
   } else {
     dispatch(setErrorMessage(data.message));
   }
@@ -42,6 +37,29 @@ export const getDriverData = (id) => async (dispatch) => {
       type: 'SET_DRIVER_DATA',
       payload: data.data,
     });
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};
+
+// reject driver
+export const rejectDriver = (id) => async (dispatch) => {
+  console.log(id);
+  const { data } = await updateData(`/drivers/reject/${id}`);
+  if (data.success) {
+    dispatch(setSuccessMessage(data.message));
+    dispatch(getDriverData(id));
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};
+
+//approve driver
+export const setDrvWages = (props, navigate) => async (dispatch) => {
+  const { data } = await updateData(`/drivers/approve`, props);
+  if (data.success) {
+    dispatch(setSuccessMessage(data.message));
+    navigate();
   } else {
     dispatch(setErrorMessage(data.message));
   }

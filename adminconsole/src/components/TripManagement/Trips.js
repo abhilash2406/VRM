@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import NavBar from '../Main/NavBar';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllTrips } from './index';
+import { getAllTrips,dltTrip } from './index';
 import DataTable, { createTheme } from 'react-data-table-component';
-
 
 const Trips = () => {
   const dispatch = useDispatch();
@@ -50,6 +49,16 @@ const Trips = () => {
             <td>{trp.route?.from}</td>
             <td>{trp.route?.to}</td>
             <td>{trp.truck?.brand}</td>
+            <td>
+            <button
+            className="btn btn-danger"
+            onClick={() => {
+              dispatch(dltTrip(trp.id));
+            }}
+          >
+            Delete
+          </button>
+            </td>
           </tr>
         );
       })
@@ -65,7 +74,7 @@ const Trips = () => {
             </Link>
           ) : null}
           <div>
-          {/* <DataTable
+            {/* <DataTable
               columns={columns}
               pagination
               theme="solarized"
@@ -78,6 +87,7 @@ const Trips = () => {
                   <th scope="col">From</th>
                   <th scope="col">To</th>
                   <th scope="col">Truck</th>
+                  <th scope="col">action</th>
                 </tr>
               </thead>
               <tbody>{tableData}</tbody>

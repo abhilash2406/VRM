@@ -104,6 +104,7 @@ const AddTruck = () => {
         .min(1950)
         .max(new Date().getFullYear()),
       status: Yup.string().required(),
+      condition: Yup.string().required(),
     }),
     enableReinitialize: true,
     // initial values
@@ -117,6 +118,7 @@ const AddTruck = () => {
       RCNo: id ? truckDetails.RCNo : '',
       yrManufacture: id ? truckDetails.yrManufacture : '',
       status: id ? truckDetails.status : '',
+      condition: id ? truckDetails.condition : '',
     },
     onSubmit: (values, { resetForm }) => {
       const formData = new FormData();
@@ -128,6 +130,8 @@ const AddTruck = () => {
       formData.append('chassisNo', values.chassisNo);
       formData.append('RCNo', values.RCNo);
       formData.append('status', values.status);
+      formData.append('condition', values.condition);
+
       formData.append('yrManufacture', values.yrManufacture);
       formData.append('truckPhoto', truckPhoto);
       formData.append('rcPhoto', rcPhoto);
@@ -144,6 +148,8 @@ const AddTruck = () => {
       <h1 className="title">Enter Truck Details</h1>
       <form className="contact-form row" onSubmit={handleSubmit}>
         <div className="form-field col-lg-4 mt-4">
+          <label htmlFor="photos">select brand</label>
+
           <select
             name="brand"
             id="brand"
@@ -163,6 +169,8 @@ const AddTruck = () => {
           {errors.brand && touched.brand ? <div>{errors.brand}</div> : null}
         </div>
         <div className="form-field col-lg-4 mt-4">
+          <label htmlFor="photos">select model</label>
+
           <select
             name="model"
             id="model"
@@ -182,6 +190,8 @@ const AddTruck = () => {
           {errors.model && touched.model ? <div>{errors.model}</div> : null}
         </div>
         <div className="form-field col-lg-4 mt-4 ">
+          <label htmlFor="photos">select variant</label>
+
           <select
             name="variant"
             id="variant"
@@ -203,6 +213,8 @@ const AddTruck = () => {
           ) : null}
         </div>
         <div className="form-field col-lg-6 ">
+          <label htmlFor="photos"> Vehicle identification number</label>
+
           <input
             type="text"
             name="VIN"
@@ -217,6 +229,8 @@ const AddTruck = () => {
           {errors.VIN && touched.VIN ? <div>{errors.VIN}</div> : null}
         </div>
         <div className="form-field col-lg-6 ">
+          <label htmlFor="photos">engine No</label>
+
           <input
             type="text"
             name="engineNo"
@@ -234,6 +248,8 @@ const AddTruck = () => {
         </div>
 
         <div className="form-field col-lg-6 ">
+          <label htmlFor="photos">Chassis No</label>
+
           <input
             type="text"
             name="chassisNo"
@@ -250,6 +266,8 @@ const AddTruck = () => {
           ) : null}
         </div>
         <div className="form-field col-lg-6 ">
+          <label htmlFor="photos">Rc Number</label>
+
           <input
             type="text"
             name="RCNo"
@@ -278,7 +296,7 @@ const AddTruck = () => {
             <div>{errors.rcPhoto}</div>
           ) : null}
         </div>
-        <div className="col-lg-6">
+        <div className="col-lg-6 mt-3">
           <label htmlFor="yrManufacture">Year of Manufacturing:</label>
           <select
             name="yrManufacture"
@@ -300,7 +318,7 @@ const AddTruck = () => {
             <div>{errors.yrManufacture}</div>
           ) : null}
         </div>
-        <div className="col-lg-6">
+        <div className="col-lg-6 mt-3">
           <label htmlFor="status">Status:</label>
           <select
             name="status"
@@ -317,7 +335,25 @@ const AddTruck = () => {
           </select>
           {errors.status && touched.status ? <div>{errors.status}</div> : null}
         </div>
-        <div className="col-lg-6">
+        <div className="col-lg-6 mt-3">
+          <label htmlFor="status">condition:</label>
+          <select
+            name="condition"
+            id="condition"
+            className="form-control"
+            value={values.condition}
+            onChange={handleChange}
+            onBlur={handleBlur}
+          >
+            <option value="">select truck condition</option>
+            <option value="working">working</option>
+            <option value="not-working">not-working</option>
+          </select>
+          {errors.condition && touched.condition ? (
+            <div>{errors.condition}</div>
+          ) : null}
+        </div>
+        <div className="col-lg-6 mt-3">
           <label htmlFor="photos">Truck photos:</label>
           <input
             type="file"

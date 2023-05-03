@@ -10,10 +10,10 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { setRoute } from './action';
 
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 
 const AddRoutes = (props) => {
-  
+  const navigate = useNavigate()
   let LocationData;
   const dispatch = useDispatch();
   const [formValues, setFormValues] = useState({
@@ -134,7 +134,7 @@ const AddRoutes = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formValues);
-    dispatch(setRoute(formValues));
+    dispatch(setRoute(formValues,() => navigate('/routes')));
     // setFormValues({
     //   from: '',
     //   to: '',

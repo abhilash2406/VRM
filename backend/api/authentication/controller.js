@@ -389,7 +389,7 @@ exports.signUpUser = async (req, res, next) => {
         yrManufacture: req.body.yrManufacture,
         rcPhoto: req.files['rcPhoto'][0].path.replace(/^public/, ''),
         truckPhoto: req.files['truckPhoto'][0].path.replace(/^public/, ''),
-        condition: 'working',
+        condition: req.body.condition,
         isActive: true,
         status: req.body.status,
         createdBy: user.id,
@@ -457,6 +457,7 @@ exports.signUpUser = async (req, res, next) => {
     }
   }
 };
+
 
 //docusign functions
 

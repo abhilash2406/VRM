@@ -27,7 +27,6 @@ const DrivingDetails = () => {
   const { driverData } = useSelector((e) => e.auth);
   console.log('driverData', driverData);
 
-
   const [licenseImg, setLicenseImg] = useState('');
   const [userImg, setUserImg] = useState('');
 
@@ -91,14 +90,13 @@ const DrivingDetails = () => {
     licenseType: Yup.string().required('License is required'),
 
     licenseNo: Yup.string().required('License number is required'),
-  
   });
 
   const validationSchema2 = Yup.object().shape({
     licenseType: Yup.string().required('License is required'),
 
     licenseNo: Yup.string().required('License number is required'),
-   
+
     variant: Yup.string().required('variant is required'),
     VIN: Yup.string()
       .matches(
@@ -141,7 +139,7 @@ const DrivingDetails = () => {
               // initial values
               licenseType: '',
               licenseNo: '',
-            
+
               brand: '',
               model: '',
               variant: '',
@@ -151,6 +149,7 @@ const DrivingDetails = () => {
               RCNo: '',
               yrManufacture: '',
               status: '',
+              condition: '',
             }}
             // validation
             validationSchema={
@@ -168,9 +167,9 @@ const DrivingDetails = () => {
                 formData.append('password', driverData.password);
                 formData.append('licenseType', values.licenseType);
                 formData.append('licenseNo', values.licenseNo);
-                   formData.append('licensePhoto', licenseImg);
+                formData.append('licensePhoto', licenseImg);
                 formData.append('userPhoto', userImg);
-           formData.append('brand', branid);
+                formData.append('brand', branid);
                 formData.append('model', modelid);
                 formData.append('variant', values.variant);
                 formData.append('VIN', values.VIN);
@@ -178,6 +177,7 @@ const DrivingDetails = () => {
                 formData.append('chassisNo', values.chassisNo);
                 formData.append('RCNo', values.RCNo);
                 formData.append('status', values.status);
+                formData.append('condition', values.condition);
                 formData.append('yrManufacture', values.yrManufacture);
                 formData.append('truckPhoto', truckPhoto);
                 formData.append('rcPhoto', rcPhoto);
@@ -191,7 +191,6 @@ const DrivingDetails = () => {
                 formData.append('licenseNo', values.licenseNo);
                 formData.append('licensePhoto', licenseImg);
                 formData.append('userPhoto', userImg);
-                
               }
               // resetForm({ values: '' });
               dispatch(getUserData(formData, () => navigate('/success')));
@@ -282,7 +281,6 @@ const DrivingDetails = () => {
                         placeholder="Upload license"
                       />
                     </div>
-               
 
                     <div>
                       <label>Do you have truck?</label>
@@ -307,7 +305,9 @@ const DrivingDetails = () => {
                         <button type="submit" className="btn btn-dark">
                           Register
                         </button>{' '}
-                        <Link to={'/fill-details'} className='btn btn-warning'>back</Link>
+                        <Link to={'/fill-details'} className="btn btn-warning">
+                          back
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -516,6 +516,24 @@ const DrivingDetails = () => {
                           </select>
                           {errors.status && touched.status ? (
                             <div>{errors.status}</div>
+                          ) : null}
+                        </div>
+                        <div className="col-lg-6 mt-3">
+                          <label htmlFor="status">condition:</label>
+                          <select
+                            name="condition"
+                            id="condition"
+                            className="form-control"
+                            value={values.condition}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                          >
+                            <option value="">select truck condition</option>
+                            <option value="working">working</option>
+                            <option value="not-working">not-working</option>
+                          </select>
+                          {errors.condition && touched.condition ? (
+                            <div>{errors.condition}</div>
                           ) : null}
                         </div>
                         <div className="form-group mb-4 w-75">

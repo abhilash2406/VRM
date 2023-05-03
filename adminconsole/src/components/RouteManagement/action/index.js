@@ -1,11 +1,12 @@
-import { getData, postData,deleteData } from '../../../services';
+import { getData, postData, deleteData } from '../../../services';
 import { setSuccessMessage, setErrorMessage } from '../../../action';
 
-export const setRoute = (routeData) => async (dispatch) => {
+export const setRoute = (routeData, navigate) => async (dispatch) => {
   console.log('routeData', routeData);
   const { data } = await postData('/routes/add', routeData);
   if (data.success === true) {
     dispatch(setSuccessMessage('Route created  Successfully'));
+    navigate();
   } else {
     dispatch(setErrorMessage(data.message));
   }

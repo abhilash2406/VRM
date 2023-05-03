@@ -17,6 +17,7 @@ router.route('/add').post(
 );
 router.route('/get-data').post(controller.correspondingData);
 router.route('/').get(controller.getAllTruckData);
+router.route('/activeTrucks').get(controller.getActiveTrucks)
 router.route('/:id').get(controller.truckToEdit).delete(controller.dltTruck);
 
 module.exports = router;

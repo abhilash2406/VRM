@@ -37,6 +37,8 @@ exports.getAllRoutes = async (req, res) => {
   }
 };
 
+
+//delete route
 exports.deleteRoute = async (req, res) => {
   const id = req.params.id;
   try {

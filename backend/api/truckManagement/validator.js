@@ -11,6 +11,7 @@ const TruckValidate = async (req, res, next) => {
     RCNo: Joi.string().required(),
     yrManufacture: Joi.string().required(),
     status: Joi.string().valid('active', 'deactive', 'pending').optional(),
+    condition: Joi.string().valid('working', 'not-working').optional(),
   });
   try {
     req.body = await schema.validateAsync(req.body);

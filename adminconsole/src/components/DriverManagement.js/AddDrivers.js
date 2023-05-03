@@ -7,15 +7,12 @@ import { useFormik, Formik } from 'formik';
 import * as Yup from 'yup';
 import { addDrivers } from './action';
 
-
-
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
 const AddDrivers = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
- 
 
   //multi select
 
@@ -30,8 +27,6 @@ const AddDrivers = () => {
     const file = e.target.files[0];
     setUserImg(file);
   };
-
- 
 
   const validationSchema1 = Yup.object().shape({
     name: Yup.string().min(3).max(20).required('name is Required'),
@@ -87,7 +82,10 @@ const AddDrivers = () => {
               formData.append('bata', values.bata);
 
               resetForm({ values: '' });
-              dispatch(addDrivers(formData, () => navigate()));
+              document.getElementById("userPhoto").value = null;
+              document.getElementById("licensePhoto").value = null;
+
+              dispatch(addDrivers(formData, () => navigate('/drivers')));
             }}
           >
             {({
@@ -278,7 +276,9 @@ const AddDrivers = () => {
                         <button type="submit" className="btn btn-dark">
                           Register
                         </button>{' '}
-                        <Link to={'/drivers'} className='btn btn-warning'>back</Link>
+                        <Link to={'/drivers'} className="btn btn-warning">
+                          back
+                        </Link>
                       </div>
                     </div>
                   </div>
