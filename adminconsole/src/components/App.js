@@ -214,6 +214,14 @@ const App = () => {
               </PrivateRoute>
             }
           />
+           <Route
+            path="/edit-trips/:id"
+            element={
+              <PrivateRoute>
+                <AddTrips />
+              </PrivateRoute>
+            }
+          />
           <Route
             path="/transactions"
             element={

@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import { addDrivers } from './action';
 import { setErrorMessage } from '../../action';
 
+
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
@@ -15,7 +16,20 @@ const AddDrivers = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+
+
   //multi select
+  const options = [
+    { value: 'two-wheeler', label: 'two-wheeler' },
+    { value: 'four-wheeler', label: 'four-wheeler' },
+    { value: 'heavy-vehicle', label: 'heavy-vehicle' },
+  ];
+
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const handleSelectChange = (selected) => {
+    setSelectedOptions(selected);
+  };
 
   const [licenseImg, setLicenseImg] = useState('');
   const [userImg, setUserImg] = useState('');
@@ -37,7 +51,7 @@ const AddDrivers = () => {
     email: Yup.string()
       .email('type mail in valid format')
       .required('email is Required'),
-    licenseType: Yup.string().required('License is required'),
+    
 
     licenseNo: Yup.string().required('License number is required'),
     shift: Yup.string().required('shift is required'),
@@ -59,7 +73,7 @@ const AddDrivers = () => {
               name: '',
               phoneNumber: '',
               email: '',
-              licenseType: '',
+
               licenseNo: '',
               shift: '',
               dailyWage: '',
@@ -79,7 +93,7 @@ const AddDrivers = () => {
                 formData.append('name', values.name);
                 formData.append('phoneNumber', values.phoneNumber);
                 formData.append('email', values.email);
-                formData.append('licenseType', values.licenseType);
+                formData.append('licenseType', selectedOptions);
                 formData.append('licenseNo', values.licenseNo);
                 formData.append('shift', values.shift);
                 formData.append('dailyWage', values.dailyWage);
@@ -165,23 +179,16 @@ const AddDrivers = () => {
                         <div>{errors.userPhoto}</div>
                       ) : null}
                     </div>
-                    <div className="w-75">
+                    <div className="w-75 mb-4">
                       <label style={{ fontWeight: '700' }}>owned license</label>
-                      <select
-                        name="licenseType"
-                        value={values.licenseType}
-                        onChange={handleChange}
-                        className="form-control"
-                        onBlur={handleBlur}
-                        style={{ display: 'block' }}
-                      >
-                        <option value="">Select your license</option>
-
-                        <option value="two_wheeler">Two wheeler</option>
-                        <option value="four_wheeler">Four wheeler</option>
-
-                        <option value="heavy_vehicle">Heavy Vehicle</option>
-                      </select>
+                      <Select
+                        id="multi-select"
+                        options={options}
+                        className='form-control'
+                        value={selectedOptions}
+                        onChange={handleSelectChange}
+                        isMulti
+                      />
                       {errors.licenseType && touched.licenseType ? (
                         <div>{errors.licenseType}</div>
                       ) : null}

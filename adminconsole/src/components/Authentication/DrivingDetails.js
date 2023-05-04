@@ -24,6 +24,18 @@ const DrivingDetails = () => {
   const dispatch = useDispatch();
   const [activeSection, setActiveSection] = useState(1);
 
+  const options = [
+    { value: 'two-wheeler', label: 'two-wheeler' },
+    { value: 'four-wheeler', label: 'four-wheeler' },
+    { value: 'heavy-vehicle', label: 'heavy-vehicle' },
+  ];
+
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const handleSelectChange = (selected) => {
+    setSelectedOptions(selected);
+  };
+
   const { driverData } = useSelector((e) => e.auth);
   console.log('driverData', driverData);
 
@@ -87,13 +99,13 @@ const DrivingDetails = () => {
   };
 
   const validationSchema1 = Yup.object().shape({
-    licenseType: Yup.string().required('License is required'),
+    
 
     licenseNo: Yup.string().required('License number is required'),
   });
 
   const validationSchema2 = Yup.object().shape({
-    licenseType: Yup.string().required('License is required'),
+    
 
     licenseNo: Yup.string().required('License number is required'),
 
@@ -165,7 +177,7 @@ const DrivingDetails = () => {
                 formData.append('email', driverData.email);
                 formData.append('phoneNumber', driverData.phoneNumber);
                 formData.append('password', driverData.password);
-                formData.append('licenseType', values.licenseType);
+                formData.append('licenseType', selectedOptions);
                 formData.append('licenseNo', values.licenseNo);
                 formData.append('licensePhoto', licenseImg);
                 formData.append('userPhoto', userImg);
@@ -187,7 +199,7 @@ const DrivingDetails = () => {
                 formData.append('email', driverData.email);
                 formData.append('phoneNumber', driverData.phoneNumber);
                 formData.append('password', driverData.password);
-                formData.append('licenseType', values.licenseType);
+                formData.append('licenseType', selectedOptions);
                 formData.append('licenseNo', values.licenseNo);
                 formData.append('licensePhoto', licenseImg);
                 formData.append('userPhoto', userImg);
@@ -228,21 +240,14 @@ const DrivingDetails = () => {
                     </div>
                     <div className="w-75">
                       <label style={{ fontWeight: '700' }}>owned license</label>
-                      <select
-                        name="licenseType"
-                        value={values.licenseType}
-                        onChange={handleChange}
-                        className="form-control"
-                        onBlur={handleBlur}
-                        style={{ display: 'block' }}
-                      >
-                        <option value="">Select your license</option>
-
-                        <option value="two_wheeler">Two wheeler</option>
-                        <option value="four_wheeler">Four wheeler</option>
-
-                        <option value="heavy_vehicle">Heavy Vehicle</option>
-                      </select>
+                      <Select
+                        id="multi-select"
+                        options={options}
+                        className='form-control'
+                        value={selectedOptions}
+                        onChange={handleSelectChange}
+                        isMulti
+                      />
                       {errors.licenseType && touched.licenseType ? (
                         <div>{errors.licenseType}</div>
                       ) : null}

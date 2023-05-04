@@ -232,6 +232,7 @@ const driverReducer = (state = driverInitials, action) => {
 const routeInitials = {
   routeData: [],
   trips: [],
+  tripData: [],
 };
 
 const routeReducer = (state = routeInitials, action) => {
@@ -246,7 +247,11 @@ const routeReducer = (state = routeInitials, action) => {
         ...state,
         trips: action.payload,
       };
-
+    case 'GET_TRIP_DATA':
+      return {
+        ...state,
+        tripData: action.payload,
+      };
     default:
       return state;
   }

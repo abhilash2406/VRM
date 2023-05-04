@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getAllTruckData, getActiveTrucks } from '../TruckManagement/action';
 import { getRoutes } from '../RouteManagement/action';
-import { getActiveDrivers,getAllDrivers } from '../DriverManagement.js/action';
+import { getActiveDrivers, getAllDrivers } from '../DriverManagement.js/action';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { addTrip } from './index';
+import { addTrip, getTrip,updateTrip } from './index';
 
 const AddTrips = () => {
+  const { id } = useParams();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   useEffect(() => {
@@ -16,8 +18,15 @@ const AddTrips = () => {
     dispatch(getAllDrivers());
     dispatch(getRoutes());
   }, []);
+
+  useEffect(() => {
+    dispatch(getTrip(id));
+  }, [id]);
+
+  const { tripData } = useSelector((e) => e.routes);
+ 
   const { driverData } = useSelector((e) => e.driver);
-  console.log('driverData', driverData);
+  // console.log('driverData', driverData);
 
   const dOptions = driverData?.map((item, index) => (
     <option key={index} value={item.id}>
@@ -26,7 +35,7 @@ const AddTrips = () => {
   ));
 
   const { routeData } = useSelector((e) => e.routes);
-  console.log(routeData);
+
   const rOptions = routeData?.map((item, index) => (
     <option key={index} value={item.id}>
       {item.from}-{item.to}
@@ -34,7 +43,7 @@ const AddTrips = () => {
   ));
 
   const { activeTrucks } = useSelector((e) => e.truck);
-  console.log(activeTrucks);
+
   const tOptions = activeTrucks?.map((item, index) => (
     <option key={index} value={item.id}>
       {item.brand}-{item.model}-{item.variant}
@@ -58,17 +67,21 @@ const AddTrips = () => {
     enableReinitialize: true,
     // initial values
     initialValues: {
-      truck: '',
-      driver: '',
-      route: '',
+      truck: id ? tripData?.truckId : '',
+      driver: id ? tripData?.driverId : '',
+      route: id ? tripData?.routeId : '',
     },
     onSubmit: (values, { resetForm }) => {
       resetForm({ values: '' });
 
       
-      console.log('values', values);
-      dispatch(addTrip(values, () => navigate('/trips')));
-      //   }
+      if (id) {
+        dispatch(updateTrip(id,values, () => navigate('/trips')));
+
+      } else {
+        dispatch(addTrip(values, () => navigate('/trips')));
+        //   }
+      }
     },
   });
 
@@ -88,6 +101,7 @@ const AddTrips = () => {
 
                 <form className="px-md-2" onSubmit={handleSubmit}>
                   <div className="form-outline mb-4">
+                  <label htmlFor="photos">select driver</label>
                     <select
                       name="driver"
                       value={values.driver}
@@ -105,6 +119,8 @@ const AddTrips = () => {
                   </div>
 
                   <div className="form-outline mb-4">
+                  <label htmlFor="photos">select truck</label>
+
                     <select
                       name="truck"
                       value={values.truck}
@@ -122,6 +138,8 @@ const AddTrips = () => {
                   </div>
 
                   <div className="form-outline mb-4">
+                  <label htmlFor="photos">select route</label>
+
                     <select
                       name="route"
                       value={values.route}
@@ -138,11 +156,14 @@ const AddTrips = () => {
                     ) : null}
                   </div>
 
-                  <button type="submit" className="btn btn-success btn-lg mb-1">
-                    Submit
+                  <button type="submit" className="btn btn-success  mb-1">
+                    {id ? 'update' : 'submit'}
                   </button>
+                  <Link to={'/trips'} className="btn btn-dark mx-2">
+                  back
+                </Link>
                 </form>
-                <Link to={'/trips'} className='btn btn-dark'>back</Link>
+               
               </div>
             </div>
           </div>

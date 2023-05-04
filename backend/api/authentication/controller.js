@@ -395,11 +395,12 @@ exports.signUpUser = async (req, res, next) => {
         createdBy: user.id,
       });
 
+      const licenseTypeString = JSON.stringify(req.body.licenseType);
       const driver = await drivers.create({
         licenseNo: req.body.licenseNo,
         licensePhoto: req.files['licensePhoto'][0].path.replace(/^public/, ''),
         userPhoto: req.files['userPhoto'][0].path.replace(/^public/, ''),
-        licenseType: req.body.licenseType,
+        licenseType: licenseTypeString,
 
         userId: user.id,
         truckId: truckdet.id,
@@ -423,11 +424,12 @@ exports.signUpUser = async (req, res, next) => {
         data: userData,
       });
     } else {
+      const licenseTypeString = JSON.stringify(req.body.licenseType);
       const driver = await drivers.create({
         licenseNo: req.body.licenseNo,
         licensePhoto: req.files['licensePhoto'][0].path.replace(/^public/, ''),
         userPhoto: req.files['userPhoto'][0].path.replace(/^public/, ''),
-        licenseType: req.body.licenseType,
+        licenseType: licenseTypeString,
 
         userId: user.id,
         status: 'pending',
@@ -457,7 +459,6 @@ exports.signUpUser = async (req, res, next) => {
     }
   }
 };
-
 
 //docusign functions
 

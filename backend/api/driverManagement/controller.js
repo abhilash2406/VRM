@@ -45,7 +45,7 @@ exports.getDriverDatas = async (req, res, next) => {
 // add driver by admin
 exports.addDrivers = async (req, res, next) => {
   try {
-    // console.log('req.body', req.body);
+    console.log('req.body', req.body);
     const userExist = await login.findOne({ where: { email: req.body.email } });
     if (userExist) {
       res.send({
@@ -89,6 +89,7 @@ exports.addDrivers = async (req, res, next) => {
           loginId: log.id,
         });
 
+        const licenseTypeString = JSON.stringify(req.body.licenseType);
         const driver = await drivers.create({
           licenseNo: req.body.licenseNo,
           licensePhoto: req.files['licensePhoto'][0].path.replace(
@@ -96,7 +97,7 @@ exports.addDrivers = async (req, res, next) => {
             ''
           ),
           userPhoto: req.files['userPhoto'][0].path.replace(/^public/, ''),
-          licenseType: req.body.licenseType,
+          licenseType: licenseTypeString,
           shift: req.body.shift,
           dailyWage: req.body.dailyWage,
           bata: req.body.bata,

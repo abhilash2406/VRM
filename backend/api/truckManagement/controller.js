@@ -107,7 +107,7 @@ exports.correspondingData = async (req, res, next) => {
 // add truck
 exports.addTrucks = async (req, res, next) => {
   try {
-    console.log(req.body)
+    console.log(req.body);
     const truck_exist = await trucks.findAll({
       where: {
         [Op.or]: [
@@ -282,4 +282,7 @@ exports.dltTruck = async (req, res) => {
       message: err.message,
     });
   }
+};
+exports.updateTruck = async (req, res, next) => {
+  console.log('req.body', req.body);
 };

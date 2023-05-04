@@ -1,4 +1,4 @@
-import { getData, postData, updateData,deleteData } from '../../../services';
+import { getData, postData, updateData, deleteData } from '../../../services';
 import { setSuccessMessage, setErrorMessage } from '../../../action';
 
 //get all truck brands
@@ -30,7 +30,7 @@ export const getAllTruckVariants = () => async (dispatch) => {
 
 //add truck
 export const addTrucks = (props, navigate) => async (dispatch) => {
-  console.log(props)
+  console.log(props);
   const { data } = await postData('trucks/add', props);
   if (data.success) {
     dispatch(setSuccessMessage(data.success));
@@ -96,7 +96,6 @@ export const dltTruck = (id) => async (dispatch) => {
   }
 };
 
-
 // get active truck data
 export const getActiveTrucks = () => async (dispatch) => {
   const { data } = await getData('/trucks/activeTrucks');
@@ -106,6 +105,18 @@ export const getActiveTrucks = () => async (dispatch) => {
       payload: data.data,
     });
     // dispatch(setSuccessMessage(data.message));
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};
+
+//update truck
+export const UpdateTruck = (id, props, navigate) => async (dispatch) => {
+  console.log(props,id)
+  const { data } = await updateData(`/trucks/${id}`, props);
+  if (data.success) {
+    dispatch(setSuccessMessage(data.success));
+    navigate();
   } else {
     dispatch(setErrorMessage(data.message));
   }

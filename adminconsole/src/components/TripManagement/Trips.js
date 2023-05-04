@@ -12,7 +12,7 @@ const Trips = () => {
   }, []);
 
   const { trips } = useSelector((e) => e.routes);
-  console.log('trips', trips);
+  
 
   const { grantedPermissions } = useSelector((state) => state.auth);
 

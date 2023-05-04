@@ -11,6 +11,7 @@ import {
   addTrucks,
   getCorrespondingData,
   getTruckDataToEdit,
+  UpdateTruck,
 } from './action';
 import { setErrorMessage } from '../../action';
 
@@ -42,6 +43,7 @@ const AddTruck = () => {
 
   const [branid, setBrandId] = useState('');
   const [modelid, setModelId] = useState('');
+  console.log(modelid)
 
   const getDataFromDb = (e) => {
     const bid = document.getElementById('brand').value;
@@ -139,8 +141,6 @@ const AddTruck = () => {
       condition: id ? truckDetails.condition : '',
     },
     onSubmit: (values, { resetForm }) => {
-     
-
       if (!rcPhoto) {
         dispatch(setErrorMessage('please select rc photo'));
       } else if (!truckPhoto) {
@@ -162,9 +162,11 @@ const AddTruck = () => {
         formData.append('rcPhoto', rcPhoto);
         // resetForm({ values: '' });
         console.log({ ...values });
-
-        dispatch(addTrucks(formData, () => navigate('/trucks')));
-        
+        if (id) {
+          dispatch(UpdateTruck(id, formData, () => navigate('/trucks')));
+        } else {
+          dispatch(addTrucks(formData, () => navigate('/trucks')));
+        }
       }
     },
   });
@@ -201,7 +203,7 @@ const AddTruck = () => {
             name="model"
             id="model"
             className="form-control"
-            value={id ? truckDetails.model : ''}
+            // value={values.model}
             onChange={(e) => getDataFromDb(e)}
             onBlur={handleBlur}
             style={{ display: 'block' }}
@@ -388,6 +390,7 @@ const AddTruck = () => {
             name="truckPhoto"
             className="form-control"
             id="truckPhoto"
+            
             multiple
             onChange={handleImage2Change}
             onBlur={handleBlur}
@@ -404,9 +407,10 @@ const AddTruck = () => {
           <button type="submit" className="btn btn-warning">
             {id ? 'update' : 'add'}
           </button>
+          <Link className='btn btn-primary mx-2' to={'/trucks'}>back</Link>
         </div>
       </form>
-      <Link to={'/trucks'}>back</Link>
+     
     </section>
   );
 };

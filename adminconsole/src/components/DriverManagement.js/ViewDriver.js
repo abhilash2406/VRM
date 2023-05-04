@@ -20,6 +20,8 @@ const ViewDriver = () => {
   const { viewDriver } = useSelector((e) => e.driver);
   console.log('viewDriver', viewDriver);
   // debugger;
+  // const driverLicenseType = JSON.parse(viewDriver?.licenseType);
+  // console.log('dri', driverLicenseType)
 
   const onRejectDriver = () => {
     dispatch(rejectDriver(id));
@@ -86,25 +88,25 @@ const ViewDriver = () => {
                 <label class="labels">License No</label>
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control border-0"
                   value={viewDriver?.licenseNo}
                 />
               </div>
-              <div class="col-md-6">
+              {/* <div class="col-md-6">
                 <label class="labels">License Type</label>
                 <input
                   type="text"
-                  class="form-control"
-                  value={viewDriver?.licenseType}
+                  class="form-control  border-0"
+                  // value={}
                 />
-              </div>
+              </div> */}
             </div>
             <div class="row mt-3">
               <div class="col-md-12">
                 <label class="labels">Mobile Number</label>
                 <input
                   type="text"
-                  class="form-control"
+                  class="form-control  border-0"
                   value={viewDriver?.user?.phoneNumber}
                 />
               </div>
@@ -115,7 +117,7 @@ const ViewDriver = () => {
                 {viewDriver?.dailyWage === null ? null : (
                   <input
                     type="text"
-                    class="form-control"
+                    class="form-control  border-0"
                     value={viewDriver?.dailyWage}
                   />
                 )}
@@ -125,7 +127,7 @@ const ViewDriver = () => {
                 {viewDriver?.bata === null ? null : (
                   <input
                     type="text"
-                    class="form-control"
+                    class="form-control  border-0"
                     value={viewDriver?.bata}
                   />
                 )}

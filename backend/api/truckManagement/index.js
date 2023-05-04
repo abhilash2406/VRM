@@ -19,6 +19,17 @@ router.route('/add').post(
 router.route('/get-data').post(controller.correspondingData);
 router.route('/').get(controller.getAllTruckData);
 router.route('/activeTrucks').get(controller.getActiveTrucks);
-router.route('/:id').get(controller.truckToEdit).delete(controller.dltTruck);
+router
+  .route('/:id')
+  .get(controller.truckToEdit)
+  .delete(controller.dltTruck)
+  .patch(
+    upload.fields([
+      { name: 'rcPhoto', maxCount: 1 },
+      { name: 'truckPhoto', maxCount: 1 },
+    ]),
+    validate.TruckValidate,
+    controller.updateTruck
+  );
 
 module.exports = router;
