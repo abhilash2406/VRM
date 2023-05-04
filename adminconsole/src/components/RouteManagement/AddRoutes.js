@@ -8,13 +8,15 @@ import {
   DirectionsService,
 } from 'google-maps-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setRoute } from './action';
+import { setRoute,getRouteData } from './action';
 
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate,useParams } from 'react-router-dom';
 
 const AddRoutes = (props) => {
-  const navigate = useNavigate()
-  let LocationData;
+  const navigate = useNavigate();
+  const { id } = useParams();
+  console.log(id);
+
   const dispatch = useDispatch();
   const [formValues, setFormValues] = useState({
     from: '',
@@ -29,16 +31,23 @@ const AddRoutes = (props) => {
     marginLeft: '26%',
   };
   const [markers, setMarkers] = useState([]);
-  
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getRouteData(id));
+    }
+  }, [id]);
+  const { routeDetails } = useSelector((e) => e.routes);
+  console.log('routeData', routeDetails);
 
   const handleTitleChange = async (e) => {
     const { value } = e.target;
-    
+
     try {
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${value}&key=AIzaSyD1n-Lml-bCOkTnNZs3uZNqq5IEyo7VQRY`
       );
-    
+
       const addressComponents = response.data.results[0].address_components;
       const countryObj = addressComponents.find((component) =>
         component.types.includes('country')
@@ -74,7 +83,7 @@ const AddRoutes = (props) => {
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${value}&key=AIzaSyD1n-Lml-bCOkTnNZs3uZNqq5IEyo7VQRY`
       );
-      
+
       setFormValues({ ...formValues, to: value });
     } catch (error) {
       console.error(error);
@@ -134,7 +143,7 @@ const AddRoutes = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formValues);
-    dispatch(setRoute(formValues,() => navigate('/routes')));
+    dispatch(setRoute(formValues, () => navigate('/routes')));
     // setFormValues({
     //   from: '',
     //   to: '',
@@ -273,7 +282,7 @@ const AddRoutes = (props) => {
                 stopover={true}
               />
             ))}
-           
+
             <Polyline
               path={waypoints.map((waypoint) => ({
                 lat: waypoint.lat,

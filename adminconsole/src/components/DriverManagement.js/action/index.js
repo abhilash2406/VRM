@@ -77,3 +77,14 @@ export const dltDriver = (id) => async (dispatch) => {
     dispatch(setErrorMessage(data.message));
   }
 };
+
+//update driver
+export const updateDrivers = (id, props, navigate) => async (dispatch) => {
+  const { data } = await updateData(`/drivers/${id}`, props);
+  if (data.success) {
+    dispatch(setSuccessMessage(data.message));
+    navigate();
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};

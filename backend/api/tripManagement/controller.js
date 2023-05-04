@@ -36,10 +36,21 @@ exports.addTrips = async (req, res, next) => {
             message: 'This driver needs approval',
           });
         } else {
+          const check_trip = await trips.findOne({
+            where: {
+              driverId: req.body.driver,
+            },
+          });
+          const status = check_trip
+            ? 'scheduled'
+            : ['ongoing', 'completed', 'cancelled'][
+                Math.floor(Math.random() * 4)
+              ];
           const data = await trips.create({
             driverId: req.body.driver,
             truckId: req.body.truck,
             routeId: req.body.route,
+            status: status,
           });
           await drivers.update(
             {
@@ -213,11 +224,22 @@ exports.updateTrip = async (req, res, next) => {
             message: 'This driver needs approval',
           });
         } else {
+          const check_trip = await trips.findOne({
+            where: {
+              driverId: req.body.driver,
+            },
+          });
+          const status = check_trip
+            ? 'scheduled'
+            : ['ongoing', 'completed', 'cancelled'][
+                Math.floor(Math.random() * 4)
+              ];
           const data = await trips.update(
             {
               driverId: req.body.driver,
               truckId: req.body.truck,
               routeId: req.body.route,
+              status: status,
             },
             {
               where: {

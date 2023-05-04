@@ -44,11 +44,15 @@ const Gallery = () => {
     } else {
       const formData = new FormData();
       formData.append('image', selectedFile);
+      setSelectedFile('');
+      document.getElementById('img').value = null;
+
       dispatch(uploadToGallery(formData, () => navigate('/gallery')));
-      dispatch(retrieveImgs());
     }
   };
-
+  // useEffect(() => {
+  //   dispatch(retrieveImgs());
+  // }, []);
   const handleImageClick = (event) => {
     setSelectedImage(event.target.src);
     setModalIsOpen(true);
@@ -79,7 +83,14 @@ const Gallery = () => {
                   <h3>React Multiple File Upload</h3>
 
                   <div className="form-group">
-                    <input type="file" multiple onChange={handleFileSelect} />
+                    <input
+                      type="file"
+                      multiple
+                      onChange={handleFileSelect}
+                      id="img"
+                      name="img"
+                      className="form-control w-50"
+                    />
                   </div>
                   <div className="form-group">
                     <button className="btn btn-primary" type="submit">
@@ -118,7 +129,11 @@ const Gallery = () => {
               onRequestClose={handleCloseModal}
               style={customStyles}
             >
-              <img src={selectedImage} alt="Selected slide" />
+              <img
+                src={selectedImage}
+                alt="Selected slide"
+                style={{ width: '500px' }}
+              />
             </Modal>
           </div>
         </div>

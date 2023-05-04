@@ -22,11 +22,27 @@ export const getRoutes = () => async (dispatch) => {
   }
 };
 
+// dlt route
 export const dltRoute = (id) => async (dispatch) => {
   const { data } = await deleteData(`/routes/${id}`);
   if (data.success) {
     dispatch(setSuccessMessage(data.message));
     dispatch(getRoutes());
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};
+
+
+// get route data
+export const getRouteData = (id) => async (dispatch) => {
+  console.log('hy', id);
+  const { data } = await getData(`/routes/${id}`);
+  if (data.success) {
+    dispatch({
+      type: 'GET_ROUTE_DATA',
+      payload: data.data,
+    });
   } else {
     dispatch(setErrorMessage(data.message));
   }

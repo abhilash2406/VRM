@@ -21,6 +21,11 @@ const trip = sequelize.define(
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
     },
+    status: {
+      type: DataTypes.ENUM('scheduled', 'ongoing', 'cancelled', 'completed'),
+      allowNull: true,
+      defaultValue: 'scheduled',
+    },
   },
   {
     timestamps: true,

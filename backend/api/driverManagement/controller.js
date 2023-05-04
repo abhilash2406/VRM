@@ -128,6 +128,52 @@ exports.addDrivers = async (req, res, next) => {
   }
 };
 
+//update driver
+
+exports.updateDriver = async (req, res) => {
+  const id = req.params.id;
+  console.log('id', id);
+  try {
+    const driver_ext = await drivers.findByPk(id);
+    // console.log(driver_ext);
+    if (!driver_ext) {
+      res.send({
+        success: false,
+        message: 'this driver not exists',
+      });
+    } else {
+      const user_ext = await users.findByPk(driver_ext.userId);
+      // console.log(user_ext);
+      const login_ext = await login.findByPk(user_ext.loginId);
+      // console.log(login_ext);
+
+      await user_ext.update({
+        name: req.body.name,
+        phoneNumber: req.body.phoneNumber,
+      });
+      const licenseTypeString = JSON.stringify(req.body.licenseType);
+      await driver_ext.update({
+        licenseNo: req.body.licenseNo,
+        licensePhoto: req.files['licensePhoto'][0].path.replace(/^public/, ''),
+        userPhoto: req.files['userPhoto'][0].path.replace(/^public/, ''),
+        licenseType: licenseTypeString,
+        shift: req.body.shift,
+        dailyWage: req.body.dailyWage,
+        bata: req.body.bata,
+      });
+      res.send({
+        success: true,
+        message: 'data updated',
+      });
+    }
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};
+
 //view
 exports.viewDriver = async (req, res) => {
   const id = req.params.id;

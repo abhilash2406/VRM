@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styledComponents from 'styled-components';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { useFormik, Formik } from 'formik';
 import * as Yup from 'yup';
-import { addDrivers } from './action';
+import { addDrivers, getDriverData, updateDrivers } from './action';
 import { setErrorMessage } from '../../action';
-
 
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -15,8 +14,8 @@ const phoneRegExp =
 const AddDrivers = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-
+  const { id } = useParams();
+  console.log(id);
 
   //multi select
   const options = [
@@ -33,6 +32,7 @@ const AddDrivers = () => {
 
   const [licenseImg, setLicenseImg] = useState('');
   const [userImg, setUserImg] = useState('');
+   const [isReadOnly, setIsReadOnly] = useState(false);
 
   const handleImage2Change = (e) => {
     const file = e.target.files[0];
@@ -43,6 +43,15 @@ const AddDrivers = () => {
     setUserImg(file);
   };
 
+  useEffect(() => {
+    if (id) {
+      dispatch(getDriverData(id));
+      setIsReadOnly(true);
+    }
+  }, [id]);
+  const { viewDriver } = useSelector((e) => e.driver);
+  // console.log('viewDriver', viewDriver);
+
   const validationSchema1 = Yup.object().shape({
     name: Yup.string().min(3).max(20).required('name is Required'),
     phoneNumber: Yup.string()
@@ -51,7 +60,6 @@ const AddDrivers = () => {
     email: Yup.string()
       .email('type mail in valid format')
       .required('email is Required'),
-    
 
     licenseNo: Yup.string().required('License number is required'),
     shift: Yup.string().required('shift is required'),
@@ -70,15 +78,16 @@ const AddDrivers = () => {
           <Formik
             initialValues={{
               // initial values
-              name: '',
-              phoneNumber: '',
-              email: '',
+              name: id ? viewDriver?.user?.name : '',
+              phoneNumber: id ? viewDriver?.user?.phoneNumber : '',
+              email: id ? viewDriver?.user?.login?.email : '',
 
-              licenseNo: '',
-              shift: '',
-              dailyWage: '',
-              bata: '',
+              licenseNo: id ? viewDriver?.licenseNo : '',
+              shift: id ? viewDriver?.shift : '',
+              dailyWage: id ? viewDriver?.dailyWage : '',
+              bata: id ? viewDriver?.bata : '',
             }}
+            enableReinitialize={true}
             // validation
             validationSchema={validationSchema1}
             // on submit values
@@ -87,6 +96,8 @@ const AddDrivers = () => {
                 dispatch(setErrorMessage('please select license photo'));
               } else if (!userImg) {
                 dispatch(setErrorMessage('please select user photo'));
+              } else if (selectedOptions.length === 0) {
+                dispatch(setErrorMessage('please select your license'));
               } else {
                 console.log('values', values);
                 const formData = new FormData();
@@ -102,10 +113,17 @@ const AddDrivers = () => {
                 formData.append('bata', values.bata);
 
                 resetForm({ values: '' });
-                document.getElementById('userPhoto').value = null;
-                document.getElementById('licensePhoto').value = null;
-
-                dispatch(addDrivers(formData, () => navigate('/drivers')));
+                // document.getElementById('userPhoto').value = null;
+                // document.getElementById('licensePhoto').value = null;
+                // setLicenseImg('');
+                // setUserImg('')
+                if (id) {
+                  dispatch(
+                    updateDrivers(id, formData, () => navigate('/drivers'))
+                  );
+                } else {
+                  dispatch(addDrivers(formData, () => navigate('/drivers')));
+                }
               }
             }}
           >
@@ -148,6 +166,7 @@ const AddDrivers = () => {
                       </label>
                       <input
                         type="text"
+                         readOnly={isReadOnly}
                         className="form-control"
                         id="email"
                         name="email"
@@ -162,29 +181,12 @@ const AddDrivers = () => {
                       ) : null}
                     </div>
 
-                    <div className="form-group mb-4 w-75">
-                      <label htmlFor="uname" style={{ fontWeight: '700' }}>
-                        Driver Image
-                      </label>
-                      <input
-                        type="file"
-                        className="form-control"
-                        id="userPhoto"
-                        name="userPhoto"
-                        onChange={handleImage1Change}
-                        onBlur={handleBlur}
-                      />
-
-                      {errors.userPhoto && touched.userPhoto ? (
-                        <div>{errors.userPhoto}</div>
-                      ) : null}
-                    </div>
                     <div className="w-75 mb-4">
                       <label style={{ fontWeight: '700' }}>owned license</label>
                       <Select
                         id="multi-select"
                         options={options}
-                        className='form-control'
+                        className="form-control"
                         value={selectedOptions}
                         onChange={handleSelectChange}
                         isMulti
@@ -193,25 +195,7 @@ const AddDrivers = () => {
                         <div>{errors.licenseType}</div>
                       ) : null}
                     </div>
-                    <div className="form-group mb-4 w-75">
-                      <label htmlFor="license" style={{ fontWeight: '700' }}>
-                        license No
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="licenseNo"
-                        name="licenseNo"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.licenseNo}
-                        placeholder="Enter Your license_no"
-                      />
 
-                      {errors.licenseNo && touched.licenseNo ? (
-                        <div>{errors.licenseNo}</div>
-                      ) : null}
-                    </div>
                     <div className="form-group mb-4 w-75">
                       <label htmlFor="file-input" className="input-label">
                         Upload license
@@ -227,24 +211,7 @@ const AddDrivers = () => {
                         placeholder="Upload license"
                       />
                     </div>
-                    <div className="form-group mb-4 w-75">
-                      <select
-                        name="shift"
-                        value={values.shift}
-                        onChange={handleChange}
-                        className="form-control"
-                        onBlur={handleBlur}
-                        style={{ display: 'block' }}
-                      >
-                        <option value="">Select an shift</option>
 
-                        <option value="morning">morning</option>
-                        <option value="night">night</option>
-                      </select>
-                      {errors.shift && touched.shift ? (
-                        <div>{errors.shift}</div>
-                      ) : null}
-                    </div>
                     <div className="form-group mb-4 w-75">
                       <label htmlFor="first_name" style={{ fontWeight: '700' }}>
                         Enter dailyWage
@@ -314,6 +281,63 @@ const AddDrivers = () => {
 
                       {errors.phoneNumber && touched.phoneNumber ? (
                         <div>{errors.phoneNumber}</div>
+                      ) : null}
+                    </div>
+                    <div className="form-group mb-4 w-75">
+                      <label htmlFor="uname" style={{ fontWeight: '700' }}>
+                        Driver Image
+                      </label>
+                      <input
+                        type="file"
+                        className="form-control"
+                        id="userPhoto"
+                        name="userPhoto"
+                        onChange={handleImage1Change}
+                        onBlur={handleBlur}
+                      />
+
+                      {errors.userPhoto && touched.userPhoto ? (
+                        <div>{errors.userPhoto}</div>
+                      ) : null}
+                    </div>
+                    <div className="form-group mb-4 w-75">
+                      <label htmlFor="license" style={{ fontWeight: '700' }}>
+                        license No
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="licenseNo"
+                        name="licenseNo"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.licenseNo}
+                        placeholder="Enter Your license_no"
+                      />
+
+                      {errors.licenseNo && touched.licenseNo ? (
+                        <div>{errors.licenseNo}</div>
+                      ) : null}
+                    </div>
+                    <div className="form-group mb-4 w-75">
+                      <label htmlFor="license" style={{ fontWeight: '700' }}>
+                        select shift
+                      </label>
+                      <select
+                        name="shift"
+                        value={values.shift}
+                        onChange={handleChange}
+                        className="form-control"
+                        onBlur={handleBlur}
+                        style={{ display: 'block' }}
+                      >
+                        <option value="">Select an shift</option>
+
+                        <option value="morning">morning</option>
+                        <option value="night">night</option>
+                      </select>
+                      {errors.shift && touched.shift ? (
+                        <div>{errors.shift}</div>
                       ) : null}
                     </div>
                   </div>

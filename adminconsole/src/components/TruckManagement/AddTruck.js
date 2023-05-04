@@ -59,27 +59,13 @@ const AddTruck = () => {
 
   const handleImage2Change = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setTruckPhoto(reader.result);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setTruckPhoto(null);
-    }
+    setTruckPhoto(file)
+    
   };
   const handleImage1Change = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setRcPhoto(reader.result);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setRcPhoto(null);
-    }
+    setRcPhoto(file)
+  
   };
 
   const {
@@ -128,10 +114,10 @@ const AddTruck = () => {
     enableReinitialize: true,
     // initial values
     initialValues: {
-      brand: id ? truckDetails.brand : '',
+      brand: '',
       model: '',
 
-      variant: id ? truckDetails.variant : '',
+      variant:  '',
       VIN: id ? truckDetails.VIN : '',
       engineNo: id ? truckDetails.engineNo : '',
       chassisNo: id ? truckDetails.chassisNo : '',
@@ -203,6 +189,7 @@ const AddTruck = () => {
             name="model"
             id="model"
             className="form-control"
+            
             // value={values.model}
             onChange={(e) => getDataFromDb(e)}
             onBlur={handleBlur}

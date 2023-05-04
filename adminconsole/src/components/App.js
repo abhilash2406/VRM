@@ -167,6 +167,14 @@ const App = () => {
             }
           />
           <Route
+            path="/edit-routes/:id"
+            element={
+              <PrivateRoute>
+                <AddRoutes />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/add-routes"
             element={
               <PrivateRoute>
@@ -191,6 +199,14 @@ const App = () => {
             }
           />
            <Route
+            path="/edit-driver/:id"
+            element={
+              <PrivateRoute>
+                <AddDrivers />
+              </PrivateRoute>
+            }
+          />
+             <Route
             path="/view-data/:id"
             element={
               <PrivateRoute>

@@ -15,7 +15,7 @@ const ViewDriver = () => {
 
   useEffect(() => {
     dispatch(getDriverData(id));
-  }, []);
+  }, [id]);
 
   const { viewDriver } = useSelector((e) => e.driver);
   console.log('viewDriver', viewDriver);

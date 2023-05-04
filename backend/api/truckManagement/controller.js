@@ -285,4 +285,63 @@ exports.dltTruck = async (req, res) => {
 };
 exports.updateTruck = async (req, res, next) => {
   console.log('req.body', req.body);
+  const id = req.params.id;
+  console.log('id', id);
+  const truck_exist = await trucks.findByPk(id);
+  console.log(truck_exist)
+  if(!truck_exist){
+    res.send({
+      success: false,
+      message:'truck not exists'
+    })
+  }else {
+    const rcPhotoPath = req.files['rcPhoto'][0].path.replace(/^public/, '');
+    const truckPhotoPath = req.files['truckPhoto'][0].path.replace(
+      /^public/,
+      ''
+    );
+
+    const truckBrand = await Brand.findOne({
+      where: {
+        brandId: req.body.brand,
+      },
+    });
+
+    const truckModel = await TruckModel.findOne({
+      where: {
+        modelId: req.body.model,
+      },
+    });
+
+    const truckVariant = await Variant.findOne({
+      where: {
+        id: req.body.variant,
+      },
+    });
+
+    await truck_exist.update({
+      brand: truckBrand.name,
+      model: truckModel.name,
+      variant: truckVariant.name,
+      VIN: req.body.VIN,
+      engineNo: req.body.engineNo,
+      chassisNo: req.body.chassisNo,
+      RCNo: req.body.RCNo,
+      yrManufacture: req.body.yrManufacture,
+      rcPhoto: rcPhotoPath,
+      truckPhoto: truckPhotoPath,
+      condition: req.body.condition,
+      status: req.body.status,
+      isActive:
+        req.body.status === 'active' && req.body.condition === 'working'
+          ? true
+          : false,
+
+     
+    });
+    res.send({
+      success: true,
+      message:'updated successfully'
+    })
+  }
 };

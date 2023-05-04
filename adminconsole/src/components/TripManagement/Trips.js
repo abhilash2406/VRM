@@ -49,6 +49,8 @@ const Trips = () => {
             <td>{trp.route?.from}</td>
             <td>{trp.route?.to}</td>
             <td>{trp.truck?.brand}</td>
+            <td>{trp.status}</td>
+
 
             <td>
               <div>
@@ -96,7 +98,10 @@ const Trips = () => {
                   <th scope="col">From</th>
                   <th scope="col">To</th>
                   <th scope="col">Truck</th>
+                  <th scope="col">status</th>
+
                   <th scope="col">action</th>
+
                 </tr>
               </thead>
               <tbody>{tableData}</tbody>

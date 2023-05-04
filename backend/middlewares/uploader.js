@@ -46,7 +46,7 @@ const multiUpload = multer({
 
 const upload = multer({
   storage: imageStorage,
-  limits: { fileSize: 1000000 },
+  limits: { fileSize: 2000000 },
   fileFilter: (req, data, cb) => {
     console.log('>>>>>??', data);
     if (

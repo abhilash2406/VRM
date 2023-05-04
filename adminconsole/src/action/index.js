@@ -94,7 +94,7 @@ export const uploadToGallery = (image,navigate) => async (dispatch) => {
   const { data } = await postData('/gallery', image);
   if (data.success) {
     dispatch(setSuccessMessage(data.message));
-    // dispatch(retrieveImgs());
+    dispatch(retrieveImgs());
     navigate()
   } else {
     dispatch(setErrorMessage(data.message));

@@ -16,7 +16,18 @@ router
     controller.addDrivers
   );
 
-router.route('/:id').get(controller.viewDriver).delete(controller.deleteDriver);
+router
+  .route('/:id')
+  .get(controller.viewDriver)
+  .delete(controller.deleteDriver)
+  .patch(
+    upload.fields([
+      { name: 'userPhoto', maxCount: 1 },
+      { name: 'licensePhoto', maxCount: 1 },
+    ]),
+    validator.driverValidate,
+    controller.updateDriver
+  );
 router.route('/active').get(controller.fetchActiveDrivers);
 router.route('/reject/:id').patch(controller.rejectDriver);
 router.route('/approve').patch(controller.approveDrivers);

@@ -25,7 +25,7 @@ exports.getAllRoutes = async (req, res) => {
   try {
     let data = await routes.findAll({});
     // console.log('data', data);
-    res.json({
+    res.send({
       success: true,
       data,
     });
@@ -56,3 +56,23 @@ exports.deleteRoute = async (req, res) => {
     });
   }
 };
+
+
+//get route data
+exports.getRoute = async (req,res)=>{
+  const id = req.params.id;
+  try {
+    let data = await routes.findByPk(id);
+    // console.log('data', data);
+    res.send({
+      success: true,
+      data,
+    });
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+
+}

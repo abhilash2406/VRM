@@ -6,7 +6,7 @@ import { getRoutes } from '../RouteManagement/action';
 import { getActiveDrivers, getAllDrivers } from '../DriverManagement.js/action';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { addTrip, getTrip,updateTrip } from './index';
+import { addTrip, getTrip, updateTrip } from './index';
 
 const AddTrips = () => {
   const { id } = useParams();
@@ -20,11 +20,13 @@ const AddTrips = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(getTrip(id));
+    if (id) {
+      dispatch(getTrip(id));
+    }
   }, [id]);
 
   const { tripData } = useSelector((e) => e.routes);
- 
+
   const { driverData } = useSelector((e) => e.driver);
   // console.log('driverData', driverData);
 
@@ -74,10 +76,8 @@ const AddTrips = () => {
     onSubmit: (values, { resetForm }) => {
       resetForm({ values: '' });
 
-      
       if (id) {
-        dispatch(updateTrip(id,values, () => navigate('/trips')));
-
+        dispatch(updateTrip(id, values, () => navigate('/trips')));
       } else {
         dispatch(addTrip(values, () => navigate('/trips')));
         //   }
@@ -101,7 +101,7 @@ const AddTrips = () => {
 
                 <form className="px-md-2" onSubmit={handleSubmit}>
                   <div className="form-outline mb-4">
-                  <label htmlFor="photos">select driver</label>
+                    <label htmlFor="photos">select driver</label>
                     <select
                       name="driver"
                       value={values.driver}
@@ -119,7 +119,7 @@ const AddTrips = () => {
                   </div>
 
                   <div className="form-outline mb-4">
-                  <label htmlFor="photos">select truck</label>
+                    <label htmlFor="photos">select truck</label>
 
                     <select
                       name="truck"
@@ -138,7 +138,7 @@ const AddTrips = () => {
                   </div>
 
                   <div className="form-outline mb-4">
-                  <label htmlFor="photos">select route</label>
+                    <label htmlFor="photos">select route</label>
 
                     <select
                       name="route"
@@ -160,10 +160,9 @@ const AddTrips = () => {
                     {id ? 'update' : 'submit'}
                   </button>
                   <Link to={'/trips'} className="btn btn-dark mx-2">
-                  back
-                </Link>
+                    back
+                  </Link>
                 </form>
-               
               </div>
             </div>
           </div>

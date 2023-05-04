@@ -233,6 +233,7 @@ const routeInitials = {
   routeData: [],
   trips: [],
   tripData: [],
+  routeDetails:[]
 };
 
 const routeReducer = (state = routeInitials, action) => {
@@ -252,6 +253,11 @@ const routeReducer = (state = routeInitials, action) => {
         ...state,
         tripData: action.payload,
       };
+      case 'GET_ROUTE_DATA':
+        return {
+          ...state,
+          routeDetails: action.payload,
+        };
     default:
       return state;
   }
