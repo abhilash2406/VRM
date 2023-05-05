@@ -8,6 +8,7 @@ const locationSchema = Joi.object({
 const tripValidate = async (req, res, next) => {
   console.log(req.body);
   const schema = Joi.object({
+    date: Joi.date().min('1900-01-01').required(),
     driverId: Joi.string().uuid().required(),
     truckId: Joi.string().uuid().required(),
     routeId: Joi.string().uuid().required(),

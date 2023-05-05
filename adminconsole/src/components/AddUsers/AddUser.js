@@ -84,7 +84,7 @@ const AddUser = () => {
     },
   });
 
-  const options = designations.filter(
+  const options = designations?.filter(
     (item) => item.designation !== 'Admin' && item.designation !== 'Driver'
   );
   console.log('options', options);

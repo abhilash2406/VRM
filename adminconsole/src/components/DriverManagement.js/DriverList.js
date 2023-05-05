@@ -44,9 +44,11 @@ const DriverList = () => {
         </td>
         <td>
           {permissionAllowed?.includes('Edit') ? (
-            <Link className="btn btn-info" to={`/edit-driver/${data.id}`}>
-              Edit
-            </Link>
+            data?.status === 'approved' ? (
+              <Link className="btn btn-info" to={`/edit-driver/${data.id}`}>
+                Edit
+              </Link>
+            ) : 'approve first'
           ) : null}
         </td>
         <td>
@@ -84,6 +86,7 @@ const DriverList = () => {
                   <th scope="col">email</th>
                   <th scope="col">status</th>
                   <th scope="col">view</th>
+
                   <th scope="col">edit</th>
 
                   <th scope="col">delete</th>

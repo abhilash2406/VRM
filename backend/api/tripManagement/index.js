@@ -13,4 +13,6 @@ router
   .get(controller.getTripData)
   .patch(controller.updateTrip);
 
+router.route('/count').post(controller.noOfTrips);
+
 module.exports = router;

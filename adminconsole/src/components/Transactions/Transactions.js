@@ -12,7 +12,7 @@ const Transactions = () => {
 
   const { transactions } = useSelector((e) => e.transc);
   console.log(transactions);
-  const tableData = transactions.map((trans, index) => {
+  const tableData = transactions?.map((trans, index) => {
     return (
       <tr>
         

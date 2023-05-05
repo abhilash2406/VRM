@@ -45,13 +45,12 @@ const Trips = () => {
     ? trips.map((trp, index) => {
         return (
           <tr>
-            <td>{trp.driver?.user?.name}</td>
-            <td>{trp.route?.from}</td>
-            <td>{trp.route?.to}</td>
-            <td>{trp.truck?.brand}</td>
-            <td>{trp.status}</td>
-
-
+            <td>{trp?.driver?.user?.name}</td>
+            <td>{trp?.route?.from}</td>
+            <td>{trp?.route?.to}</td>
+            <td>{trp?.truck?.brand}</td>
+            <td>{trp?.status}</td>
+            <td>{new Date(trp?.date).toISOString().substring(0, 10)}</td>
             <td>
               <div>
                 {' '}
@@ -103,7 +102,8 @@ const Trips = () => {
                   <th scope="col">To</th>
                   <th scope="col">Truck</th>
                   <th scope="col">status</th>
-
+                  <th scope="col">Date of trip</th>
+                    
                   <th scope="col">action</th>
 
                 </tr>

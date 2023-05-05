@@ -4,7 +4,8 @@ const drivers = require('../../models/driver');
 const trips = require('../../models/trip');
 const users = require('../../models/users');
 const login = require('../../models/login');
-const { where } = require('sequelize');
+const { Op } = require('sequelize');
+const moment = require('moment');
 
 // add trips
 exports.addTrips = async (req, res, next) => {
@@ -36,20 +37,24 @@ exports.addTrips = async (req, res, next) => {
             message: 'This driver needs approval',
           });
         } else {
-          const check_trip = await trips.findOne({
-            where: {
-              driverId: req.body.driverId,
-            },
-          });
-          const status = check_trip
-            ? 'scheduled'
-            : ['ongoing', 'completed', 'cancelled'][
-                Math.floor(Math.random() * 4)
-              ];
+          const today = new Date();
+          const inputDate = new Date(req.body.date);
+
+          const status =
+            inputDate.getTime() > today.getTime()
+              ? 'scheduled'
+              : ['ongoing', 'completed', 'cancelled'][
+                  Math.floor(Math.random() * 3)
+                ];
+
+          let new_date = moment(req.body.date).format('YYYY-MM-DD');
+          console.log(new_date);
+          req.body.date = new_date;
           const data = await trips.create({
             driverId: req.body.driverId,
             truckId: req.body.truckId,
             routeId: req.body.routeId,
+            date: req.body.date,
             status: status,
           });
           await drivers.update(
@@ -113,7 +118,7 @@ exports.getTrips = async (req, res, next) => {
 
 exports.getTripData = async (req, res, next) => {
   const id = req.params.id;
-  console.log('id', id);
+  console.log('iiid', id);
   try {
     const data = await trips.findOne({
       include: [
@@ -224,21 +229,25 @@ exports.updateTrip = async (req, res, next) => {
             message: 'This driver needs approval',
           });
         } else {
-          const check_trip = await trips.findOne({
-            where: {
-              driverId: req.body.driverId,
-            },
-          });
-          const status = check_trip
-            ? 'scheduled'
-            : ['ongoing', 'completed', 'cancelled'][
-                Math.floor(Math.random() * 4)
-              ];
+          const today = new Date();
+          const inputDate = new Date(req.body.date);
+
+          const status =
+            inputDate.getTime() > today.getTime()
+              ? 'scheduled'
+              : ['ongoing', 'completed', 'cancelled'][
+                  Math.floor(Math.random() * 3)
+                ];
+
+          let new_date = moment(req.body.date).format('YYYY-MM-DD');
+          console.log(new_date);
+          req.body.date = new_date;
           const data = await trips.update(
             {
               driverId: req.body.driverId,
               truckId: req.body.truckId,
               routeId: req.body.routeId,
+              date: req.body.date,
               status: status,
             },
             {
@@ -267,6 +276,30 @@ exports.updateTrip = async (req, res, next) => {
         }
       }
     }
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+    });
+  }
+};
+
+// no of trips in last 30 days
+exports.noOfTrips = async (req, res) => {
+  console.log('hy');
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  try {
+    const numTrips = await trips.findAll({
+      where: {
+        date: { [Op.gte]: thirtyDaysAgo },
+      },
+    });
+    res.send({
+      success: true,
+      message: 'no of trip in last 30 days',
+      data: numTrips,
+    });
   } catch (e) {
     res.send({
       success: false,

@@ -7,6 +7,7 @@ import { getActiveDrivers, getAllDrivers } from '../DriverManagement.js/action';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { addTrip, getTrip, updateTrip } from './index';
+import moment from 'moment';
 
 const AddTrips = () => {
   const { id } = useParams();
@@ -26,9 +27,9 @@ const AddTrips = () => {
   }, [id]);
 
   const { tripData } = useSelector((e) => e.routes);
+  // console.log('driverData', tripData);
 
   const { driverData } = useSelector((e) => e.driver);
-  // console.log('driverData', driverData);
 
   const dOptions = driverData?.map((item, index) => (
     <option key={index} value={item.id}>
@@ -62,6 +63,7 @@ const AddTrips = () => {
     resetForm,
   } = useFormik({
     validationSchema: Yup.object().shape({
+      date: Yup.date().required('  date is Required'),
       truckId: Yup.string().required('select truck'),
       driverId: Yup.string().required('select driver'),
       routeId: Yup.string().required('select route'),
@@ -69,13 +71,14 @@ const AddTrips = () => {
     enableReinitialize: true,
     // initial values
     initialValues: {
+      date: id ? moment(tripData?.date).format('YYYY-MM-DD') : '',
       truckId: id ? tripData?.truckId : '',
       driverId: id ? tripData?.driverId : '',
       routeId: id ? tripData?.routeId : '',
     },
     onSubmit: (values, { resetForm }) => {
       resetForm({ values: '' });
-
+      console.log('values', values);
       if (id) {
         dispatch(updateTrip(id, values, () => navigate('/trips')));
       } else {
@@ -100,6 +103,23 @@ const AddTrips = () => {
                 <h3 className="mb-4 pb-2 pb-md-0 mb-md-5 px-md-2">Trip</h3>
 
                 <form className="px-md-2" onSubmit={handleSubmit}>
+                  <div className="form-outline mb-4 w-50">
+                    <label htmlFor="date"> Date</label>
+                    <br />
+
+                    <input
+                      type="date"
+                      id="date"
+                      name="date"
+                      className="form-control"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.date}
+                    />
+                    {errors.date && touched.date ? (
+                      <div>{errors.date}</div>
+                    ) : null}
+                  </div>
                   <div className="form-outline mb-4">
                     <label htmlFor="photos">select driver</label>
                     <select

@@ -54,7 +54,7 @@ module.exports = async (req, res, next) => {
       .concat(isAdminExists.id)
       .concat(isAdminExists.email);
     if (matchValidity != decoded.validity) {
-      return res.json({
+      return res.send({
         success: false,
         message: 'Access Denied',
       });
@@ -63,7 +63,7 @@ module.exports = async (req, res, next) => {
     return next();
   } catch (ex) {
     console.log('error', ex);
-    res.json({
+    res.send({
       success: false,
       message: 'Invalid Token',
     });

@@ -89,13 +89,13 @@ export const readFeedback = (id) => async (dispatch) => {
 };
 
 // image upload
-export const uploadToGallery = (image,navigate) => async (dispatch) => {
+export const uploadToGallery = (image, navigate) => async (dispatch) => {
   console.log('imgs', image);
   const { data } = await postData('/gallery', image);
   if (data.success) {
     dispatch(setSuccessMessage(data.message));
     dispatch(retrieveImgs());
-    navigate()
+    navigate();
   } else {
     dispatch(setErrorMessage(data.message));
   }
@@ -134,14 +134,13 @@ export const dltFeedBack = (id) => async (dispatch) => {
   }
 };
 
-
 //change-password
-export  const changePass = (props)=> async (dispatch)=>{
-  const {data}= await postData('/profile/change-password', props)
+export const changePass = (props) => async (dispatch) => {
+  const { data } = await postData('/profile/change-password', props);
   if (data.success) {
     dispatch(setSuccessMessage(data.message));
-   
   } else {
     dispatch(setErrorMessage(data.message));
   }
 };
+

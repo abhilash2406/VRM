@@ -9,6 +9,10 @@ const trip = sequelize.define(
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
+    date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
     driverId: {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,

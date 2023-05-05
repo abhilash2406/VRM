@@ -447,7 +447,7 @@ exports.signUpUser = async (req, res, next) => {
       let mailOptions = {
         to: req.body.email,
         subject: 'Successfully Registered',
-        text: `Your profile naming ${req.body.first_name} is registered successfully in GOGO-X portal `,
+        text: `Your profile naming ${req.body.first_name} is registered successfully in GOGO-X portal, wait for admin approval `,
       };
       const info = await transporter.sendMail(mailOptions);
 
@@ -587,7 +587,7 @@ exports.proceedPayment = async (req, res, next) => {
     const formattedDate = moment(date).format('YYYY-MM-DD');
     const transc = await transactions.create({
       amount: 1000,
-      type: 'card',
+      type: 'debit',
       date: formattedDate,
       driverId: userData.driver,
     });

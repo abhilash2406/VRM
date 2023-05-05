@@ -55,3 +55,19 @@ export const updateTrip = (id, props, navigate) => async (dispatch) => {
     dispatch(setErrorMessage(data.message));
   }
 };
+
+
+//no of trips in last 30
+export const noOfTrips = () => async (dispatch) => {
+  const { data } = await postData('/trips/count');
+  console.log('data', data)
+  if (data.success) {
+    dispatch({
+      type: 'GET_NO_OF_TRIPS',
+      payload: data.data,
+    });
+    // dispatch(setSuccessMessage(data.message));
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};

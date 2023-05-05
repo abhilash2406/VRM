@@ -60,7 +60,7 @@ const Permissions = () => {
       } else {
         permissions.filter((item) => {
           if (item.id === value) {
-            setGranted(grantPer.filter((id) => id.permissionId !== item.id));
+            setGranted(grantPer?.filter((id) => id.permissionId !== item.id));
           }
         });
       }
@@ -68,7 +68,7 @@ const Permissions = () => {
   };
 
   const updatePermission = () => {
-    let uniqueArray = grantPer.filter(
+    let uniqueArray = grantPer?.filter(
       (item, index, self) =>
         index ===
         self.findIndex(
@@ -79,7 +79,7 @@ const Permissions = () => {
     );
     dispatch(givePermission(role, uniqueArray));
   };
-  const designationItem = designations.map((item, index) => {
+  const designationItem = designations?.map((item, index) => {
     return (
       <option key={index} value={item.id}>
         {item.designation}
