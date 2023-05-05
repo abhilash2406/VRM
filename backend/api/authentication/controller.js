@@ -586,6 +586,8 @@ exports.proceedPayment = async (req, res, next) => {
     const date = new Date(); // Create a new Date object
     const formattedDate = moment(date).format('YYYY-MM-DD');
     const transc = await transactions.create({
+      name: userData.name,
+      email: userData.mail,
       amount: 1000,
       type: 'debit',
       date: formattedDate,

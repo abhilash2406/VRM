@@ -8,6 +8,14 @@ const transaction = sequelize.define('transaction', {
     defaultValue: Sequelize.UUIDV4,
     primaryKey: true,
   },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   amount: {
     type: DataTypes.STRING,
     allowNull: false,
