@@ -133,3 +133,15 @@ export const dltFeedBack = (id) => async (dispatch) => {
     dispatch(setErrorMessage(data.message));
   }
 };
+
+
+//change-password
+export  const changePass = (props)=> async (dispatch)=>{
+  const {data}= await postData('/profile/change-password', props)
+  if (data.success) {
+    dispatch(setSuccessMessage(data.message));
+   
+  } else {
+    dispatch(setErrorMessage(data.message));
+  }
+};

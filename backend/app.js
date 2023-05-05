@@ -20,6 +20,11 @@ app.use(
   })
 );
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./modules/documentation/swagger');
+
+app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

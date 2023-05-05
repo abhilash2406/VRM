@@ -10,21 +10,21 @@ const { where } = require('sequelize');
 exports.addTrips = async (req, res, next) => {
   try {
     console.log(req.body);
-    const truck_exist = await trucks.findByPk(req.body.truck);
+    const truck_exist = await trucks.findByPk(req.body.truckId);
     if (!truck_exist) {
       res.send({
         success: false,
         message: 'This truck does not exist',
       });
     } else {
-      const route_exist = await routes.findByPk(req.body.route);
+      const route_exist = await routes.findByPk(req.body.routeId);
       if (!route_exist) {
         res.send({
           success: false,
           message: 'This route does not exist',
         });
       } else {
-        const driver_exists = await drivers.findByPk(req.body.driver);
+        const driver_exists = await drivers.findByPk(req.body.driverId);
         if (!driver_exists) {
           res.send({
             success: false,
@@ -38,7 +38,7 @@ exports.addTrips = async (req, res, next) => {
         } else {
           const check_trip = await trips.findOne({
             where: {
-              driverId: req.body.driver,
+              driverId: req.body.driverId,
             },
           });
           const status = check_trip
@@ -47,19 +47,19 @@ exports.addTrips = async (req, res, next) => {
                 Math.floor(Math.random() * 4)
               ];
           const data = await trips.create({
-            driverId: req.body.driver,
-            truckId: req.body.truck,
-            routeId: req.body.route,
+            driverId: req.body.driverId,
+            truckId: req.body.truckId,
+            routeId: req.body.routeId,
             status: status,
           });
           await drivers.update(
             {
-              routeId: req.body.route,
-              truckId: req.body.truck,
+              routeId: req.body.routeId,
+              truckId: req.body.truckId,
             },
             {
               where: {
-                id: req.body.driver,
+                id: req.body.driverId,
               },
             }
           );
@@ -198,21 +198,21 @@ exports.updateTrip = async (req, res, next) => {
     console.log(req.body);
     const id = req.params.id;
     console.log('id', id);
-    const truck_exist = await trucks.findByPk(req.body.truck);
+    const truck_exist = await trucks.findByPk(req.body.truckId);
     if (!truck_exist) {
       res.send({
         success: false,
         message: 'This truck does not exist',
       });
     } else {
-      const route_exist = await routes.findByPk(req.body.route);
+      const route_exist = await routes.findByPk(req.body.routeId);
       if (!route_exist) {
         res.send({
           success: false,
           message: 'This route does not exist',
         });
       } else {
-        const driver_exists = await drivers.findByPk(req.body.driver);
+        const driver_exists = await drivers.findByPk(req.body.driverId);
         if (!driver_exists) {
           res.send({
             success: false,
@@ -226,7 +226,7 @@ exports.updateTrip = async (req, res, next) => {
         } else {
           const check_trip = await trips.findOne({
             where: {
-              driverId: req.body.driver,
+              driverId: req.body.driverId,
             },
           });
           const status = check_trip
@@ -236,9 +236,9 @@ exports.updateTrip = async (req, res, next) => {
               ];
           const data = await trips.update(
             {
-              driverId: req.body.driver,
-              truckId: req.body.truck,
-              routeId: req.body.route,
+              driverId: req.body.driverId,
+              truckId: req.body.truckId,
+              routeId: req.body.routeId,
               status: status,
             },
             {
@@ -250,11 +250,11 @@ exports.updateTrip = async (req, res, next) => {
           await drivers.update(
             {
               routeId: req.body.route,
-              truckId: req.body.truck,
+              truckId: req.body.truckId,
             },
             {
               where: {
-                id: req.body.driver,
+                id: req.body.driverId,
               },
             }
           );

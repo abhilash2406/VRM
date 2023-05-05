@@ -45,7 +45,7 @@ const AddRoutes = (props) => {
 
     try {
       const response = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${value}&key=AIzaSyD1n-Lml-bCOkTnNZs3uZNqq5IEyo7VQRY`
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${value}&key=AIzaSyBUPUokCkp3c29HyW3ltTOHaWy1eq58Qqc`
       );
 
       const addressComponents = response.data.results[0].address_components;
@@ -302,5 +302,5 @@ const AddRoutes = (props) => {
 };
 
 export default GoogleApiWrapper({
-  apiKey: 'AIzaSyD1n-Lml-bCOkTnNZs3uZNqq5IEyo7VQRY',
+  apiKey: 'AIzaSyBUPUokCkp3c29HyW3ltTOHaWy1eq58Qqc',
 })(AddRoutes);

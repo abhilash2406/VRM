@@ -62,16 +62,16 @@ const AddTrips = () => {
     resetForm,
   } = useFormik({
     validationSchema: Yup.object().shape({
-      truck: Yup.string().required('select truck'),
-      driver: Yup.string().required('select driver'),
-      route: Yup.string().required('select route'),
+      truckId: Yup.string().required('select truck'),
+      driverId: Yup.string().required('select driver'),
+      routeId: Yup.string().required('select route'),
     }),
     enableReinitialize: true,
     // initial values
     initialValues: {
-      truck: id ? tripData?.truckId : '',
-      driver: id ? tripData?.driverId : '',
-      route: id ? tripData?.routeId : '',
+      truckId: id ? tripData?.truckId : '',
+      driverId: id ? tripData?.driverId : '',
+      routeId: id ? tripData?.routeId : '',
     },
     onSubmit: (values, { resetForm }) => {
       resetForm({ values: '' });
@@ -103,8 +103,8 @@ const AddTrips = () => {
                   <div className="form-outline mb-4">
                     <label htmlFor="photos">select driver</label>
                     <select
-                      name="driver"
-                      value={values.driver}
+                      name="driverId"
+                      value={values.driverId}
                       className="form-control"
                       onChange={handleChange}
                       onBlur={handleBlur}
@@ -113,8 +113,8 @@ const AddTrips = () => {
                       <option value="">Select an driver</option>
                       {dOptions}
                     </select>
-                    {errors.driver && touched.driver ? (
-                      <div>{errors.driver}</div>
+                    {errors.driverId && touched.driverId ? (
+                      <div>{errors.driverId}</div>
                     ) : null}
                   </div>
 
@@ -122,8 +122,8 @@ const AddTrips = () => {
                     <label htmlFor="photos">select truck</label>
 
                     <select
-                      name="truck"
-                      value={values.truck}
+                      name="truckId"
+                      value={values.truckId}
                       className="form-control"
                       onChange={handleChange}
                       onBlur={handleBlur}
@@ -132,8 +132,8 @@ const AddTrips = () => {
                       <option value="">Select an truck</option>
                       {tOptions}
                     </select>
-                    {errors.truck && touched.truck ? (
-                      <div>{errors.truck}</div>
+                    {errors.truckId && touched.truckId ? (
+                      <div>{errors.truckId}</div>
                     ) : null}
                   </div>
 
@@ -141,8 +141,8 @@ const AddTrips = () => {
                     <label htmlFor="photos">select route</label>
 
                     <select
-                      name="route"
-                      value={values.route}
+                      name="routeId"
+                      value={values.routeId}
                       className="form-control"
                       onChange={handleChange}
                       onBlur={handleBlur}
@@ -151,8 +151,8 @@ const AddTrips = () => {
                       <option value="">Select an route</option>
                       {rOptions}
                     </select>
-                    {errors.route && touched.route ? (
-                      <div>{errors.route}</div>
+                    {errors.routeId && touched.routeId ? (
+                      <div>{errors.routeId}</div>
                     ) : null}
                   </div>
 

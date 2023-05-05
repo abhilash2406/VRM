@@ -60,6 +60,8 @@ const Trips = () => {
                     Edit
                   </Link>
                 ) : null}
+                {permissionAllowed?.includes('Delete') ? (
+
                 <button
                   className="btn btn-danger mx-2"
                   onClick={() => {
@@ -68,6 +70,8 @@ const Trips = () => {
                 >
                   Delete
                 </button>
+                ) : null}
+
               </div>
             </td>
           </tr>

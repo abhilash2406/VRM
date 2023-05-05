@@ -7,6 +7,7 @@ import NavBar from './NavBar';
 import { fetchFeedbacks } from '../../action';
 import { getAllTruckData } from '../TruckManagement/action';
 import { getRoutes } from '../RouteManagement/action';
+import { getAllDrivers } from '../DriverManagement.js/action';
 import Graph from './Graph';
 import Chart from 'chart.js/auto';
 import { CategoryScale } from 'chart.js';
@@ -16,10 +17,12 @@ const Dashboard = () => {
   useEffect(() => {
     dispatch(fetchFeedbacks());
     dispatch(getAllTruckData());
+    dispatch(getAllDrivers());
     dispatch(getRoutes());
   }, []);
   const { feedbacks } = useSelector((e) => e.user);
   const { truckData } = useSelector((e) => e.truck);
+  const { driverData } = useSelector((e) => e.driver);
   const { routeData } = useSelector((e) => e.routes);
   const { grantedPermissions } = useSelector((state) => state.auth);
 
@@ -56,7 +59,7 @@ const Dashboard = () => {
                   <div className="card" style={{ width: '15rem' }}>
                     <div className="card-body">
                       <h5 className="card-title">No of drivers</h5>
-                      <p className="card-text">{feedbacks.length}</p>
+                      <p className="card-text">{driverData.length}</p>
                     </div>
                   </div>
                 ) : null}
@@ -75,7 +78,7 @@ const Dashboard = () => {
                   </div>
                 ) : null}
               </div>
-              <div className='w-75'>
+              <div className="w-75">
                 <Graph data={tripsData} />
               </div>
             </div>

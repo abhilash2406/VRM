@@ -29,6 +29,7 @@ import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useDispatch, useSelector } from 'react-redux';
 import './index.css';
+import ChangePassword from './Main/ChangePassword';
 import io from 'socket.io-client';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -251,6 +252,14 @@ const App = () => {
             element={
               <PrivateRoute>
                 <Permissions />
+              </PrivateRoute>
+            }
+          />
+             <Route
+            path="/change-password"
+            element={
+              <PrivateRoute>
+                <ChangePassword />
               </PrivateRoute>
             }
           />
