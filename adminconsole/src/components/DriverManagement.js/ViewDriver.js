@@ -11,14 +11,13 @@ const ViewDriver = () => {
   const dispatch = useDispatch();
 
   const { id } = useParams();
-  console.log(id);
 
   useEffect(() => {
     dispatch(getDriverData(id));
   }, [id]);
 
   const { viewDriver } = useSelector((e) => e.driver);
-  console.log('viewDriver', viewDriver);
+
   // debugger;
   // const driverLicenseType = JSON.parse(viewDriver?.licenseType);
   // console.log('dri', driverLicenseType)
@@ -57,9 +56,9 @@ const ViewDriver = () => {
     },
     onSubmit: (values, { resetForm }) => {
       // resetForm({ values: '' });
-      values.id = id;
+
       console.log('values', values);
-      dispatch(setDrvWages(values, () => navigate('/drivers')));
+      dispatch(setDrvWages(id, values, () => navigate('/drivers')));
     },
   });
 
@@ -161,9 +160,9 @@ const ViewDriver = () => {
           <form onSubmit={handleSubmit}>
             <div className="row align-items-center">
               <div className="col mt-4">
-              <label htmlFor="file-input" className="input-label">
-                       enter daily wage
-                      </label>
+                <label htmlFor="file-input" className="input-label">
+                  enter daily wage
+                </label>
                 <input
                   type="text"
                   name="dailyWage"
@@ -181,9 +180,9 @@ const ViewDriver = () => {
             </div>
             <div className="row align-items-center mt-4">
               <div className="col">
-              <label htmlFor="file-input" className="input-label">
-                        bata
-                      </label>
+                <label htmlFor="file-input" className="input-label">
+                  bata
+                </label>
                 <input
                   type="text"
                   id="bata"
@@ -199,9 +198,9 @@ const ViewDriver = () => {
             </div>
             <div className="row align-items-center mt-4">
               <div className="col">
-              <label htmlFor="file-input" className="input-label">
-                        select shift
-                      </label>
+                <label htmlFor="file-input" className="input-label">
+                  select shift
+                </label>
                 <select
                   name="shift"
                   value={values.shift}
