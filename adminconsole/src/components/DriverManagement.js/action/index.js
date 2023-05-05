@@ -55,8 +55,9 @@ export const rejectDriver = (id) => async (dispatch) => {
 };
 
 //approve driver
-export const setDrvWages = (props, navigate) => async (dispatch) => {
-  const { data } = await updateData(`/drivers/approve`, props);
+export const setDrvWages = (id,props, navigate) => async (dispatch) => {
+console.log('props', props)
+  const { data } = await updateData(`/drivers/approve/${id}`, props);
   if (data.success) {
     dispatch(setSuccessMessage(data.message));
     navigate();

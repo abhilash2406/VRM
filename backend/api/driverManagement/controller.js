@@ -5,6 +5,7 @@ const trips = require('../../models/trip');
 const login = require('../../models/login');
 const routes = require('../../models/route');
 const designations = require('../../models/designation');
+const transactions = require('../../models/transaction');
 const transporter = require('../../modules/mail');
 const { Op } = require('sequelize');
 const Docusign = require('docusign-esign');
@@ -271,33 +272,42 @@ exports.rejectDriver = async (req, res, next) => {
 exports.approveDrivers = async (req, res, next) => {
   try {
     console.log('req.body', req.body);
-    const data = await drivers.update(
-      {
-        status: 'approved',
-        dailyWage: req.body.dailyWage,
-        bata: req.body.bata,
-        shift: req.body.shift,
-      },
-      {
-        where: {
-          id: req.body.id,
-        },
-      }
-    );
-    res.send({
-      success: true,
-      message: 'approved',
+
+    const transaction = await transactions.findOne({
+      where: { driverId: req.params.id },
     });
+
+    console.log('first', transaction);
+    if (!transaction) {
+      res.send({
+        success: false,
+        message: 'not paid',
+      });
+    } else {
+      const data = await drivers.update(
+        {
+          status: 'approved',
+          dailyWage: req.body.dailyWage,
+          bata: req.body.bata,
+          shift: req.body.shift,
+        },
+        {
+          where: {
+            id: req.params.id,
+          },
+        }
+      );
+      res.send({
+        success: true,
+        message: 'approved',
+      });
+    }
   } catch (e) {
     res.send({
       success: false,
       message: e.message,
     });
   }
-};
-
-exports.presentDrivers = async (req, res, next) => {
-  console.log('first');
 };
 
 //docusign functions

@@ -30,7 +30,7 @@ router
   );
 router.route('/active').get(controller.fetchActiveDrivers);
 router.route('/reject/:id').patch(controller.rejectDriver);
-router.route('/approve').patch(controller.approveDrivers);
-router.route('/present').get(controller.presentDrivers);
+router.route('/approve/:id').patch(controller.approveDrivers);
+
 
 module.exports = router;
