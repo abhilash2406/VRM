@@ -22,6 +22,7 @@ const Permissions = () => {
   const uniqueMenus = new Set(permissions?.map((item) => item.menu));
   const menus = Array.from(uniqueMenus);
   const { designations } = useSelector((state) => state.user);
+  console.log('first', designations)
   const {roleData} = useSelector((e)=>e.permissions)
   const [role, setRole] = useState('');
 
