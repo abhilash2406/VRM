@@ -12,6 +12,7 @@ const Trips = () => {
   }, []);
 
   const { trips } = useSelector((e) => e.routes);
+  const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
   
 
   const { grantedPermissions } = useSelector((state) => state.auth);
@@ -54,12 +55,12 @@ const Trips = () => {
             <td>
               <div>
                 {' '}
-                {permissionAllowed?.includes('Edit') ? (
+                {userRole === 'Admin' || permissionAllowed?.includes('Edit') ? (
                   <Link className="btn btn-info" to={`/edit-trips/${trp.id}`}>
                     Edit
                   </Link>
                 ) : null}
-                {permissionAllowed?.includes('Delete') ? (
+                {userRole === 'Admin' || permissionAllowed?.includes('Delete') ? (
 
                 <button
                   className="btn btn-danger mx-2"

@@ -16,7 +16,7 @@ const BarGraph = ({ trips }) => {
   useEffect(() => {
     // Group the trips by month
     const tripsByMonth = trips?.reduce((acc, trip) => {
-      const month = moment(trip.date).format('MMMM');
+      const month = moment(trip?.date).format('MMMM');
       acc[month] = acc[month] ? acc[month] + 1 : 1;
       return acc;
     }, {});

@@ -29,6 +29,8 @@ const Gallery = () => {
 
   const { imgs } = useSelector((e) => e.user);
   console.log(imgs);
+  const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
+
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
@@ -78,7 +80,7 @@ const Gallery = () => {
 
             <hr className="mt-2 mb-5" />
             <div className="mb-3">
-              {permissionAllowed?.includes('Delete') ? (
+              {userRole === 'Admin' || permissionAllowed?.includes('Delete') ? (
                 <form onSubmit={handleSubmit}>
                   <h3>React Multiple File Upload</h3>
 
@@ -110,7 +112,7 @@ const Gallery = () => {
                     alt=""
                     onClick={handleImageClick}
                   />
-                  {permissionAllowed?.includes('Delete') ? (
+                  {userRole === 'Admin' || permissionAllowed?.includes('Delete') ? (
                     <button
                       className="btn btn-warning"
                       onClick={() => {

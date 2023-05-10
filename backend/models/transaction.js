@@ -1,7 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/sequelize-config');
 
-
 const transaction = sequelize.define('transaction', {
   id: {
     type: DataTypes.UUID,
@@ -25,8 +24,8 @@ const transaction = sequelize.define('transaction', {
     allowNull: false,
   },
   date: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.DATE,
+    allowNull: true,
   },
   driverId: {
     type: DataTypes.UUID,

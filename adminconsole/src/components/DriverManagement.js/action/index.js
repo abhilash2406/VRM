@@ -4,7 +4,7 @@ import { setSuccessMessage, setErrorMessage } from '../../../action';
 // get all drivers
 export const getAllDrivers = () => async (dispatch) => {
   const { data } = await getData('/drivers');
-  console.log('data', data);
+  // console.log('data', data);
   dispatch({
     type: 'GET_DRIVER_DATA',
     payload: data.data,

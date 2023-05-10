@@ -12,7 +12,7 @@ const DriverList = () => {
   useEffect(() => {
     dispatch(getAllDrivers());
   }, []);
-
+  const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
   const { grantedPermissions } = useSelector((state) => state.auth);
   let array = grantedPermissions?.filter((item) => item.menu === 'Driver');
   let permissionAllowed = array?.map((e) => e.subMenu);
@@ -43,7 +43,9 @@ const DriverList = () => {
           </Link>
         </td>
         <td>
-          {permissionAllowed?.includes('Edit') ? (
+      
+
+          {userRole === 'Admin'|| permissionAllowed?.includes('Edit') ? (
             data?.status === 'approved' ? (
               <Link className="btn btn-info" to={`/edit-driver/${data.id}`}>
                 Edit
@@ -70,7 +72,7 @@ const DriverList = () => {
       <div className="row">
         <NavBar />
         <div className="col-sm p-3 min-vh-100">
-          {permissionAllowed?.includes('Add') ? (
+          {userRole === 'Admin'|| permissionAllowed?.includes('Add') ? (
             <Link to="/add-drivers">
               <button className="btn btn-info add-btn">Add driver</button>
             </Link>

@@ -582,18 +582,20 @@ exports.proceedPayment = async (req, res, next) => {
       phone: userData.phn,
     });
 
-    // console.log('customer', customer);
+    console.log('customer', customer);
     const date = new Date(); // Create a new Date object
+    console.log('date', date)
     const formattedDate = moment(date).format('YYYY-MM-DD');
+    console.log('fo', formattedDate)
     const transc = await transactions.create({
       name: userData.name,
       email: userData.mail,
       amount: 1000,
-      type: 'debit',
+      type: 'card',
       date: formattedDate,
       driverId: userData.driver,
     });
-    // console.log('transc', transc);
+    console.log('transc', transc);
 
     const intent = await Stripe.paymentIntents.create({
       payment_method: id,
@@ -607,7 +609,7 @@ exports.proceedPayment = async (req, res, next) => {
       payment_method: id,
     });
 
-    // console.log(paymentIntent);
+    console.log(paymentIntent);
 
     return res.send({
       success: true,

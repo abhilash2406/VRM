@@ -60,7 +60,7 @@ export const updateTrip = (id, props, navigate) => async (dispatch) => {
 //no of trips in last 30
 export const noOfTrips = () => async (dispatch) => {
   const { data } = await postData('/trips/count');
-  console.log('data', data)
+  // console.log('data', data)
   if (data.success) {
     dispatch({
       type: 'GET_NO_OF_TRIPS',

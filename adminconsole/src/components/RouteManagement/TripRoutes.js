@@ -44,6 +44,8 @@ const TripRoutes = () => {
   const { grantedPermissions } = useSelector((state) => state.auth);
 
   let array = grantedPermissions?.filter((item) => item.menu === 'Route');
+  const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
+
 
   let permissionAllowed = array?.map((e) => e.subMenu);
   const columns = [
@@ -67,15 +69,15 @@ const TripRoutes = () => {
 
     {
       name: 'Action',
-      omit: permissionAllowed?.includes('Delete') ? false : true,
+      omit: userRole === 'Admin' || permissionAllowed?.includes('Delete') ? false : true,
       selector: (row) => (
         <div>
-          {permissionAllowed?.includes('Edit') ? (
+          { userRole === 'Admin' || permissionAllowed?.includes('Edit') ? (
             <Link className="btn btn-info" to={`/edit-routes/${row.id}`}>
               Edit
             </Link>
           ) : null}
-          {permissionAllowed?.includes('Delete') ? (
+          { userRole === 'Admin' || permissionAllowed?.includes('Delete') ? (
             <button
               className="btn btn-danger"
               onClick={() => {
@@ -95,7 +97,7 @@ const TripRoutes = () => {
       <div className="row">
         <NavBar />
         <div className="col-sm p-3 min-vh-100">
-          {permissionAllowed?.includes('Add') ? (
+          { userRole === 'Admin' || permissionAllowed?.includes('Add') ? (
             <Link to="/add-routes">
               <button className="btn btn-info add-btn">Add Routes</button>
             </Link>

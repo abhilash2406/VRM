@@ -38,6 +38,7 @@ const ListTruck = () => {
     },
     'dark'
   );
+  const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
   const { grantedPermissions } = useSelector((state) => state.auth);
   // console.log('grantedPermissions', grantedPermissions);
   let array = grantedPermissions?.filter((item) => item.menu === 'Truck');
@@ -75,12 +76,12 @@ const ListTruck = () => {
       selector: (row) => (
         <div>
           {' '}
-          {permissionAllowed?.includes('Edit') ? (
+          {userRole === 'Admin'|| permissionAllowed?.includes('Edit') ? (
             <Link className="btn btn-info" to={`/edit-trucks/${row.id}`}>
               Edit
             </Link>
           ) : null}
-          {permissionAllowed?.includes('Delete') ? (
+          {userRole === 'Admin'|| permissionAllowed?.includes('Delete') ? (
             <button
               className="btn btn-warning"
               onClick={() => {
@@ -102,7 +103,7 @@ const ListTruck = () => {
         <NavBar />
         <div className="col-sm p-3 min-vh-100">
           <div className="mb-3">
-            {permissionAllowed?.includes('Add') ? (
+            { userRole === 'Admin'|| permissionAllowed?.includes('Add') ? (
               <Link to="/add-trucks">
                 <button className="btn btn-info add-btn">Add Truck</button>
               </Link>

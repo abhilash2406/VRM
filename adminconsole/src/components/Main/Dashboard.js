@@ -9,20 +9,30 @@ import { getAllTruckData } from '../TruckManagement/action';
 import { getRoutes } from '../RouteManagement/action';
 import { getAllDrivers } from '../DriverManagement.js/action';
 import { noOfTrips, getAllTrips } from '../TripManagement/index';
-
+import Web3 from 'web3';
 import Graph from './Graph';
 import Chart from 'chart.js/auto';
 import { CategoryScale } from 'chart.js';
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    (async () => {
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const web3 = new Web3(window.ethereum);
+
+      const accounts = web3.utils.toTwosComplement('-1');
+      console.log(accounts.toString());
+    })();
+  }, []);
   useEffect(() => {
     dispatch(fetchFeedbacks());
     dispatch(getAllTruckData());
     dispatch(getAllDrivers());
     dispatch(getRoutes());
     dispatch(noOfTrips());
-    dispatch(getAllTrips())
+    dispatch(getAllTrips());
   }, []);
   const { feedbacks } = useSelector((e) => e.user);
   const { truckData } = useSelector((e) => e.truck);
@@ -30,8 +40,9 @@ const Dashboard = () => {
   const { routeData } = useSelector((e) => e.routes);
   const { Trips } = useSelector((e) => e.routes);
   const { trips } = useSelector((e) => e.routes);
+  const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
 
-  console.log('Trips', trips)
+  // console.log('Trips', trips)
   const { grantedPermissions } = useSelector((state) => state.auth);
 
   let array = grantedPermissions?.filter((item) => item.menu === 'Dashboard');
@@ -55,7 +66,7 @@ const Dashboard = () => {
           <section>
             <div className="d-flex flex-column">
               <div className="d-flex">
-                {permissionAllowed?.includes('no_of_messages') ? (
+                {userRole=== 'Admin' || permissionAllowed?.includes('no_of_messages') ? (
                   <div className="card" style={{ width: '12rem' }}>
                     <div className="card-body">
                       <h5 className="card-title">No of user messages</h5>
@@ -63,7 +74,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                 ) : null}
-                {permissionAllowed?.includes('no_of_drivers') ? (
+                {userRole=== 'Admin' || permissionAllowed?.includes('no_of_drivers') ? (
                   <div className="card" style={{ width: '12rem' }}>
                     <div className="card-body">
                       <h5 className="card-title">No of drivers</h5>
@@ -83,7 +94,7 @@ const Dashboard = () => {
                     <p className="card-text">{Trips?.length}</p>
                   </div>
                 </div>
-                {permissionAllowed?.includes('no_of_routes') ? (
+                {userRole=== 'Admin' || permissionAllowed?.includes('no_of_routes') ? (
                   <div className="card" style={{ width: '12rem' }}>
                     <div className="card-body">
                       <h5 className="card-title">No of routes</h5>
