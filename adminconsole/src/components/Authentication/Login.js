@@ -75,7 +75,7 @@ const Login = () => {
                 // on submit values
                 onSubmit={(values, { resetForm }) => {
                   resetForm({ values: '' });
-                
+
                   dispatch(setLogin(values, () => navigate('/dashboard')));
                 }}
               >
@@ -158,7 +158,9 @@ const Login = () => {
                   </form>
                 )}
               </Formik>
-              <a href="http://localhost:3000" className='btn btn-info'>back</a>
+              <a href="http://localhost:3000" className="btn btn-info">
+                back
+              </a>
             </div>
           </div>
         </div>
