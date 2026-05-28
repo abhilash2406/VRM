@@ -1,7 +1,7 @@
-const contact = require('../../models/contact');
-const mail = require('../../modules/mail');
+import contact from '../../models/contact.js';
+import mail from '../../modules/mail.js';
 
-exports.setContact = async (req, res, next) => {
+export const setContact = async (req, res, next) => {
   //   console.log('req', req.body);
   try {
     req.body.status = 'unread';

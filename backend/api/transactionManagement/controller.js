@@ -1,8 +1,8 @@
-const transactions = require('../../models/transaction');
-const drivers = require('../../models/driver');
-const users = require('../../models/users');
+import transactions from '../../models/transaction.js';
+import drivers from '../../models/driver.js';
+import users from '../../models/users.js';
 
-exports.TransactionList = async (req, res, next) => {
+export const TransactionList = async (req, res, next) => {
   try {
     const data = await transactions.findAll({
       include: {

@@ -1,6 +1,6 @@
-const signup = require('../users');
-const login = require('../login');
-const designation = require('../designation');
+import signup from '../users.js';
+import login from '../login.js';
+import designation from '../designation.js';
 
 const hashing = async (password) => {
   const salt = await login.generateSalt();

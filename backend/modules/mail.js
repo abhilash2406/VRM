@@ -1,4 +1,4 @@
-const { createTransport } = require('nodemailer');
+import { createTransport } from 'nodemailer';
 
 let transporter = createTransport({
   host: 'smtp.gmail.com',
@@ -10,4 +10,4 @@ let transporter = createTransport({
   },
 });
 
-module.exports = transporter;
+export default transporter;

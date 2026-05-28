@@ -1,4 +1,4 @@
-const designation = require('../designation');
+import designation from '../designation.js';
 
 (async () => {
   try {

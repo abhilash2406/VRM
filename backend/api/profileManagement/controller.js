@@ -1,13 +1,13 @@
-const users = require('../../models/users');
-const login = require('../../models/login');
-const designations = require('../../models/designation');
-const permissions = require('../../models/permission');
-const contacts = require('../../models/contact');
-const jwt = require('jsonwebtoken');
-const permissionSetting = require('../../models/permissionSetting');
-const CryptoJS = require('crypto-js');
+import users from '../../models/users.js';
+import login from '../../models/login.js';
+import designations from '../../models/designation.js';
+import permissions from '../../models/permission.js';
+import contacts from '../../models/contact.js';
+import jwt from 'jsonwebtoken';
+import permissionSetting from '../../models/permissionSetting.js';
+import CryptoJS from 'crypto-js';
 
-exports.viewProfile = async (req, res, next) => {
+export const viewProfile = async (req, res, next) => {
   try {
     const token = req.header('Authorization')
       ? req.header('Authorization').replace('Bearer ', '')
@@ -35,7 +35,7 @@ exports.viewProfile = async (req, res, next) => {
   }
 };
 
-exports.getUserMessages = async (req, res, next) => {
+export const getUserMessages = async (req, res, next) => {
   try {
     const data = await contacts.findAll({});
     // console.log('vdata', data);
@@ -52,7 +52,7 @@ exports.getUserMessages = async (req, res, next) => {
   }
 };
 
-exports.getMsgToRead = async (req, res, next) => {
+export const getMsgToRead = async (req, res, next) => {
   try {
     const id = req.params.id;
     const feedback = await contacts.findByPk(id);
@@ -73,7 +73,7 @@ exports.getMsgToRead = async (req, res, next) => {
 };
 
 //dlt feedback
-exports.dltFeedback = async (req, res) => {
+export const dltFeedback = async (req, res) => {
   const id = req.params.id;
   try {
     const feedback = await contacts.findByPk(id);
@@ -91,7 +91,7 @@ exports.dltFeedback = async (req, res) => {
 };
 
 //permissions
-exports.ProfilePermissions = async (req, res, next) => {
+export const ProfilePermissions = async (req, res, next) => {
   try {
     console.log('hy');
     const token = req.header('Authorization')
@@ -128,7 +128,7 @@ exports.ProfilePermissions = async (req, res, next) => {
 
 //change password
 
-exports.changePassword = async (req, res) => {
+export const changePassword = async (req, res) => {
   const decrypted = CryptoJS.AES.decrypt(
     req.body.currentPassword,
     'XkhZG4fW2t2W'

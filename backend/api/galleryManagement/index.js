@@ -1,10 +1,10 @@
-var express = require('express');
+import express from 'express';
+import * as controller from './controller.js';
+import { upload } from '../../middlewares/uploader.js';
 var router = express.Router();
-const controller = require('./controller');
-const { upload } = require('../../middlewares/uploader');
 
 router.route('/').get(controller.retrieveImages);
 
 router.route('/').post(upload.single('image'), controller.uploadImages);
 router.route('/:id').delete(controller.dltImages);
-module.exports = router;
+export default router;

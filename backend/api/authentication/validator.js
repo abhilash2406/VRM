@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
 const addUserValidate = async (req, res, next) => {
   const schema = Joi.object({
@@ -15,4 +15,5 @@ const addUserValidate = async (req, res, next) => {
   }
 };
 
-module.exports = { addUserValidate };
+export { addUserValidate };
+export default { addUserValidate };

@@ -1,5 +1,5 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/sequelize-config');
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/sequelize-config.js';
 
 const gallery = sequelize.define(
   'gallery',
@@ -18,4 +18,4 @@ const gallery = sequelize.define(
     timestamps: true,
   }
 );
-module.exports = gallery;
+export default gallery;

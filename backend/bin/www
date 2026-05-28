@@ -4,9 +4,10 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('backend:server');
-var http = require('http');
+import app from '../app.js';
+import debugFn from 'debug';
+const debug = debugFn('backend:server');
+import http from 'http';
 
 /**
  * Get port from environment and store in Express.
@@ -20,7 +21,7 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
-const { Server } = require('socket.io');
+import { Server } from 'socket.io';
 const io = new Server(server, {
   cors: {
     origin: '*',
@@ -103,4 +104,4 @@ function onListening() {
   var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
-module.exports = io;
+export default io;

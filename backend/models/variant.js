@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const  sequelize  = require('../config/sequelize-config');
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/sequelize-config.js';
 
 const variant = sequelize.define(
   'variant',
@@ -23,4 +23,4 @@ const variant = sequelize.define(
   }
 );
 
-module.exports = variant;
+export default variant;

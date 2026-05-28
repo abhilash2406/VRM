@@ -1,14 +1,14 @@
-const trucks = require('../../models/truck');
-const routes = require('../../models/route');
-const drivers = require('../../models/driver');
-const trips = require('../../models/trip');
-const users = require('../../models/users');
-const login = require('../../models/login');
-const { Op } = require('sequelize');
-const moment = require('moment');
+import trucks from '../../models/truck.js';
+import routes from '../../models/route.js';
+import drivers from '../../models/driver.js';
+import trips from '../../models/trip.js';
+import users from '../../models/users.js';
+import login from '../../models/login.js';
+import { Op } from 'sequelize';
+import moment from 'moment';
 
 // add trips
-exports.addTrips = async (req, res, next) => {
+export const addTrips = async (req, res, next) => {
   try {
     console.log(req.body);
     const truck_exist = await trucks.findByPk(req.body.truckId);
@@ -85,7 +85,7 @@ exports.addTrips = async (req, res, next) => {
   }
 };
 
-exports.getTrips = async (req, res, next) => {
+export const getTrips = async (req, res, next) => {
   try {
     const data = await trips.findAll({
       include: [
@@ -116,7 +116,7 @@ exports.getTrips = async (req, res, next) => {
   }
 };
 
-exports.getTripData = async (req, res, next) => {
+export const getTripData = async (req, res, next) => {
   const id = req.params.id;
   console.log('iiid', id);
   try {
@@ -153,7 +153,7 @@ exports.getTripData = async (req, res, next) => {
 };
 
 //delete trip
-exports.deleteTrip = async (req, res) => {
+export const deleteTrip = async (req, res) => {
   const id = req.params.id;
   console.log('id', id);
   try {
@@ -198,7 +198,7 @@ exports.deleteTrip = async (req, res) => {
 };
 
 //update trip
-exports.updateTrip = async (req, res, next) => {
+export const updateTrip = async (req, res, next) => {
   try {
     console.log(req.body);
     const id = req.params.id;
@@ -285,7 +285,7 @@ exports.updateTrip = async (req, res, next) => {
 };
 
 // no of trips in last 30 days
-exports.noOfTrips = async (req, res) => {
+export const noOfTrips = async (req, res) => {
   console.log('hy');
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);

@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
 const TruckValidate = async (req, res, next) => {
   const schema = Joi.object({
@@ -21,4 +21,5 @@ const TruckValidate = async (req, res, next) => {
   }
 };
 
-module.exports = { TruckValidate };
+export { TruckValidate };
+export default { TruckValidate };

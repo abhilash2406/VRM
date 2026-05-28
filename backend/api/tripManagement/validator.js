@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
 const locationSchema = Joi.object({
   longitude: Joi.string().required(),
@@ -21,4 +21,5 @@ const tripValidate = async (req, res, next) => {
   }
 };
 
-module.exports = { tripValidate };
+export { tripValidate };
+export default { tripValidate };

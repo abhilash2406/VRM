@@ -1,13 +1,13 @@
-const Brand = require('../../models/brand');
-const TruckModel = require('../../models/truckModel');
-const Variant = require('../../models/variant');
-const trucks = require('../../models/truck');
-const login = require('../../models/login');
-const users = require('../../models/users');
-const jwt = require('jsonwebtoken');
-const { Op } = require('sequelize');
+import Brand from '../../models/brand.js';
+import TruckModel from '../../models/truckModel.js';
+import Variant from '../../models/variant.js';
+import trucks from '../../models/truck.js';
+import login from '../../models/login.js';
+import users from '../../models/users.js';
+import jwt from 'jsonwebtoken';
+import { Op } from 'sequelize';
 
-exports.getTruckBrands = async (req, res, next) => {
+export const getTruckBrands = async (req, res, next) => {
   try {
     const data = await Brand.findAll();
     res.send({
@@ -23,7 +23,7 @@ exports.getTruckBrands = async (req, res, next) => {
   }
 };
 
-exports.getTruckModels = async (req, res, next) => {
+export const getTruckModels = async (req, res, next) => {
   try {
     const data = await TruckModel.findAll();
     res.send({
@@ -39,7 +39,7 @@ exports.getTruckModels = async (req, res, next) => {
   }
 };
 
-exports.getTruckVariants = async (req, res, next) => {
+export const getTruckVariants = async (req, res, next) => {
   try {
     const data = await Variant.findAll();
     res.send({
@@ -54,7 +54,7 @@ exports.getTruckVariants = async (req, res, next) => {
     });
   }
 };
-exports.correspondingData = async (req, res, next) => {
+export const correspondingData = async (req, res, next) => {
   try {
     // console.log(req.body);
     if (!req.body.brandId && !req.body.modelId) {
@@ -105,7 +105,7 @@ exports.correspondingData = async (req, res, next) => {
 };
 
 // add truck
-exports.addTrucks = async (req, res, next) => {
+export const addTrucks = async (req, res, next) => {
   try {
     console.log(req.body);
     const truck_exist = await trucks.findAll({
@@ -205,7 +205,7 @@ exports.addTrucks = async (req, res, next) => {
 };
 
 // get all trucks
-exports.getAllTruckData = async (req, res, next) => {
+export const getAllTruckData = async (req, res, next) => {
   try {
     const data = await trucks.findAll();
     res.send({
@@ -221,7 +221,7 @@ exports.getAllTruckData = async (req, res, next) => {
   }
 };
 // get active trucks
-exports.getActiveTrucks = async (req, res, next) => {
+export const getActiveTrucks = async (req, res, next) => {
   try {
     const data = await trucks.findAll({
       where: {
@@ -242,7 +242,7 @@ exports.getActiveTrucks = async (req, res, next) => {
 };
 
 // get all trucks
-exports.truckToEdit = async (req, res, next) => {
+export const truckToEdit = async (req, res, next) => {
   try {
     // console.log('req.params.id', req.params.id);
     const data = await trucks.findByPk(req.params.id);
@@ -260,7 +260,7 @@ exports.truckToEdit = async (req, res, next) => {
 };
 
 //dlt trucks
-exports.dltTruck = async (req, res) => {
+export const dltTruck = async (req, res) => {
   const id = req.params.id;
   try {
     const feedback = await trucks.findByPk(id);
@@ -283,7 +283,7 @@ exports.dltTruck = async (req, res) => {
     });
   }
 };
-exports.updateTruck = async (req, res, next) => {
+export const updateTruck = async (req, res, next) => {
   console.log('req.body', req.body);
   const id = req.params.id;
   console.log('id', id);

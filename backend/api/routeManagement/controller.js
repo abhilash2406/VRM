@@ -1,6 +1,6 @@
-const routes = require('../../models/route');
+import routes from '../../models/route.js';
 
-exports.addRoutes = async (req, res, next) => {
+export const addRoutes = async (req, res, next) => {
   try {
     // console.log('req.body', req.body);
     req.body.title = req.body.from + '-' + req.body.to;
@@ -21,7 +21,7 @@ exports.addRoutes = async (req, res, next) => {
   }
 };
 
-exports.getAllRoutes = async (req, res) => {
+export const getAllRoutes = async (req, res) => {
   try {
     let data = await routes.findAll({});
     // console.log('data', data);
@@ -39,7 +39,7 @@ exports.getAllRoutes = async (req, res) => {
 
 
 //delete route
-exports.deleteRoute = async (req, res) => {
+export const deleteRoute = async (req, res) => {
   const id = req.params.id;
   try {
     const Routes = await routes.findByPk(id);
@@ -59,7 +59,7 @@ exports.deleteRoute = async (req, res) => {
 
 
 //get route data
-exports.getRoute = async (req,res)=>{
+export const getRoute = async (req,res)=>{
   const id = req.params.id;
   try {
     let data = await routes.findByPk(id);

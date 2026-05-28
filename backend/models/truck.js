@@ -1,5 +1,5 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/sequelize-config');
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/sequelize-config.js';
 
 const truck = sequelize.define('truck', {
   id: {
@@ -73,4 +73,4 @@ truck.associate = (models) => {
   truck.belongsTo(models.users, { foreignKey: 'createdBy' });
 };
 
-module.exports = truck;
+export default truck;

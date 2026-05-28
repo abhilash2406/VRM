@@ -1,5 +1,5 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/sequelize-config');
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/sequelize-config.js';
 
 const trip = sequelize.define(
   'trip',
@@ -42,4 +42,4 @@ trip.associate = (models) => {
   trip.belongsTo(models.route, { foreignKey: 'routeId', allowNull: false });
 };
 
-module.exports = trip;
+export default trip;

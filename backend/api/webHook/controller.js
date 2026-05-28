@@ -1,6 +1,6 @@
-const users = require('../../models/users');
+import users from '../../models/users.js';
 
-exports.success = async (req, res) => {
+export const success = async (req, res) => {
   console.log('1', req.body.data.envelopeSummary.recipients);
 
   try {

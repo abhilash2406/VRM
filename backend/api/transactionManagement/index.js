@@ -1,7 +1,7 @@
-var express = require('express');
+import express from 'express';
+import * as controller from './controller.js';
 var router = express.Router();
-const controller = require('./controller');
 
 router.route('/').get(controller.TransactionList);
 
-module.exports = router;
+export default router;

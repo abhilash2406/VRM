@@ -1,5 +1,5 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/sequelize-config');
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/sequelize-config.js';
 
 const driver = sequelize.define(
   'driver',
@@ -69,4 +69,4 @@ driver.associate = (models) => {
   });
 };
 
-module.exports = driver;
+export default driver;

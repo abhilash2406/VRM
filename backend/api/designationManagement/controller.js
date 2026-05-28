@@ -1,10 +1,10 @@
-const designation = require('../../models/designation');
-const { Op } = require('sequelize');
-const sequelize = require('../../config/sequelize-config');
+import designation from '../../models/designation.js';
+import { Op } from 'sequelize';
+import sequelize from '../../config/sequelize-config.js';
 
 
 
-exports.getDesignations = async (req, res, next) => {
+export const getDesignations = async (req, res, next) => {
   try {
     const data = await designation.findAll({
       where: {

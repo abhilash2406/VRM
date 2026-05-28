@@ -1,6 +1,6 @@
-var express = require('express');
+import express from 'express';
+import * as controller from './controller.js';
 var router = express.Router();
-const controller = require('./controller');
 
 router.route('/view').get(controller.viewProfile);
 router.route('/feedback').get(controller.getUserMessages);
@@ -12,4 +12,4 @@ router
 router.route('/permissions').post(controller.ProfilePermissions);
 router.route('/change-password').post(controller.changePassword);
 
-module.exports = router;
+export default router;
