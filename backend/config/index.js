@@ -6,7 +6,7 @@ const configurations = JSON.parse(
   fs.readFileSync(new URL('./config.json', import.meta.url), 'utf-8')
 );
 
-const config = configurations[env];
+const config = configurations[env] || configurations['development'] || configurations['local'];
 
 export const database = config.database;
 export const stripe = config.stripe;
