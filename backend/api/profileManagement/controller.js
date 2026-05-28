@@ -83,7 +83,7 @@ export const dltFeedback = async (req, res) => {
       message: ' deleted successfully',
     });
   } catch (err) {
-    return es.send({
+    return res.send({
       success: false,
       message: err.message,
     });
