@@ -1,7 +1,7 @@
-var express = require('express');
+import express from 'express';
+import * as controller from '../contactManagement/controller.js';
+import validate from './validator.js';
 var router = express.Router();
-const controller = require('../contactManagement/controller');
-const validate = require('./validator');
 
 router.route('/').post(validate.contactValidate, controller.setContact);
 /**
@@ -54,4 +54,4 @@ router.route('/').post(validate.contactValidate, controller.setContact);
  *       - message
  */
 
-module.exports = router;
+export default router;

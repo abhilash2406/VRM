@@ -1,9 +1,9 @@
-const permissions = require('../../models/permission');
-const designations = require('../../models/designation');
-const permissionSetting = require('../../models/permissionSetting');
+import permissions from '../../models/permission.js';
+import designations from '../../models/designation.js';
+import permissionSetting from '../../models/permissionSetting.js';
 
 // fetch all permissions
-exports.getAllPermissions = async (req, res, next) => {
+export const getAllPermissions = async (req, res, next) => {
   try {
     const data = await permissions.findAll({});
 
@@ -20,7 +20,7 @@ exports.getAllPermissions = async (req, res, next) => {
 };
 
 // post user permissions
-exports.grantPermissions = async (req, res, next) => {
+export const grantPermissions = async (req, res, next) => {
   try {
     await permissionSetting.destroy({
       where: { designationId: req.params.id },
@@ -64,7 +64,7 @@ exports.grantPermissions = async (req, res, next) => {
   }
 };
 
-exports.getUserData = async (req, res, next) => {
+export const getUserData = async (req, res, next) => {
   try {
    
     const allowed = await permissionSetting.findAll({

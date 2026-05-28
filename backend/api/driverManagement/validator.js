@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
 const driverValidate = async (req, res, next) => {
 //   console.log('re.body', req.body);
@@ -20,4 +20,5 @@ const driverValidate = async (req, res, next) => {
   }
 };
 
-module.exports = { driverValidate };
+export { driverValidate };
+export default { driverValidate };

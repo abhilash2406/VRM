@@ -1,5 +1,5 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/sequelize-config');
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/sequelize-config.js';
 
 const transaction = sequelize.define('transaction', {
   id: {
@@ -40,4 +40,4 @@ transaction.associate = (models) => {
   });
 };
 
-module.exports = transaction;
+export default transaction;

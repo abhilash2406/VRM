@@ -1,6 +1,6 @@
-const Brand = require('../brand');
-const TruckModel = require('../truckModel');
-const Variant = require('../variant');
+import Brand from '../brand.js';
+import TruckModel from '../truckModel.js';
+import Variant from '../variant.js';
 
 const brandsData = [
   { brandId: 1, name: 'Scania' },

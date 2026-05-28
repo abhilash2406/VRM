@@ -1,5 +1,5 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/sequelize-config');
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/sequelize-config.js';
 
 const permissionSetting = sequelize.define(
   'permissionSetting',
@@ -36,4 +36,4 @@ permissionSetting.associate = (models) => {
   });
 };
 
-module.exports = permissionSetting;
+export default permissionSetting;

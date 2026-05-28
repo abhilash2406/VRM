@@ -1,25 +1,25 @@
-const users = require('../../models/users');
-const login = require('../../models/login');
-const designations = require('../../models/designation');
-const permissionSetting = require('../../models/permissionSetting');
-const permissions = require('../../models/permission');
-const drivers = require('../../models/driver');
-const transactions = require('../../models/transaction');
-const transporter = require('../../modules/mail');
-const Docusign = require('docusign-esign');
-const { docusign, stripe } = require('../../config');
-const fs = require('fs');
-const moment = require('moment');
-const path = require('path');
-const session = require('express-session');
-const Brand = require('../../models/brand');
-const TruckModel = require('../../models/truckModel');
-const Variant = require('../../models/variant');
-const trucks = require('../../models/truck');
-const { Op } = require('sequelize');
-const Stripe = require('stripe')(stripe.secret_key);
+import users from '../../models/users.js';
+import login from '../../models/login.js';
+import designations from '../../models/designation.js';
+import permissionSetting from '../../models/permissionSetting.js';
+import permissions from '../../models/permission.js';
+import drivers from '../../models/driver.js';
+import transactions from '../../models/transaction.js';
+import transporter from '../../modules/mail.js';
+import { stripe } from '../../config/index.js';
+import fs from 'fs';
+import moment from 'moment';
+import path from 'path';
+import session from 'express-session';
+import Brand from '../../models/brand.js';
+import TruckModel from '../../models/truckModel.js';
+import Variant from '../../models/variant.js';
+import trucks from '../../models/truck.js';
+import { Op } from 'sequelize';
+import StripeClass from 'stripe';
+const Stripe = new StripeClass(stripe.secret_key);
 
-exports.Login = async (req, res, next) => {
+export const Login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await login.findOne({ where: { email: email } });
@@ -146,7 +146,7 @@ exports.Login = async (req, res, next) => {
 
 //add users
 
-exports.addUsers = async (req, res, next) => {
+export const addUsers = async (req, res, next) => {
   try {
     const userExist = await login.findOne({ where: { email: req.body.email } });
 
@@ -201,7 +201,7 @@ exports.addUsers = async (req, res, next) => {
 
 // google login
 
-exports.googleLogin = async (req, res, next) => {
+export const googleLogin = async (req, res, next) => {
   try {
     const googleToken = req.body.token;
     const currentUser = await login.findOne({
@@ -254,7 +254,7 @@ exports.googleLogin = async (req, res, next) => {
 };
 
 // sign  up
-exports.SignUp = async (req, res, next) => {
+export const SignUp = async (req, res, next) => {
   try {
     const user = await login.findOne({ where: { email: req.body.email } });
 
@@ -277,7 +277,7 @@ exports.SignUp = async (req, res, next) => {
   }
 };
 
-exports.googleSignUp = async (req, res, next) => {
+export const googleSignUp = async (req, res, next) => {
   try {
     const user = await login.findOne({
       where: { email: req.body.data.data.email },
@@ -304,7 +304,7 @@ exports.googleSignUp = async (req, res, next) => {
 
 //driver sign up
 
-exports.signUpUser = async (req, res, next) => {
+export const signUpUser = async (req, res, next) => {
   console.log('req.body', req.body);
   console.log('req.files', req.files);
 
@@ -417,10 +417,8 @@ exports.signUpUser = async (req, res, next) => {
       };
       console.log('userData', userData);
 
-      const { url, result } = await documentSign(req);
       res.send({
         success: true,
-        url: url,
         data: userData,
       });
     } else {
@@ -443,7 +441,6 @@ exports.signUpUser = async (req, res, next) => {
       };
       console.log('userData', userData);
 
-      const { url, result } = await documentSign(req);
       let mailOptions = {
         to: req.body.email,
         subject: 'Successfully Registered',
@@ -453,123 +450,13 @@ exports.signUpUser = async (req, res, next) => {
 
       res.send({
         success: true,
-        url: url,
         data: userData,
       });
     }
   }
 };
 
-//docusign functions
-
-async function documentSign(req) {
-  await checkToken(req);
-  let envelopesApi = getEnvelopesApi(req);
-  // console.log('envelopesApi', envelopesApi)
-  let envelope = makeEnvelope(req);
-  // console.log('envelopes', envelope);
-
-  let result = await envelopesApi.createEnvelope(docusign.accountId, {
-    envelopeDefinition: envelope,
-  });
-  // console.log('ENVELOPE RESULT', result);
-
-  let viewRequest = makeRecipientViewRequest(
-    req.body.first_name,
-    req.body.email
-  );
-  // console.log('viewRequest', viewRequest);
-  const { url } = await envelopesApi.createRecipientView(
-    docusign.accountId,
-    result.envelopeId,
-    { recipientViewRequest: viewRequest }
-  );
-  // console.log('result', result);
-  return { result, url };
-}
-
-async function checkToken(req) {
-  try {
-    if (req.session.access_token && Date.now() < req.session.expires_at) {
-      console.log('RE USING ACCESS TOKEN', req.session.access_token);
-    } else {
-      let dsApiClient = new Docusign.ApiClient();
-      // console.log('first', dsApiClient);
-      dsApiClient.setBasePath(docusign.basePath);
-      const results = await dsApiClient.requestJWTUserToken(
-        docusign.integrationKey,
-        docusign.userId,
-        'signature',
-        fs.readFileSync(path.join(__dirname, '../../private.key')),
-        3600
-      );
-      // console.log('results', results);
-      req.session.access_token = results.body.access_token;
-      req.session.expires_at =
-        Date.now() + (results.body.expires_in - 60) * 1000;
-
-      req.session.save(function (err) {
-        if (err) console.log(err);
-      });
-    }
-    // req.redirect('')
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-function getEnvelopesApi(req) {
-  let dsApiClient = new Docusign.ApiClient();
-  dsApiClient.setBasePath(docusign.basePath);
-  dsApiClient.addDefaultHeader(
-    'Authorization',
-    'Bearer ' + req.session.access_token.trim()
-  );
-  return new Docusign.EnvelopesApi(dsApiClient);
-}
-
-function makeEnvelope(req) {
-  let env = new Docusign.EnvelopeDefinition();
-  env.templateId = docusign.templateId;
-  let text = Docusign.Text.constructFromObject({
-    tabLabel: 'Signer Name',
-    value: req.body.first_name,
-  });
-
-  // pull together the existing and new tabs ina a tab object
-  let tabs = Docusign.Tabs.constructFromObject({
-    textTabs: [text],
-  });
-
-  let signer1 = Docusign.TemplateRole.constructFromObject({
-    email: req.body.email,
-    name: req.body.first_name,
-    tabs: tabs,
-    clientUserId: docusign.clientUserId,
-    roleName: 'Signer',
-  });
-
-  env.templateRoles = [signer1];
-  env.status = 'sent';
-
-  return env;
-}
-
-function makeRecipientViewRequest(name, email) {
-  let viewRequest = new Docusign.RecipientViewRequest();
-
-  viewRequest.returnUrl = 'http://localhost:3001/payment';
-  viewRequest.authenticationMethod = 'none';
-
-  // Recipient info must match embedded recipient info we use to create the envelope
-  viewRequest.email = email;
-  viewRequest.userName = name;
-  viewRequest.clientUserId = docusign.clientUserId;
-
-  return viewRequest;
-}
-
-exports.proceedPayment = async (req, res, next) => {
+export const proceedPayment = async (req, res, next) => {
   try {
     let { id, userData } = req.body;
 

@@ -1,21 +1,19 @@
-const drivers = require('../../models/driver');
-const trucks = require('../../models/truck');
-const users = require('../../models/users');
-const trips = require('../../models/trip');
-const login = require('../../models/login');
-const routes = require('../../models/route');
-const designations = require('../../models/designation');
-const transactions = require('../../models/transaction');
-const transporter = require('../../modules/mail');
-const { Op } = require('sequelize');
-const Docusign = require('docusign-esign');
-const { docusign } = require('../../config');
-const path = require('path');
-const fs = require('fs');
+import drivers from '../../models/driver.js';
+import trucks from '../../models/truck.js';
+import users from '../../models/users.js';
+import trips from '../../models/trip.js';
+import login from '../../models/login.js';
+import routes from '../../models/route.js';
+import designations from '../../models/designation.js';
+import transactions from '../../models/transaction.js';
+import transporter from '../../modules/mail.js';
+import { Op } from 'sequelize';
+import path from 'path';
+import fs from 'fs';
+import session from 'express-session';
 
-const session = require('express-session');
 
-exports.getDriverDatas = async (req, res, next) => {
+export const getDriverDatas = async (req, res, next) => {
   try {
     const data = await drivers.findAll({
       include: [
@@ -44,7 +42,7 @@ exports.getDriverDatas = async (req, res, next) => {
 };
 
 // add driver by admin
-exports.addDrivers = async (req, res, next) => {
+export const addDrivers = async (req, res, next) => {
   try {
     console.log('req.body', req.body);
     const userExist = await login.findOne({ where: { email: req.body.email } });
@@ -107,12 +105,10 @@ exports.addDrivers = async (req, res, next) => {
         });
 
         console.log('driver', driver);
-        const { url, result } = await documentSign(req);
-
         let mailOptions = {
           to: req.body.email,
           subject: 'Successfully Registered',
-          text: `Your username is ${req.body.name} and password is ${randomPassword} and  please sign the document using the following link: ${url} to complete your registration procedures`,
+          text: `Your username is ${req.body.name} and password is ${randomPassword} to complete your registration procedures`,
         };
         const info = await transporter.sendMail(mailOptions);
         return res.send({
@@ -131,7 +127,7 @@ exports.addDrivers = async (req, res, next) => {
 
 //update driver
 
-exports.updateDriver = async (req, res) => {
+export const updateDriver = async (req, res) => {
   const id = req.params.id;
   console.log('id', id);
   try {
@@ -176,7 +172,7 @@ exports.updateDriver = async (req, res) => {
 };
 
 //view
-exports.viewDriver = async (req, res) => {
+export const viewDriver = async (req, res) => {
   const id = req.params.id;
   try {
     const drv = await drivers.findOne({
@@ -214,7 +210,7 @@ exports.viewDriver = async (req, res) => {
 
 //get active drivers
 
-exports.fetchActiveDrivers = async (req, res) => {
+export const fetchActiveDrivers = async (req, res) => {
   console.log('first');
   try {
     const data = await drivers.findAll({
@@ -246,7 +242,7 @@ exports.fetchActiveDrivers = async (req, res) => {
 };
 
 //reject driver
-exports.rejectDriver = async (req, res, next) => {
+export const rejectDriver = async (req, res, next) => {
   try {
     const { id } = req.params;
     const data = await drivers.update(
@@ -269,7 +265,7 @@ exports.rejectDriver = async (req, res, next) => {
   }
 };
 
-exports.approveDrivers = async (req, res, next) => {
+export const approveDrivers = async (req, res, next) => {
   try {
     console.log('req.body', req.body);
 
@@ -310,113 +306,7 @@ exports.approveDrivers = async (req, res, next) => {
   }
 };
 
-//docusign functions
-
-async function documentSign(req) {
-  await checkToken(req);
-  let envelopesApi = getEnvelopesApi(req);
-  // console.log('envelopesApi', envelopesApi)
-  let envelope = makeEnvelope(req);
-  // console.log('envelopes', envelope);
-
-  let result = await envelopesApi.createEnvelope(docusign.accountId, {
-    envelopeDefinition: envelope,
-  });
-  // console.log('ENVELOPE RESULT', result);
-
-  let viewRequest = makeRecipientViewRequest(req.body.name, req.body.email);
-  // console.log('viewRequest', viewRequest);
-  const { url } = await envelopesApi.createRecipientView(
-    docusign.accountId,
-    result.envelopeId,
-    { recipientViewRequest: viewRequest }
-  );
-  // console.log('result', result);
-  return { result, url };
-}
-
-async function checkToken(req) {
-  try {
-    if (req.session.access_token && Date.now() < req.session.expires_at) {
-      console.log('RE USING ACCESS TOKEN', req.session.access_token);
-    } else {
-      let dsApiClient = new Docusign.ApiClient();
-      // console.log('first', dsApiClient);
-      dsApiClient.setBasePath(docusign.basePath);
-      const results = await dsApiClient.requestJWTUserToken(
-        docusign.integrationKey,
-        docusign.userId,
-        'signature',
-        fs.readFileSync(path.join(__dirname, '../../private.key')),
-        3600
-      );
-      // console.log('results', results);
-      req.session.access_token = results.body.access_token;
-      req.session.expires_at =
-        Date.now() + (results.body.expires_in - 60) * 1000;
-
-      req.session.save(function (err) {
-        if (err) console.log(err);
-      });
-    }
-    // req.redirect('')
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-function getEnvelopesApi(req) {
-  let dsApiClient = new Docusign.ApiClient();
-  dsApiClient.setBasePath(docusign.basePath);
-  dsApiClient.addDefaultHeader(
-    'Authorization',
-    'Bearer ' + req.session.access_token.trim()
-  );
-  return new Docusign.EnvelopesApi(dsApiClient);
-}
-
-function makeEnvelope(req) {
-  let env = new Docusign.EnvelopeDefinition();
-  env.templateId = docusign.templateId;
-  let text = Docusign.Text.constructFromObject({
-    tabLabel: 'Signer Name',
-    value: req.body.name,
-  });
-
-  // pull together the existing and new tabs ina a tab object
-  let tabs = Docusign.Tabs.constructFromObject({
-    textTabs: [text],
-  });
-
-  let signer1 = Docusign.TemplateRole.constructFromObject({
-    email: req.body.email,
-    name: req.body.name,
-    tabs: tabs,
-    clientUserId: docusign.clientUserId,
-    roleName: 'Signer',
-  });
-
-  env.templateRoles = [signer1];
-  env.status = 'sent';
-
-  return env;
-}
-
-function makeRecipientViewRequest(name, email) {
-  let viewRequest = new Docusign.RecipientViewRequest();
-
-  viewRequest.returnUrl = 'http://localhost:3001/success';
-  viewRequest.authenticationMethod = 'none';
-
-  // Recipient info must match embedded recipient info we use to create the envelope
-  viewRequest.email = email;
-  viewRequest.userName = name;
-  viewRequest.clientUserId = docusign.clientUserId;
-
-  return viewRequest;
-}
-
-exports.deleteDriver = async (req, res) => {
+export const deleteDriver = async (req, res) => {
   const id = req.params.id;
   console.log('id', id);
   try {

@@ -1,10 +1,10 @@
+import jwt from 'jsonwebtoken';
+import login from '../models/login.js';
+import { Op } from 'sequelize';
 // // authentication middleware
 
-const jwt = require('jsonwebtoken');
-const login = require('../models/login');
-const { Op } = require('sequelize');
 
-module.exports = async (req, res, next) => {
+export default async (req, res, next) => {;
   try {
     if (
       req.originalUrl.startsWith('/auth') ||

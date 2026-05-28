@@ -1,7 +1,7 @@
-const gallery = require('../../models/gallery');
-const path = require('path');
+import gallery from '../../models/gallery.js';
+import path from 'path';
 
-exports.uploadImages = async (req, res, next) => {
+export const uploadImages = async (req, res, next) => {
   //   console.log("images")
   console.log('req.files', req.file);
   const imagePath = req.file.path.replace(/^public/, '');
@@ -9,7 +9,7 @@ exports.uploadImages = async (req, res, next) => {
   await gallery.create(req.body);
 };
 
-exports.retrieveImages = async (req, res, next) => {
+export const retrieveImages = async (req, res, next) => {
   try {
     const data = await gallery.findAll();
     res.send({
@@ -25,7 +25,7 @@ exports.retrieveImages = async (req, res, next) => {
   }
 };
 //delete
-exports.dltImages = async (req, res) => {
+export const dltImages = async (req, res) => {
   const id = req.params.id;
   try {
     const Gallery = await gallery.findByPk(id);

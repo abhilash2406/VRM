@@ -1,9 +1,9 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/sequelize-config');
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/sequelize-config.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const { jwts } = require('../config');
+
 
 const login = sequelize.define(
   'login',
@@ -83,4 +83,4 @@ login.associate = (models) => {
   });
 };
 
-module.exports = login;
+export default login;

@@ -1,5 +1,5 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/sequelize-config');
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/sequelize-config.js';
 
 const route = sequelize.define(
   'route',
@@ -55,4 +55,4 @@ const route = sequelize.define(
   }
 );
 
-module.exports = route;
+export default route;

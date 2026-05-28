@@ -1,4 +1,4 @@
-const permission = require('../permission');
+import permission from '../permission.js';
 
 (async () => {
   try {

@@ -1,8 +1,13 @@
-const path = require('path');
-const fs = require('fs');
-const sequelize = require('../config/sequelize-config');
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+import path from 'path';
+import fs from 'fs';
+import sequelize from '../config/sequelize-config.js';
 // const basename = path.basename(__filename);
 // const dirname = path.dirname(__filename);
+import { logger } from '../config/winston-config.js';
 
 const files = fs
   .readdirSync(__dirname)
@@ -28,6 +33,6 @@ const files = fs
 
   sequelize
     .sync({ force: false, alter: { drop: false } })
-    .then(() => console.log('db sync done!'))
-    .catch((e) => console.log(e.message));
+    .then(() => logger.info('✅ Database connected and synced successfully!'))
+    .catch((e) => logger.error(e.message));
 })();
