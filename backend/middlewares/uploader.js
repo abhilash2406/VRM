@@ -1,69 +1,167 @@
-import multer from 'multer';
+import fileUpload from 'express-fileupload';
+import path from 'path';
+import fs from 'fs';
+import BadRequest from '../exceptions/badRequest.js';
 
-const imageStorage = multer.diskStorage({
-  destination: 'public/images',
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
+export const ImageMimeTypes = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/gif',
+  'image/bmp',
+  'image/svg+xml',
+  'image/heic',
+  'image/heif',
+];
 
-const multiStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/images');
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
-const multiUpload = multer({
-  storage: multiStorage,
-  limits: {
-    fileSize: 10000000, //10 MB  ,
-  },
-  fileFilter(req, file, cb) {
-    console.log('>>>>>??', file);
+export const DocumentMimeTypes = [
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+];
 
-    if (
-      file.mimetype === 'image/png' ||
-      file.mimetype === 'image/jpg' ||
-      file.mimetype === 'image/jpeg' ||
-      file.mimetype === 'image/PNG' ||
-      file.mimetype === 'image/JPG' ||
-      file.mimetype === 'image/JPEG' ||
-      file.mimetype === 'application/pdf'
-    ) {
-      cb(null, true);
-    } else {
-      cb(new Error('File type not supported'));
+export const FileMimeTypes = [...ImageMimeTypes, ...DocumentMimeTypes];
+
+const getAllowedMimeTypes = (allowedTypes) => {
+  if (Array.isArray(allowedTypes)) {
+    return allowedTypes;
+  }
+  switch (allowedTypes) {
+    case 'image':
+      return ImageMimeTypes;
+    case 'document':
+      return DocumentMimeTypes;
+    case 'file':
+      return FileMimeTypes;
+    default:
+      throw new BadRequest(`Unknown allowedTypes keyword: ${allowedTypes}`);
+  }
+};
+
+const fileValidation = ({ file, allowedTypes, maxSizeMB, required = false, maxFiles }) => {
+  if (required && !file) {
+    throw new BadRequest('File is required');
+  }
+
+  const files = file ? (Array.isArray(file) ? file : [file]) : [];
+
+  const maxSize = maxSizeMB * 1024 * 1024;
+
+  const allowedMimeTypes = getAllowedMimeTypes(allowedTypes);
+
+  if (maxFiles && files.length > maxFiles) {
+    throw new BadRequest(`Only up to ${maxFiles} file(s) are allowed`);
+  }
+
+  files.forEach((f) => {
+    if (f.size > maxSize) {
+      throw new BadRequest(`File exceeds maximum size of ${maxSizeMB} MB`);
     }
 
-    if (req.files.length > 5) {
-      return cb(null, false, (req.lengthValidationError = true));
+    const fileType = f.mimetype || path.extname(f.name).toLowerCase();
+
+    if (!allowedMimeTypes.includes(fileType)) {
+      throw new BadRequest(`Invalid file type. Allowed types are: ${allowedMimeTypes.join(', ')}`);
     }
-    cb(undefined, true);
-  },
+  });
+};
+
+// Configure base express-fileupload middleware
+const handleUpload = fileUpload({
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB global limit
+  abortOnLimit: true,
+  createParentPath: true, // Auto-create public/images if it doesn't exist
 });
 
-const upload = multer({
-  storage: imageStorage,
-  limits: { fileSize: 2000000 },
-  fileFilter: (req, data, cb) => {
-    console.log('>>>>>??', data);
-    if (
-      data.mimetype === 'image/png' ||
-      data.mimetype === 'image/jpg' ||
-      data.mimetype === 'image/jpeg' ||
-      data.mimetype === 'image/PNG' ||
-      data.mimetype === 'image/JPG' ||
-      data.mimetype === 'image/JPEG'
-    ) {
-      cb(null, true);
-    } else {
-      cb(null, false);
-      return cb(new Error('Invalid image format'));
-    }
-  },
-});
+// Helper to save file and mimic multer's object structure
+const saveFile = async (file) => {
+  const filename = `${Date.now()}-${file.name.replace(/\\s+/g, '_')}`;
+  const uploadPath = path.join('public', 'images', filename);
 
-export { upload, multiUpload };
-export default { upload, multiUpload };
+  await file.mv(uploadPath);
+
+  // Return an object that looks exactly like what controllers expect from multer
+  return {
+    path: uploadPath,
+    filename: filename,
+    originalname: file.name,
+    mimetype: file.mimetype,
+    size: file.size,
+  };
+};
+
+export const upload = {
+  single: (fieldName) => [
+    handleUpload,
+    async (req, res, next) => {
+      try {
+        if (!req.files || !req.files[fieldName]) {
+          return next(); // Proceed without file if not required by Multer
+        }
+
+        let file = req.files[fieldName];
+        if (Array.isArray(file)) {
+          file = file[0]; // .single() only expects one
+        }
+
+        // Run the custom validation
+        fileValidation({ file, allowedTypes: ImageMimeTypes, maxSizeMB: 2 });
+
+        // Save to disk and attach to req.file
+        req.file = await saveFile(file);
+
+        next();
+      } catch (err) {
+        next(err);
+      }
+    },
+  ],
+  fields: (fieldsArray) => [
+    handleUpload,
+    async (req, res, next) => {
+      try {
+        req.multerFiles = {};
+
+        if (!req.files) return next();
+
+        for (const field of fieldsArray) {
+          const fieldName = field.name;
+          if (req.files[fieldName]) {
+            let files = req.files[fieldName];
+            if (!Array.isArray(files)) {
+              files = [files];
+            }
+
+            // Limit check based on maxCount
+            if (field.maxCount && files.length > field.maxCount) {
+              files = files.slice(0, field.maxCount);
+            }
+
+            // Run the custom validation
+            fileValidation({ file: files, allowedTypes: FileMimeTypes, maxSizeMB: 10 });
+
+            // Save to disk and construct array
+            const savedFiles = [];
+            for (const f of files) {
+              savedFiles.push(await saveFile(f));
+            }
+
+            req.multerFiles[fieldName] = savedFiles;
+          }
+        }
+
+        // Overwrite express-fileupload's req.files with our new multer-compatible object
+        req.files = req.multerFiles;
+        next();
+      } catch (err) {
+        next(err);
+      }
+    },
+  ],
+};
+
+// Also export as multiUpload for backwards compatibility
+export const multiUpload = upload;
+export default { upload, multiUpload, fileValidation };
