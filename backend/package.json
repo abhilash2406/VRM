@@ -7,7 +7,11 @@
     "start": "node ./bin/www",
     "dev": "node --watch ./bin/www",
     "seed:admin": "node ./models/seeders/admin.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest --coverage"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "migration:run": "npx sequelize-cli db:migrate"
   },
   "dependencies": {
     "axios": "^1.16.1",
@@ -39,6 +43,16 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
-    "jest": "^30.4.2"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.4.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jest": "^29.15.2",
+    "eslint-plugin-prettier": "^5.5.6",
+    "globals": "^17.6.0",
+    "husky": "^9.1.7",
+    "jest": "^30.4.2",
+    "lint-staged": "^17.0.5",
+    "prettier": "^3.8.3",
+    "sequelize-cli": "^6.6.5"
   }
 }

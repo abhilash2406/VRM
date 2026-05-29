@@ -13,15 +13,11 @@ const files = fs
   .readdirSync(__dirname)
   .filter(
     (file) =>
-      file.indexOf('.') !== 0 &&
-      file !== path.basename(__filename) &&
-      file.slice(-3) === '.js'
+      file.indexOf('.') !== 0 && file !== path.basename(__filename) && file.slice(-3) === '.js'
   );
 
 (async () => {
-  // eslint-disable-next-line no-restricted-syntax
   for (const file of files) {
-    // eslint-disable-next-line no-await-in-loop
     await import(`file://${path.resolve(__dirname, file)}`);
   }
 
@@ -32,7 +28,7 @@ const files = fs
   });
 
   sequelize
-    .sync({ force: false, alter: { drop: false } })
-    .then(() => logger.info('✅ Database connected and synced successfully!'))
+    .authenticate()
+    .then(() => logger.info('✅ Database connected successfully! (Auto-sync disabled)'))
     .catch((e) => logger.error(e.message));
 })();
