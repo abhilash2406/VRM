@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 import React, { useState, useEffect, useRef } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -44,7 +45,7 @@ const FillDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { usermail } = useSelector((e) => e.auth);
-  console.log('usermail', usermail);
+  logger.info('usermail', usermail);
 
   return (
     <section className="body">
@@ -75,7 +76,7 @@ const FillDetails = () => {
                 // on submit values
                 onSubmit={(values, { resetForm }) => {
                   // resetForm({ values: '' });
-                  console.log('values', values);
+                  logger.info('values', values);
                   dispatch(
                     getDriverData(values, () => navigate('/driver-details'))
                   );

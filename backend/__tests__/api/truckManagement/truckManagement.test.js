@@ -97,9 +97,7 @@ describe('Truck Management', () => {
       const next = jest.fn();
 
       await TruckValidate(req, res, next);
-      expect(res.send).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false })
-      );
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
     });
   });
 

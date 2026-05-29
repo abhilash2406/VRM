@@ -1,10 +1,11 @@
+import logger from '../../../utils/logger';
 import { getData, postData, deleteData, updateData } from '../../../services';
 import { setSuccessMessage, setErrorMessage } from '../../../action';
 
 // get all drivers
 export const getAllDrivers = () => async (dispatch) => {
   const { data } = await getData('/drivers');
-  // console.log('data', data);
+  // logger.info('data', data);
   dispatch({
     type: 'GET_DRIVER_DATA',
     payload: data.data,
@@ -14,7 +15,7 @@ export const getAllDrivers = () => async (dispatch) => {
 // get active drivers
 export const getActiveDrivers = () => async (dispatch) => {
   const { data } = await getData(`/drivers/present`);
-  console.log('data', data);
+  logger.info('data', data);
 };
 
 // add driver
@@ -30,7 +31,7 @@ export const addDrivers = (props, navigate) => async (dispatch) => {
 
 // get driver data
 export const getDriverData = (id) => async (dispatch) => {
-  console.log('hy', id);
+  logger.info('hy', id);
   const { data } = await getData(`/drivers/${id}`);
   if (data.success) {
     dispatch({
@@ -44,7 +45,7 @@ export const getDriverData = (id) => async (dispatch) => {
 
 // reject driver
 export const rejectDriver = (id) => async (dispatch) => {
-  console.log(id);
+  logger.info(id);
   const { data } = await updateData(`/drivers/reject/${id}`);
   if (data.success) {
     dispatch(setSuccessMessage(data.message));
@@ -56,7 +57,7 @@ export const rejectDriver = (id) => async (dispatch) => {
 
 //approve driver
 export const setDrvWages = (id,props, navigate) => async (dispatch) => {
-console.log('props', props)
+logger.info('props', props)
   const { data } = await updateData(`/drivers/approve/${id}`, props);
   if (data.success) {
     dispatch(setSuccessMessage(data.message));

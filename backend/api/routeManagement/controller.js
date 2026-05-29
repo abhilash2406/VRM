@@ -1,8 +1,9 @@
+import { logger } from '../../config/winston-config.js';
 import routes from '../../models/route.js';
 
 export const addRoutes = async (req, res, next) => {
   try {
-    // console.log('req.body', req.body);
+    // logger.info('req.body', req.body);
     req.body.title = req.body.from + '-' + req.body.to;
     req.body.longitude = req.body.locations.map((data) => data.longitude);
     req.body.latitude = req.body.locations.map((data) => data.latitude);
@@ -24,7 +25,7 @@ export const addRoutes = async (req, res, next) => {
 export const getAllRoutes = async (req, res) => {
   try {
     let data = await routes.findAll({});
-    // console.log('data', data);
+    // logger.info('data', data);
     res.send({
       success: true,
       data,
@@ -36,7 +37,6 @@ export const getAllRoutes = async (req, res) => {
     });
   }
 };
-
 
 //delete route
 export const deleteRoute = async (req, res) => {
@@ -57,13 +57,12 @@ export const deleteRoute = async (req, res) => {
   }
 };
 
-
 //get route data
-export const getRoute = async (req,res)=>{
+export const getRoute = async (req, res) => {
   const id = req.params.id;
   try {
     let data = await routes.findByPk(id);
-    // console.log('data', data);
+    // logger.info('data', data);
     res.send({
       success: true,
       data,
@@ -74,5 +73,4 @@ export const getRoute = async (req,res)=>{
       message: e.message,
     });
   }
-
-}
+};

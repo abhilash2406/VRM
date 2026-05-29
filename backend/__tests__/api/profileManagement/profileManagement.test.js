@@ -91,9 +91,7 @@ describe('Profile Management', () => {
 
       await controller.viewProfile(req, res);
 
-      expect(res.send).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false })
-      );
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
     });
   });
 
@@ -142,7 +140,10 @@ describe('Profile Management', () => {
       await controller.getMsgToRead(req, res);
 
       expect(contacts.default.findByPk).toHaveBeenCalledWith('1');
-      expect(contacts.default.update).toHaveBeenCalledWith({ status: 'read' }, { where: { id: '1' } });
+      expect(contacts.default.update).toHaveBeenCalledWith(
+        { status: 'read' },
+        { where: { id: '1' } }
+      );
       expect(res.send).toHaveBeenCalledWith({
         success: true,
         message: 'marked as read',
@@ -231,9 +232,7 @@ describe('Profile Management', () => {
 
       await controller.ProfilePermissions(req, res);
 
-      expect(res.send).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false })
-      );
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
     });
   });
 
@@ -246,7 +245,11 @@ describe('Profile Management', () => {
       const confirmPasswordEncrypted = CryptoJS.AES.encrypt('new123', secretKey).toString();
 
       const token = jwt.sign({ id: 'login-1' }, process.env.JWT_SECRET);
-      login.default.findByPk.mockResolvedValue({ id: 'login-1', password: 'old_hashed_password', salt: 'old_salt' });
+      login.default.findByPk.mockResolvedValue({
+        id: 'login-1',
+        password: 'old_hashed_password',
+        salt: 'old_salt',
+      });
       login.default.verifyPassword.mockResolvedValue(true);
       login.default.generateSalt.mockResolvedValue('new_salt');
       login.default.hashPassword.mockResolvedValue('new_hashed_password');
@@ -264,7 +267,11 @@ describe('Profile Management', () => {
 
       await controller.changePassword(req, res);
 
-      expect(login.default.verifyPassword).toHaveBeenCalledWith('current123', 'old_hashed_password', 'old_salt');
+      expect(login.default.verifyPassword).toHaveBeenCalledWith(
+        'current123',
+        'old_hashed_password',
+        'old_salt'
+      );
       expect(login.default.update).toHaveBeenCalledWith(
         { salt: 'new_salt', password: 'new_hashed_password' },
         { where: { id: 'login-1' } }
@@ -293,9 +300,14 @@ describe('Profile Management', () => {
       };
       const res = { send: jest.fn() };
 
-      await expect(controller.changePassword(req, res)).rejects.toThrow("Cannot read properties of null (reading 'password')");
+      await expect(controller.changePassword(req, res)).rejects.toThrow(
+        "Cannot read properties of null (reading 'password')"
+      );
 
-      expect(global.errorMessage).toHaveBeenCalledWith(res, 'You dont have the permission to change the password');
+      expect(global.errorMessage).toHaveBeenCalledWith(
+        res,
+        'You dont have the permission to change the password'
+      );
     });
 
     it('should call errorMessage when old password verification fails', async () => {
@@ -304,7 +316,11 @@ describe('Profile Management', () => {
       const confirmPasswordEncrypted = CryptoJS.AES.encrypt('new123', secretKey).toString();
 
       const token = jwt.sign({ id: 'login-1' }, process.env.JWT_SECRET);
-      login.default.findByPk.mockResolvedValue({ id: 'login-1', password: 'old_hashed_password', salt: 'old_salt' });
+      login.default.findByPk.mockResolvedValue({
+        id: 'login-1',
+        password: 'old_hashed_password',
+        salt: 'old_salt',
+      });
       login.default.verifyPassword.mockResolvedValue(false);
 
       const req = {
@@ -319,7 +335,11 @@ describe('Profile Management', () => {
 
       await controller.changePassword(req, res);
 
-      expect(login.default.verifyPassword).toHaveBeenCalledWith('wrongpass', 'old_hashed_password', 'old_salt');
+      expect(login.default.verifyPassword).toHaveBeenCalledWith(
+        'wrongpass',
+        'old_hashed_password',
+        'old_salt'
+      );
       expect(global.errorMessage).toHaveBeenCalledWith(res, 'You entered the Wrong Password');
     });
   });

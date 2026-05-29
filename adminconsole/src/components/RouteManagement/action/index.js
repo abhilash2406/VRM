@@ -1,8 +1,9 @@
+import logger from '../../../utils/logger';
 import { getData, postData, deleteData } from '../../../services';
 import { setSuccessMessage, setErrorMessage } from '../../../action';
 
 export const setRoute = (routeData, navigate) => async (dispatch) => {
-  console.log('routeData', routeData);
+  logger.info('routeData', routeData);
   const { data } = await postData('/routes/add', routeData);
   if (data.success === true) {
     dispatch(setSuccessMessage('Route created  Successfully'));
@@ -36,7 +37,7 @@ export const dltRoute = (id) => async (dispatch) => {
 
 // get route data
 export const getRouteData = (id) => async (dispatch) => {
-  console.log('hy', id);
+  logger.info('hy', id);
   const { data } = await getData(`/routes/${id}`);
   if (data.success) {
     dispatch({

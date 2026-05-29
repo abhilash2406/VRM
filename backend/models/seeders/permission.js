@@ -1,3 +1,4 @@
+import { logger } from '../../config/winston-config.js';
 import permission from '../permission.js';
 
 (async () => {
@@ -36,6 +37,6 @@ import permission from '../permission.js';
 
     await permission.bulkCreate(permissionData);
   } catch (e) {
-    console.log('error', e.message);
+    logger.info('error', e.message);
   }
 })();

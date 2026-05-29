@@ -160,9 +160,7 @@ describe('Authentication Module', () => {
       const next = jest.fn();
 
       await addUserValidate(req, res, next);
-      expect(res.send).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false })
-      );
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
     });
   });
 
@@ -181,7 +179,12 @@ describe('Authentication Module', () => {
     });
 
     it('should handle driver login successfully (approved)', async () => {
-      const mockUserLogin = { id: 'login-1', designationId: 'des-driver', password: 'hash', salt: 'salt' };
+      const mockUserLogin = {
+        id: 'login-1',
+        designationId: 'des-driver',
+        password: 'hash',
+        salt: 'salt',
+      };
       login.default.findOne.mockResolvedValue(mockUserLogin);
       designations.default.findOne.mockResolvedValue({ id: 'des-driver', designation: 'Driver' });
       users.default.findOne.mockResolvedValue({ id: 'user-1' });
@@ -210,7 +213,12 @@ describe('Authentication Module', () => {
     });
 
     it('should fail driver login if needs approval', async () => {
-      const mockUserLogin = { id: 'login-1', designationId: 'des-driver', password: 'hash', salt: 'salt' };
+      const mockUserLogin = {
+        id: 'login-1',
+        designationId: 'des-driver',
+        password: 'hash',
+        salt: 'salt',
+      };
       login.default.findOne.mockResolvedValue(mockUserLogin);
       designations.default.findOne.mockResolvedValue({ id: 'des-driver', designation: 'Driver' });
       users.default.findOne.mockResolvedValue({ id: 'user-1' });
@@ -228,7 +236,12 @@ describe('Authentication Module', () => {
     });
 
     it('should fail driver login if password is wrong', async () => {
-      const mockUserLogin = { id: 'login-1', designationId: 'des-driver', password: 'hash', salt: 'salt' };
+      const mockUserLogin = {
+        id: 'login-1',
+        designationId: 'des-driver',
+        password: 'hash',
+        salt: 'salt',
+      };
       login.default.findOne.mockResolvedValue(mockUserLogin);
       designations.default.findOne.mockResolvedValue({ id: 'des-driver', designation: 'Driver' });
       users.default.findOne.mockResolvedValue({ id: 'user-1' });
@@ -247,7 +260,12 @@ describe('Authentication Module', () => {
     });
 
     it('should handle standard non-driver login successfully', async () => {
-      const mockUserLogin = { id: 'login-1', designationId: 'des-admin', password: 'hash', salt: 'salt' };
+      const mockUserLogin = {
+        id: 'login-1',
+        designationId: 'des-admin',
+        password: 'hash',
+        salt: 'salt',
+      };
       login.default.findOne.mockResolvedValue(mockUserLogin);
       designations.default.findOne.mockResolvedValue({ id: 'des-admin', designation: 'Admin' });
       login.default.verifyPassword.mockResolvedValue(true);
@@ -275,7 +293,12 @@ describe('Authentication Module', () => {
     });
 
     it('should fail standard non-driver login if password is wrong', async () => {
-      const mockUserLogin = { id: 'login-1', designationId: 'des-admin', password: 'hash', salt: 'salt' };
+      const mockUserLogin = {
+        id: 'login-1',
+        designationId: 'des-admin',
+        password: 'hash',
+        salt: 'salt',
+      };
       login.default.findOne.mockResolvedValue(mockUserLogin);
       designations.default.findOne.mockResolvedValue({ id: 'des-admin', designation: 'Admin' });
       login.default.verifyPassword.mockResolvedValue(false);
@@ -631,9 +654,7 @@ describe('Authentication Module', () => {
 
       await controller.proceedPayment(req, res);
 
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false })
-      );
+      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
     });
   });
 });

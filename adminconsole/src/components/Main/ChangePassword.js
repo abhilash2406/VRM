@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 import React, { useRef, useEffect } from 'react';
 import { changePass } from '../../action';
 import { useFormik } from 'formik';
@@ -50,14 +51,14 @@ const ChangePassword = () => {
     },
     onSubmit: (values, { resetForm }) => {
       resetForm({ values: '' });
-      console.log('values', values);
+      logger.info('values', values);
       const cPs = encryptData(values.currentPassword);
       values.currentPassword = cPs;
       const nPs = encryptData(values.newPassword);
       values.newPassword = nPs;
       const cnPs = encryptData(values.confirmPassword);
       values.confirmPassword = cnPs;
-      console.log('values', values);
+      logger.info('values', values);
 
         dispatch(changePass(values, () => navigate('/admin')));
     },

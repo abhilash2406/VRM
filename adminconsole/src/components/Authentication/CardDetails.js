@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 import React from 'react';
 import Cookies from 'js-cookie';
 import {
@@ -51,7 +52,7 @@ const CardDetails = () => {
         makePayment({ id: id, userData: userData }, () => navigate('/success'))
       );
     } else {
-      console.log(error.message);
+      logger.info(error.message);
     }
   };
 

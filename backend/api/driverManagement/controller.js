@@ -1,3 +1,4 @@
+import { logger } from '../../config/winston-config.js';
 import drivers from '../../models/driver.js';
 import trucks from '../../models/truck.js';
 import users from '../../models/users.js';
@@ -11,7 +12,6 @@ import { Op } from 'sequelize';
 import path from 'path';
 import fs from 'fs';
 import session from 'express-session';
-
 
 export const getDriverDatas = async (req, res, next) => {
   try {
@@ -44,7 +44,7 @@ export const getDriverDatas = async (req, res, next) => {
 // add driver by admin
 export const addDrivers = async (req, res, next) => {
   try {
-    console.log('req.body', req.body);
+    logger.info('req.body', req.body);
     const userExist = await login.findOne({ where: { email: req.body.email } });
     if (userExist) {
       res.send({
@@ -64,7 +64,7 @@ export const addDrivers = async (req, res, next) => {
           message: 'this license is already submitted',
         });
       } else {
-        console.log('hy');
+        logger.info('hy');
 
         var randomPassword = Math.random().toString(36).slice(-8);
         const salt = await login.generateSalt();
@@ -91,10 +91,7 @@ export const addDrivers = async (req, res, next) => {
         const licenseTypeString = JSON.stringify(req.body.licenseType);
         const driver = await drivers.create({
           licenseNo: req.body.licenseNo,
-          licensePhoto: req.files['licensePhoto'][0].path.replace(
-            /^public/,
-            ''
-          ),
+          licensePhoto: req.files['licensePhoto'][0].path.replace(/^public/, ''),
           userPhoto: req.files['userPhoto'][0].path.replace(/^public/, ''),
           licenseType: licenseTypeString,
           shift: req.body.shift,
@@ -104,7 +101,7 @@ export const addDrivers = async (req, res, next) => {
           status: 'approved',
         });
 
-        console.log('driver', driver);
+        logger.info('driver', driver);
         let mailOptions = {
           to: req.body.email,
           subject: 'Successfully Registered',
@@ -129,10 +126,10 @@ export const addDrivers = async (req, res, next) => {
 
 export const updateDriver = async (req, res) => {
   const id = req.params.id;
-  console.log('id', id);
+  logger.info('id', id);
   try {
     const driver_ext = await drivers.findByPk(id);
-    // console.log(driver_ext);
+    // logger.info(driver_ext);
     if (!driver_ext) {
       res.send({
         success: false,
@@ -140,9 +137,9 @@ export const updateDriver = async (req, res) => {
       });
     } else {
       const user_ext = await users.findByPk(driver_ext.userId);
-      // console.log(user_ext);
+      // logger.info(user_ext);
       const login_ext = await login.findByPk(user_ext.loginId);
-      // console.log(login_ext);
+      // logger.info(login_ext);
 
       await user_ext.update({
         name: req.body.name,
@@ -211,7 +208,7 @@ export const viewDriver = async (req, res) => {
 //get active drivers
 
 export const fetchActiveDrivers = async (req, res) => {
-  console.log('first');
+  logger.info('first');
   try {
     const data = await drivers.findAll({
       where: { status: 'approved' },
@@ -226,7 +223,7 @@ export const fetchActiveDrivers = async (req, res) => {
         },
       ],
     });
-    console.log('data', data);
+    logger.info('data', data);
 
     res.send({
       success: true,
@@ -267,13 +264,13 @@ export const rejectDriver = async (req, res, next) => {
 
 export const approveDrivers = async (req, res, next) => {
   try {
-    console.log('req.body', req.body);
+    logger.info('req.body', req.body);
 
     const transaction = await transactions.findOne({
       where: { driverId: req.params.id },
     });
 
-    console.log('first', transaction);
+    logger.info('first', transaction);
     if (!transaction) {
       res.send({
         success: false,
@@ -308,7 +305,7 @@ export const approveDrivers = async (req, res, next) => {
 
 export const deleteDriver = async (req, res) => {
   const id = req.params.id;
-  console.log('id', id);
+  logger.info('id', id);
   try {
     const driver = await drivers.findByPk(id, {
       include: [{ model: users, onDelete: 'cascade' }],
@@ -325,19 +322,19 @@ export const deleteDriver = async (req, res) => {
         where: { driverId: id },
       });
 
-      console.log(trip);
+      logger.info(trip);
 
       const user = await users.findOne({
         where: { id: driver.userId },
       });
 
-      console.log(user);
+      logger.info(user);
 
       const loged = await login.findOne({
         where: { id: user.loginId },
       });
 
-      console.log(loged);
+      logger.info(loged);
       await trip.destroy();
       await user.destroy();
       await loged.destroy();

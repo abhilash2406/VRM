@@ -25,9 +25,7 @@ describe('Route Management', () => {
           to: 'Manchester',
           country: 'UK',
           state: 'Greater London',
-          locations: [
-            { longitude: '-0.1278', latitude: '51.5074' },
-          ],
+          locations: [{ longitude: '-0.1278', latitude: '51.5074' }],
         },
       };
       const res = { send: jest.fn() };
@@ -50,9 +48,7 @@ describe('Route Management', () => {
       const next = jest.fn();
 
       await routeValidate(req, res, next);
-      expect(res.send).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false })
-      );
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
     });
   });
 
@@ -64,9 +60,7 @@ describe('Route Management', () => {
           body: {
             from: 'A',
             to: 'B',
-            locations: [
-              { longitude: '1.2', latitude: '3.4' },
-            ],
+            locations: [{ longitude: '1.2', latitude: '3.4' }],
           },
         };
         const res = { send: jest.fn() };
@@ -87,9 +81,7 @@ describe('Route Management', () => {
           body: {
             from: 'A',
             to: 'B',
-            locations: [
-              { longitude: '1.2', latitude: '3.4' },
-            ],
+            locations: [{ longitude: '1.2', latitude: '3.4' }],
           },
         };
         const res = { send: jest.fn() };

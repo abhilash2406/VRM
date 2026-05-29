@@ -1,3 +1,4 @@
+import { logger } from '../../../config/winston-config.js';
 import { jest } from '@jest/globals';
 import * as controller from '../../../api/webHook/controller.js';
 
@@ -55,7 +56,7 @@ describe('Webhook Module', () => {
         json: jest.fn(),
       };
 
-      // Spying on console.log to avoid polluting output and verify catch block execution
+      // Spying on logger.info to avoid polluting output and verify catch block execution
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
       await controller.success(req, res);

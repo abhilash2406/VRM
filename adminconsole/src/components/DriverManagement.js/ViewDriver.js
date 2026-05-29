@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,7 +21,7 @@ const ViewDriver = () => {
 
   // debugger;
   // const driverLicenseType = JSON.parse(viewDriver?.licenseType);
-  // console.log('dri', driverLicenseType)
+  // logger.info('dri', driverLicenseType)
 
   const onRejectDriver = () => {
     dispatch(rejectDriver(id));
@@ -57,7 +58,7 @@ const ViewDriver = () => {
     onSubmit: (values, { resetForm }) => {
       // resetForm({ values: '' });
 
-      console.log('values', values);
+      logger.info('values', values);
       dispatch(setDrvWages(id, values, () => navigate('/drivers')));
     },
   });

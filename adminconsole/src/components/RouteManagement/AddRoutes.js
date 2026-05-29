@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
@@ -15,7 +16,7 @@ import { Link, useNavigate,useParams } from 'react-router-dom';
 const AddRoutes = (props) => {
   const navigate = useNavigate();
   const { id } = useParams();
-  console.log(id);
+  logger.info(id);
 
   const dispatch = useDispatch();
   const [formValues, setFormValues] = useState({
@@ -38,7 +39,7 @@ const AddRoutes = (props) => {
     }
   }, [id]);
   const { routeDetails } = useSelector((e) => e.routes);
-  console.log('routeData', routeDetails);
+  logger.info('routeData', routeDetails);
 
   const handleTitleChange = async (e) => {
     const { value } = e.target;
@@ -59,12 +60,12 @@ const AddRoutes = (props) => {
       const state = stateObj ? stateObj.long_name : '';
       setFormValues({ ...formValues, from: value, country, state });
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     }
   };
 
   // const [directions, setDirections] = useState({});
-  // console.log(directions)
+  // logger.info(directions)
 
   // const directionsCallback = (response, status) => {
   //   if (status === 'OK') {
@@ -72,13 +73,13 @@ const AddRoutes = (props) => {
   //       directions: response,
   //     });
   //   } else {
-  //     console.log('Directions request failed due to ' + status);
+  //     logger.info('Directions request failed due to ' + status);
   //   }
   // };
 
   const handleToChange = async (e) => {
     const { value } = e.target;
-    console.log('valueto', value);
+    logger.info('valueto', value);
     try {
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${value}&key=AIzaSyD1n-Lml-bCOkTnNZs3uZNqq5IEyo7VQRY`
@@ -86,7 +87,7 @@ const AddRoutes = (props) => {
 
       setFormValues({ ...formValues, to: value });
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     }
   };
 
@@ -125,7 +126,7 @@ const AddRoutes = (props) => {
         locations: updatedLocations,
       });
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     }
   };
 
@@ -142,7 +143,7 @@ const AddRoutes = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formValues);
+    logger.info(formValues);
     dispatch(setRoute(formValues, () => navigate('/routes')));
     // setFormValues({
     //   from: '',
@@ -154,11 +155,11 @@ const AddRoutes = (props) => {
   };
 
   const handleRemoveLocation = (id) => {
-    console.log('Before remove', formValues.locations);
+    logger.info('Before remove', formValues.locations);
     const updatedLocations = formValues.locations.filter(
       (loc) => loc.id !== id
     );
-    console.log('After remove', updatedLocations);
+    logger.info('After remove', updatedLocations);
     setFormValues({ ...formValues, locations: updatedLocations });
   };
   let waypoints = [];
@@ -167,7 +168,7 @@ const AddRoutes = (props) => {
       (waypoints = [...waypoints, { lat: data.latitude, lng: data.longitude }])
   );
 
-  console.log('waypoints', waypoints);
+  logger.info('waypoints', waypoints);
   // // const { route } = useSelector((e) => e.lib);
   // useEffect(() => {
   //   return () => {

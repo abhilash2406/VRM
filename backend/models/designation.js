@@ -1,7 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
 
-
 const designation = sequelize.define(
   'designation',
   {

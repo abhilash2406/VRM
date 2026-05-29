@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 import React, { useState, useEffect, useRef } from 'react';
 import styledComponents from 'styled-components';
 import { useNavigate, Link } from 'react-router-dom';
@@ -37,7 +38,7 @@ const DrivingDetails = () => {
   };
 
   const { driverData } = useSelector((e) => e.auth);
-  console.log('driverData', driverData);
+  logger.info('driverData', driverData);
 
   const [licenseImg, setLicenseImg] = useState('');
   const [userImg, setUserImg] = useState('');
@@ -82,7 +83,7 @@ const DrivingDetails = () => {
     setBrandId(bid);
     const mid = document.getElementById('model').value;
     setModelId(mid);
-    console.log(bid, mid);
+    logger.info(bid, mid);
     dispatch(getCorrespondingData({ brandId: bid, modelId: mid }));
   };
 
@@ -169,7 +170,7 @@ const DrivingDetails = () => {
             }
             // on submit values
             onSubmit={(values, { resetForm }) => {
-              console.log('values', values);
+              logger.info('values', values);
               const formData = new FormData();
               if (isChecked1 === true) {
                 formData.append('first_name', driverData.first_name);

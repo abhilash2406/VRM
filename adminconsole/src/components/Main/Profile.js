@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 // view profile page
 
 import React from 'react';
@@ -13,7 +14,7 @@ const Profile = () => {
   },[]);
 
   const { userData } = useSelector((e) => e.user);
-  console.log('userData', userData);
+  logger.info('userData', userData);
   return (
     <div>
       <h2>{userData.name}</h2>

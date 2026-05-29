@@ -1,3 +1,4 @@
+import { logger } from '../../config/winston-config.js';
 import Joi from 'joi';
 
 const locationSchema = Joi.object({
@@ -6,7 +7,7 @@ const locationSchema = Joi.object({
 });
 
 const tripValidate = async (req, res, next) => {
-  console.log(req.body);
+  logger.info(req.body);
   const schema = Joi.object({
     date: Joi.date().min('1900-01-01').required(),
     driverId: Joi.string().uuid().required(),

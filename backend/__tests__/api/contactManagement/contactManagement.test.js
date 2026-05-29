@@ -48,16 +48,16 @@ describe('Contact Management', () => {
       const next = jest.fn();
 
       await contactValidate(req, res, next);
-      expect(res.send).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false })
-      );
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
     });
   });
 
   describe('Controller', () => {
     beforeEach(() => {
       jest.clearAllMocks();
-      mail.default.sendMail.mockImplementation((options, callback) => callback(null, { response: 'ok' }));
+      mail.default.sendMail.mockImplementation((options, callback) =>
+        callback(null, { response: 'ok' })
+      );
       contact.default.create.mockResolvedValue({ id: 1 });
     });
 
@@ -80,7 +80,9 @@ describe('Contact Management', () => {
     });
 
     it('should handle error if user mail sending fails', async () => {
-      mail.default.sendMail.mockImplementationOnce((options, callback) => callback(new Error('Mail fail'), null));
+      mail.default.sendMail.mockImplementationOnce((options, callback) =>
+        callback(new Error('Mail fail'), null)
+      );
       const req = {
         body: {
           name: 'John Doe',
@@ -94,16 +96,16 @@ describe('Contact Management', () => {
 
       await setContact(req, res, next);
       // Fails due to 'e is not defined' ReferenceError on line 28 in the controller, caught in outer block
-      expect(res.send).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false })
-      );
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
     });
 
     it('should handle error if admin mail sending fails', async () => {
       // First call (user email) succeeds, second call (admin email) fails
       mail.default.sendMail
         .mockImplementationOnce((options, callback) => callback(null, { response: 'ok' }))
-        .mockImplementationOnce((options, callback) => callback(new Error('Admin mail fail'), null));
+        .mockImplementationOnce((options, callback) =>
+          callback(new Error('Admin mail fail'), null)
+        );
       const req = {
         body: {
           name: 'John Doe',

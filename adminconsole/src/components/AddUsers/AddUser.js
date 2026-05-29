@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 // add user by admin
 
 import React, { useRef, useEffect } from 'react';
@@ -30,7 +31,7 @@ const AddUser = () => {
   }, []);
 
   const { designations } = useSelector((state) => state.user);
-  console.log('designations', designations);
+  logger.info('designations', designations);
 
   // const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
 
@@ -78,7 +79,7 @@ const AddUser = () => {
         // navigate('/admin');
       } else {
         // formData.append('image', fileInputRef.current.files[0]);
-        // console.log('values', values);
+        // logger.info('values', values);
         dispatch(addUser(values, () => navigate('/admin')));
       }
     },
@@ -87,7 +88,7 @@ const AddUser = () => {
   const options = designations?.filter(
     (item) => item.designation !== 'Admin' && item.designation !== 'Driver'
   );
-  console.log('options', options);
+  logger.info('options', options);
 
   const dOptions = options
     ?.map((item, index) => (

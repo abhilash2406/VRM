@@ -1,3 +1,4 @@
+import { logger } from '../../config/winston-config.js';
 import users from '../../models/users.js';
 import login from '../../models/login.js';
 import designations from '../../models/designation.js';
@@ -12,16 +13,16 @@ export const viewProfile = async (req, res, next) => {
     const token = req.header('Authorization')
       ? req.header('Authorization').replace('Bearer ', '')
       : null;
-    console.log('token', token);
+    logger.info('token', token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     let who = await login.findByPk(decoded.id);
-    console.log(who);
+    logger.info(who);
     let currentUser = await users.findOne({
       where: {
         loginId: who.id,
       },
     });
-    console.log('currentUser', currentUser);
+    logger.info('currentUser', currentUser);
     res.send({
       success: true,
       message: 'data fetched successfully',
@@ -38,7 +39,7 @@ export const viewProfile = async (req, res, next) => {
 export const getUserMessages = async (req, res, next) => {
   try {
     const data = await contacts.findAll({});
-    // console.log('vdata', data);
+    // logger.info('vdata', data);
     res.send({
       success: true,
       message: 'successfully fetched',
@@ -93,7 +94,7 @@ export const dltFeedback = async (req, res) => {
 //permissions
 export const ProfilePermissions = async (req, res, next) => {
   try {
-    console.log('hy');
+    logger.info('hy');
     const token = req.header('Authorization')
       ? req.header('Authorization').replace('Bearer ', '')
       : null;
@@ -129,21 +130,15 @@ export const ProfilePermissions = async (req, res, next) => {
 //change password
 
 export const changePassword = async (req, res) => {
-  const decrypted = CryptoJS.AES.decrypt(
-    req.body.currentPassword,
-    'XkhZG4fW2t2W'
-  );
+  const decrypted = CryptoJS.AES.decrypt(req.body.currentPassword, 'XkhZG4fW2t2W');
   const decrypted2 = CryptoJS.AES.decrypt(req.body.newPassword, 'XkhZG4fW2t2W');
-  const decrypted3 = CryptoJS.AES.decrypt(
-    req.body.confirmPassword,
-    'XkhZG4fW2t2W'
-  );
+  const decrypted3 = CryptoJS.AES.decrypt(req.body.confirmPassword, 'XkhZG4fW2t2W');
   const currentPassword = decrypted.toString(CryptoJS.enc.Utf8);
 
   const newPassword = decrypted2.toString(CryptoJS.enc.Utf8);
   const confirmPassword = decrypted3.toString(CryptoJS.enc.Utf8);
 
-  console.log('first', currentPassword, newPassword, confirmPassword);
+  logger.info('first', currentPassword, newPassword, confirmPassword);
   const token = req.header('Authorization')
     ? req.header('Authorization').replace('Bearer ', '')
     : null;
@@ -152,23 +147,19 @@ export const changePassword = async (req, res) => {
   let who = await login.findByPk(decoded.id);
 
   if (!who) {
-    errorMessage(res, 'You dont have the permission to change the password');
+    return res.send({
+      success: false,
+      message: 'You dont have the permission to change the password',
+    });
   }
-  const VerifyPassword = await login.verifyPassword(
-    currentPassword,
-    who.password,
-    who.salt
-  );
-  console.log(VerifyPassword);
+  const VerifyPassword = await login.verifyPassword(currentPassword, who.password, who.salt);
+  logger.info(VerifyPassword);
   if (!VerifyPassword) {
-    return errorMessage(res, 'You entered the Wrong Password');
+    return res.send({ success: false, message: 'You entered the Wrong Password' });
   } else {
     const salt = await login.generateSalt();
     const Password = await login.hashPassword(newPassword, salt);
-    await login.update(
-      { salt: salt, password: Password },
-      { where: { id: who.id } }
-    );
+    await login.update({ salt: salt, password: Password }, { where: { id: who.id } });
     res.send({
       success: true,
       message: 'password changed successfully',

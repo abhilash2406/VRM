@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 import React,{useEffect,useState} from 'react'
 import NavBar from '../Main/NavBar';
 import { Link } from 'react-router-dom';
@@ -22,7 +23,7 @@ const Permissions = () => {
   const uniqueMenus = new Set(permissions?.map((item) => item.menu));
   const menus = Array.from(uniqueMenus);
   const { designations } = useSelector((state) => state.user);
-  console.log('first', designations)
+  logger.info('first', designations)
   const {roleData} = useSelector((e)=>e.permissions)
   const [role, setRole] = useState('');
 
@@ -91,16 +92,16 @@ const Permissions = () => {
   const allPermissions = (menu) => {
     let permi = permissions?.filter((item) => item.menu === menu);
     let permissionIds = permi?.map((item) => item.id);
-    // console.log('grantPer', grantPer);
+    // logger.info('grantPer', grantPer);
     let a = grantPer?.filter((item) =>
       permissionIds.includes(item.permissionId)
     );
     return permissionIds.length === a.length ? true : false;
   };
   const singlePermissions = (data) => {
-    // console.log(data);
+    // logger.info(data);
     let subMenuId = grantPer?.map((item) => item.permissionId);
-    // console.log(subMenuId);
+    // logger.info(subMenuId);
     return subMenuId.includes(data.id) ? true : false;
   };
 

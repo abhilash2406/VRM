@@ -13,6 +13,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
 import { setSignuP, setGsignUp } from './action';
+import logger from '../../utils/logger.js';
 
 const signuPSchema = Yup.object().shape({
   // validating username
@@ -29,7 +30,7 @@ const Registration = () => {
     const url = `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${access_token}`;
     const response = await axios.get(url);
     const data = response;
-    console.log(data);
+    logger.info(data);
     dispatch(
       setGsignUp({ token: access_token, data: data }, () =>
         navigate('/fill-details')
@@ -61,7 +62,7 @@ const Registration = () => {
                 // on submit values
                 onSubmit={(values, { resetForm }) => {
                   resetForm({ values: '' });
-                  console.log('values', values);
+                  logger.info('values', values);
                   dispatch(setSignuP(values, () => navigate('/fill-details')));
                 }}
               >
@@ -109,9 +110,9 @@ const Registration = () => {
                               );
                             }}
                             onError={() => {
-                              console.log('Login Failed');
+                              logger.info('google login failed')
                             }}
-                            // useOneTap
+                          // useOneTap
                           />
                         </GoogleOAuthProvider>
                       </div>

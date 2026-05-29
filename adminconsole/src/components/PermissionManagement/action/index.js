@@ -1,3 +1,4 @@
+import logger from '../../../utils/logger';
 import { getData, postData, updateData } from '../../../services';
 import { setSuccessMessage, setErrorMessage } from '../../../action';
 
@@ -5,7 +6,7 @@ import { setSuccessMessage, setErrorMessage } from '../../../action';
 export const getPermission = () => async (dispatch) => {
   await getData('/permissions').then((e) => {
     if (e.data.success === true) {
-      // console.log(e.data.data);
+      // logger.info(e.data.data);
       dispatch({
         type: 'GET_PERMISSION',
         payload: e.data.data,
@@ -18,7 +19,7 @@ export const getPermission = () => async (dispatch) => {
 
 // give permission
 export const givePermission = (id, updateData) => async (dispatch) => {
-  // console.log(id, updateData);
+  // logger.info(id, updateData);
   let { data } = await postData(`/permissions/${id}`, updateData);
   if (data.success) {
     dispatch(setSuccessMessage(data.message));
@@ -43,7 +44,7 @@ export const getUserPermission = (id) => async (dispatch) => {
 };
 
 export const setCurrentPermissions = (role, data) => async (dispatch) => {
-    console.log(data);
+    logger.info(data);
     // if (role === data.role) {
     dispatch({
       type: 'GET_LOGIN',
@@ -56,7 +57,7 @@ export const setCurrentPermissions = (role, data) => async (dispatch) => {
   // to fetch user allowed permissions while login
   export const permissionOfLogin = () => async (dispatch) => {
     let { data } = await postData('/profile/permissions');
-  // console.log('data', data)
+  // logger.info('data', data)
     dispatch({
       type: 'GET_LOGIN',
       permission: data.data.permission,

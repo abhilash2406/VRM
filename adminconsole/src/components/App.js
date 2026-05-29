@@ -1,3 +1,4 @@
+import logger from '../utils/logger';
 import React, { useEffect } from 'react';
 import Home from './Home/Home';
 import Login from './Authentication/Login';
@@ -58,7 +59,7 @@ const App = () => {
   const { successMsg, errorMsg } = useSelector((e) => e.msg);
   useEffect(() => {
     socket.on('GetPermissions', (data) => {
-      console.log('socketData', data);
+      logger.info('socketData', data);
 
       dispatch(setCurrentPermissions(role, data));
     });

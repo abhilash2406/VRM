@@ -1,9 +1,8 @@
+import { logger } from '../config/winston-config.js';
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
-
 
 const login = sequelize.define(
   'login',
@@ -48,9 +47,8 @@ login.hashPassword = async function (pass, salt) {
   return await bcrypt.hash(pass, salt);
 };
 login.verifyPassword = async function (pass, hash, salt) {
-  console.log('pass', pass);
-  console.log('hash', hash);
-  const hashPassword = await bcrypt.hash(pass, salt);
+  logger.info('pass', pass);
+  logger.info('hash', hash);
   // if (hashPassword === hash) return true;
   // else return false;
   return await bcrypt.compare(pass, hash);
@@ -58,7 +56,7 @@ login.verifyPassword = async function (pass, hash, salt) {
 login.generateAuthToken = function (data) {
   let expiresIn = expireIn(10);
   if (data.rememberMe) {
-    console.log('Entered---');
+    logger.info('Entered---');
     expiresIn = expireIn(720);
   }
   return jwt.sign(

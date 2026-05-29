@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -27,7 +28,7 @@ const AddTrips = () => {
   }, [id]);
 
   const { tripData } = useSelector((e) => e.routes);
-  // console.log('driverData', tripData);
+  // logger.info('driverData', tripData);
 
   const { driverData } = useSelector((e) => e.driver);
 
@@ -78,7 +79,7 @@ const AddTrips = () => {
     },
     onSubmit: (values, { resetForm }) => {
       resetForm({ values: '' });
-      console.log('values', values);
+      logger.info('values', values);
       if (id) {
         dispatch(updateTrip(id, values, () => navigate('/trips')));
       } else {

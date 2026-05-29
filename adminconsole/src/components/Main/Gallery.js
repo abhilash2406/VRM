@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 //gallery
 
 import React, { useEffect, useState } from 'react';
@@ -28,7 +29,7 @@ const Gallery = () => {
   }, []);
 
   const { imgs } = useSelector((e) => e.user);
-  console.log(imgs);
+  logger.info(imgs);
   const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
 
 
@@ -38,7 +39,7 @@ const Gallery = () => {
   const handleFileSelect = (event) => {
     setSelectedFile(event.target.files[0]);
   };
-  // console.log('files', files);
+  // logger.info('files', files);
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!selectedFile) {

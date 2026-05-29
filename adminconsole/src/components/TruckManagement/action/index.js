@@ -1,3 +1,4 @@
+import logger from '../../../utils/logger';
 import { getData, postData, updateData, deleteData } from '../../../services';
 import { setSuccessMessage, setErrorMessage } from '../../../action';
 
@@ -30,7 +31,7 @@ export const getAllTruckVariants = () => async (dispatch) => {
 
 //add truck
 export const addTrucks = (props, navigate) => async (dispatch) => {
-  console.log(props);
+  logger.info(props);
   const { data } = await postData('trucks/add', props);
   if (data.success) {
     dispatch(setSuccessMessage(data.success));
@@ -42,7 +43,7 @@ export const addTrucks = (props, navigate) => async (dispatch) => {
 
 export const getCorrespondingData = (dat) => async (dispatch) => {
   const { data } = await postData('/trucks/get-data', dat);
-  console.log('data', data);
+  logger.info('data', data);
   // dispatch({
   //   type: 'GET_TRUCK_BRANDS',
   //   payload: data.brand,
@@ -112,7 +113,7 @@ export const getActiveTrucks = () => async (dispatch) => {
 
 //update truck
 export const UpdateTruck = (id, props, navigate) => async (dispatch) => {
-  console.log(props,id)
+  logger.info(props,id)
   const { data } = await updateData(`/trucks/${id}`, props);
   if (data.success) {
     dispatch(setSuccessMessage(data.success));

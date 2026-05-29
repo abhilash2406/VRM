@@ -71,9 +71,7 @@ describe('Trip Management', () => {
       const next = jest.fn();
 
       await tripValidate(req, res, next);
-      expect(res.send).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false })
-      );
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
     });
   });
 
@@ -316,7 +314,11 @@ describe('Trip Management', () => {
 
       it('should delete trip successfully', async () => {
         const mockDestroy = jest.fn().mockResolvedValue(true);
-        trips.default.findByPk.mockResolvedValue({ id: 'trip-1', driverId: 'd-1', destroy: mockDestroy });
+        trips.default.findByPk.mockResolvedValue({
+          id: 'trip-1',
+          driverId: 'd-1',
+          destroy: mockDestroy,
+        });
 
         const mockUpdate = jest.fn().mockResolvedValue(true);
         drivers.default.findByPk.mockResolvedValue({ id: 'd-1', update: mockUpdate });
@@ -383,7 +385,10 @@ describe('Trip Management', () => {
         trucks.default.findByPk.mockResolvedValue({ id: 't-1' });
         routes.default.findByPk.mockResolvedValue({ id: 'r-1' });
         drivers.default.findByPk.mockResolvedValue(null);
-        const req = { params: { id: 'trip-1' }, body: { truckId: 't-1', routeId: 'r-1', driverId: 'd-1' } };
+        const req = {
+          params: { id: 'trip-1' },
+          body: { truckId: 't-1', routeId: 'r-1', driverId: 'd-1' },
+        };
         const res = { send: jest.fn() };
         const next = jest.fn();
 
@@ -399,7 +404,10 @@ describe('Trip Management', () => {
         trucks.default.findByPk.mockResolvedValue({ id: 't-1' });
         routes.default.findByPk.mockResolvedValue({ id: 'r-1' });
         drivers.default.findByPk.mockResolvedValue({ id: 'd-1', status: 'pending' });
-        const req = { params: { id: 'trip-1' }, body: { truckId: 't-1', routeId: 'r-1', driverId: 'd-1' } };
+        const req = {
+          params: { id: 'trip-1' },
+          body: { truckId: 't-1', routeId: 'r-1', driverId: 'd-1' },
+        };
         const res = { send: jest.fn() };
         const next = jest.fn();
 

@@ -3,7 +3,7 @@ import * as controller from './controller.js';
 import validator from './validator.js';
 var router = express.Router();
 
-router.route('/add').post( controller.addRoutes);
+router.route('/add').post(controller.addRoutes);
 router.route('/').get(controller.getAllRoutes);
 router.route('/:id').delete(controller.deleteRoute).get(controller.getRoute);
 

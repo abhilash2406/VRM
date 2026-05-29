@@ -1,3 +1,4 @@
+import { logger } from '../../config/winston-config.js';
 import signup from '../users.js';
 import login from '../login.js';
 import designation from '../designation.js';
@@ -33,15 +34,15 @@ const hashing = async (password) => {
         salt,
         designationId: designationDetails.id,
       });
-      console.log('Admin created successfully');
+      logger.info('Admin created successfully');
       await signup.create({
         ...adminData,
         loginId: loginDetails.id,
       });
     } else {
-      console.log(`Data already exists`);
+      logger.info(`Data already exists`);
     }
   } catch (e) {
-    console.log('error', e.message);
+    logger.info('error', e.message);
   }
 })();

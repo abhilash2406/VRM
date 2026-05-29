@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 //trip list
 
 import React, { useEffect } from 'react';
@@ -40,7 +41,7 @@ const TripRoutes = () => {
   );
 
   const { routeData } = useSelector((e) => e.routes);
-  console.log(routeData);
+  logger.info(routeData);
   const { grantedPermissions } = useSelector((state) => state.auth);
 
   let array = grantedPermissions?.filter((item) => item.menu === 'Route');

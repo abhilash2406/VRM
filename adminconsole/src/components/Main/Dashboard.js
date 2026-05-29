@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 // dashboard
 
 import React, { useEffect, useState } from 'react';
@@ -23,7 +24,7 @@ const Dashboard = () => {
       const web3 = new Web3(window.ethereum);
 
       const accounts = web3.utils.toTwosComplement('-1');
-      console.log(accounts.toString());
+      logger.info(accounts.toString());
     })();
   }, []);
   useEffect(() => {
@@ -42,7 +43,7 @@ const Dashboard = () => {
   const { trips } = useSelector((e) => e.routes);
   const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
 
-  // console.log('Trips', trips)
+  // logger.info('Trips', trips)
   const { grantedPermissions } = useSelector((state) => state.auth);
 
   let array = grantedPermissions?.filter((item) => item.menu === 'Dashboard');

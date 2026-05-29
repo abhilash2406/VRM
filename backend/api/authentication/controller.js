@@ -1,3 +1,4 @@
+import { logger } from '../../config/winston-config.js';
 import users from '../../models/users.js';
 import login from '../../models/login.js';
 import designations from '../../models/designation.js';
@@ -30,11 +31,11 @@ export const Login = async (req, res, next) => {
         message: 'Invalid email or password',
       });
 
-    console.log('user', user);
+    logger.info('user', user);
     const userDesig = await designations.findOne({
       where: { id: user.designationId },
     });
-    console.log('userDesig', userDesig);
+    logger.info('userDesig', userDesig);
     if (userDesig.designation === 'Driver') {
       const getuser = await users.findOne({
         where: {
@@ -46,7 +47,7 @@ export const Login = async (req, res, next) => {
           userId: getuser.id,
         },
       });
-      console.log(currentDriv);
+      logger.info(currentDriv);
       if (currentDriv.status != 'approved')
         res.send({
           success: false,
@@ -207,7 +208,7 @@ export const googleLogin = async (req, res, next) => {
     const currentUser = await login.findOne({
       where: { email: req.body.data.data.email },
     });
-    // console.log('users', currentUser);
+    // logger.info('users', currentUser);
     if (!users) {
       return res.send({
         success: false,
@@ -305,8 +306,8 @@ export const googleSignUp = async (req, res, next) => {
 //driver sign up
 
 export const signUpUser = async (req, res, next) => {
-  console.log('req.body', req.body);
-  console.log('req.files', req.files);
+  logger.info('req.body', req.body);
+  logger.info('req.files', req.files);
 
   const hashing = async (password) => {
     const salt = await login.generateSalt();
@@ -415,7 +416,7 @@ export const signUpUser = async (req, res, next) => {
         wage: 1000,
         driver: driver.id,
       };
-      console.log('userData', userData);
+      logger.info('userData', userData);
 
       res.send({
         success: true,
@@ -439,7 +440,7 @@ export const signUpUser = async (req, res, next) => {
         wage: req.body.dailyWage,
         driver: driver.id,
       };
-      console.log('userData', userData);
+      logger.info('userData', userData);
 
       let mailOptions = {
         to: req.body.email,
@@ -460,8 +461,8 @@ export const proceedPayment = async (req, res, next) => {
   try {
     let { id, userData } = req.body;
 
-    console.log('id', id);
-    console.log('userData', userData);
+    logger.info('id', id);
+    logger.info('userData', userData);
 
     const customer = await Stripe.customers.create({
       name: userData.name,
@@ -469,11 +470,11 @@ export const proceedPayment = async (req, res, next) => {
       phone: userData.phn,
     });
 
-    console.log('customer', customer);
+    logger.info('customer', customer);
     const date = new Date(); // Create a new Date object
-    console.log('date', date)
+    logger.info('date', date);
     const formattedDate = moment(date).format('YYYY-MM-DD');
-    console.log('fo', formattedDate)
+    logger.info('fo', formattedDate);
     const transc = await transactions.create({
       name: userData.name,
       email: userData.mail,
@@ -482,7 +483,7 @@ export const proceedPayment = async (req, res, next) => {
       date: formattedDate,
       driverId: userData.driver,
     });
-    console.log('transc', transc);
+    logger.info('transc', transc);
 
     const intent = await Stripe.paymentIntents.create({
       payment_method: id,
@@ -496,7 +497,7 @@ export const proceedPayment = async (req, res, next) => {
       payment_method: id,
     });
 
-    console.log(paymentIntent);
+    logger.info(paymentIntent);
 
     return res.send({
       success: true,

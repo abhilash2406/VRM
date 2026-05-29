@@ -1,3 +1,4 @@
+import { logger } from '../../config/winston-config.js';
 import designation from '../designation.js';
 
 (async () => {
@@ -10,13 +11,13 @@ import designation from '../designation.js';
       });
       if (!existingData) {
         await designation.create({ designation: e });
-        console.log('Designation created successfully');
+        logger.info('Designation created successfully');
       } else {
-        console.log(`Data already exists`);
+        logger.info(`Data already exists`);
       }
     });
   } catch (e) {
-    console.log('error', e.message);
+    logger.info('error', e.message);
     process.exit(1);
   }
 })();

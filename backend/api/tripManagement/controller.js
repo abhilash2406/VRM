@@ -1,3 +1,4 @@
+import { logger } from '../../config/winston-config.js';
 import trucks from '../../models/truck.js';
 import routes from '../../models/route.js';
 import drivers from '../../models/driver.js';
@@ -10,7 +11,7 @@ import moment from 'moment';
 // add trips
 export const addTrips = async (req, res, next) => {
   try {
-    console.log(req.body);
+    logger.info(req.body);
     const truck_exist = await trucks.findByPk(req.body.truckId);
     if (!truck_exist) {
       res.send({
@@ -43,12 +44,10 @@ export const addTrips = async (req, res, next) => {
           const status =
             inputDate.getTime() > today.getTime()
               ? 'scheduled'
-              : ['ongoing', 'completed', 'cancelled'][
-                  Math.floor(Math.random() * 3)
-                ];
+              : ['ongoing', 'completed', 'cancelled'][Math.floor(Math.random() * 3)];
 
           let new_date = moment(req.body.date).format('YYYY-MM-DD');
-          console.log(new_date);
+          logger.info(new_date);
           req.body.date = new_date;
           const data = await trips.create({
             driverId: req.body.driverId,
@@ -102,7 +101,7 @@ export const getTrips = async (req, res, next) => {
         { model: routes },
       ],
     });
-    // console.log(data);
+    // logger.info(data);
     res.send({
       success: true,
       message: 'successfully fetched',
@@ -118,7 +117,7 @@ export const getTrips = async (req, res, next) => {
 
 export const getTripData = async (req, res, next) => {
   const id = req.params.id;
-  console.log('iiid', id);
+  logger.info('iiid', id);
   try {
     const data = await trips.findOne({
       include: [
@@ -138,7 +137,7 @@ export const getTripData = async (req, res, next) => {
         id: id,
       },
     });
-    // console.log(data);
+    // logger.info(data);
     res.send({
       success: true,
       message: 'successfully fetched',
@@ -155,7 +154,7 @@ export const getTripData = async (req, res, next) => {
 //delete trip
 export const deleteTrip = async (req, res) => {
   const id = req.params.id;
-  console.log('id', id);
+  logger.info('id', id);
   try {
     const trip = await trips.findByPk(id);
     if (!trip) {
@@ -200,9 +199,9 @@ export const deleteTrip = async (req, res) => {
 //update trip
 export const updateTrip = async (req, res, next) => {
   try {
-    console.log(req.body);
+    logger.info(req.body);
     const id = req.params.id;
-    console.log('id', id);
+    logger.info('id', id);
     const truck_exist = await trucks.findByPk(req.body.truckId);
     if (!truck_exist) {
       res.send({
@@ -235,12 +234,10 @@ export const updateTrip = async (req, res, next) => {
           const status =
             inputDate.getTime() > today.getTime()
               ? 'scheduled'
-              : ['ongoing', 'completed', 'cancelled'][
-                  Math.floor(Math.random() * 3)
-                ];
+              : ['ongoing', 'completed', 'cancelled'][Math.floor(Math.random() * 3)];
 
           let new_date = moment(req.body.date).format('YYYY-MM-DD');
-          console.log(new_date);
+          logger.info(new_date);
           req.body.date = new_date;
           const data = await trips.update(
             {
@@ -286,7 +283,7 @@ export const updateTrip = async (req, res, next) => {
 
 // no of trips in last 30 days
 export const noOfTrips = async (req, res) => {
-  console.log('hy');
+  logger.info('hy');
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   try {

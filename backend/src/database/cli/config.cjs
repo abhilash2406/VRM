@@ -8,12 +8,12 @@ const dbConfig = {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT || 5432,
   dialect: process.env.DB_DIALECT || 'postgres',
-  logging: process.env.DB_LOGGING === 'true'
+  logging: process.env.DB_LOGGING === 'true',
 };
 
 module.exports = {
   development: dbConfig,
   local: dbConfig,
   test: dbConfig,
-  production: dbConfig
+  production: dbConfig,
 };

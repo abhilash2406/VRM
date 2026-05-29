@@ -105,4 +105,3 @@ router.route('/add-user').post(validate.addUserValidate, controller.addUsers);
  */
 
 export default router;
-

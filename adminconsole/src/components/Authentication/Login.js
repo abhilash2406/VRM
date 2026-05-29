@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 // login page
 
 import React, { useState, useEffect } from 'react';
@@ -39,7 +40,7 @@ const Login = () => {
     const url = `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${access_token}`;
     const response = await axios.get(url);
     const data = response;
-    console.log(data);
+    logger.info(data);
     dispatch(
       setGLogin({ token: access_token, data: data }, () =>
         navigate('/dashboard')
@@ -143,7 +144,7 @@ const Login = () => {
                               );
                             }}
                             onError={() => {
-                              console.log('Login Failed');
+                              logger.info('Login Failed');
                             }}
                             // useOneTap
                           />

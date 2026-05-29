@@ -1,8 +1,9 @@
+import logger from '../../../utils/logger';
 import { getData, postData, updateData } from '../../../services';
 import { setSuccessMessage, setErrorMessage } from '../../../action';
 
 export const addUser = (data, navigate) => async (dispatch) => {
-  console.log(data);
+  logger.info(data);
   await postData('/auth/add-user', data).then((e) => {
     if (e.data.success) {
       dispatch(setSuccessMessage(e.data.message));

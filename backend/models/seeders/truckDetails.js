@@ -1,3 +1,4 @@
+import { logger } from '../../config/winston-config.js';
 import Brand from '../brand.js';
 import TruckModel from '../truckModel.js';
 import Variant from '../variant.js';
@@ -42,22 +43,22 @@ const variantsData = [
 ];
 Brand.bulkCreate(brandsData)
   .then(() => {
-    console.log('Brands created successfully');
+    logger.info('Brands created successfully');
   })
   .catch((err) => {
-    console.error('Error creating brands:', err);
+    logger.error('Error creating brands:', err);
   });
 TruckModel.bulkCreate(modelsData)
   .then(() => {
-    console.log('model created successfully');
+    logger.info('model created successfully');
   })
   .catch((err) => {
-    console.error('Error creating models:', err);
+    logger.error('Error creating models:', err);
   });
 Variant.bulkCreate(variantsData)
   .then(() => {
-    console.log('variant created successfully');
+    logger.info('variant created successfully');
   })
   .catch((err) => {
-    console.error('Error creating variants:', err);
+    logger.error('Error creating variants:', err);
   });

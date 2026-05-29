@@ -1,14 +1,15 @@
+import { logger } from '../../config/winston-config.js';
 import contact from '../../models/contact.js';
 import mail from '../../modules/mail.js';
 
 export const setContact = async (req, res, next) => {
-  //   console.log('req', req.body);
+  //   logger.info('req', req.body);
   try {
     req.body.status = 'unread';
     const data = await contact.create(req.body);
 
     var mailOptions = {
-      from:process.env.USER_MAIL,
+      from: process.env.USER_MAIL,
       to: req.body.email,
       subject: 'your review ',
       text: `Hi ${req.body.name} our representative will contact you shortly `,
@@ -25,10 +26,10 @@ export const setContact = async (req, res, next) => {
       if (error) {
         return res.send({
           success: false,
-          message: e,
+          message: error,
         });
       } else {
-        console.log('Email sent  ' + info.response);
+        logger.info('Email sent  ' + info.response);
       }
     });
     mail.sendMail(mailOptions2, function (error, info) {
@@ -38,7 +39,7 @@ export const setContact = async (req, res, next) => {
           message: error,
         });
       } else {
-        console.log('Email sent to admin: ' + info.response);
+        logger.info('Email sent to admin: ' + info.response);
       }
     });
     res.send({

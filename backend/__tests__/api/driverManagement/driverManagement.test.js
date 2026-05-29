@@ -48,7 +48,9 @@ jest.unstable_mockModule('../../../models/trip.js', () => ({
 
 jest.unstable_mockModule('../../../modules/mail.js', () => ({
   default: {
-    sendMail: jest.fn((options, cb) => cb ? cb(null, { response: 'ok' }) : Promise.resolve({ response: 'ok' })),
+    sendMail: jest.fn((options, cb) =>
+      cb ? cb(null, { response: 'ok' }) : Promise.resolve({ response: 'ok' })
+    ),
   },
 }));
 
@@ -103,9 +105,7 @@ describe('Driver Management', () => {
       const next = jest.fn();
 
       await driverValidate(req, res, next);
-      expect(res.send).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false })
-      );
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
     });
   });
 

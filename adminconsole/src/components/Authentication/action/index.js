@@ -1,3 +1,4 @@
+import logger from '../../../utils/logger';
 import Cookies from 'js-cookie';
 import { getData, postData, updateData } from '../../../services';
 import { setSuccessMessage, setErrorMessage } from '../../../action';
@@ -5,9 +6,9 @@ import { setSuccessMessage, setErrorMessage } from '../../../action';
 //for login
 
 export const setLogin = (props, navigate) => async (dispatch) => {
-  console.log('props', props);
+  logger.info('props', props);
   await postData('/auth/login', props).then((e) => {
-    console.log('e.data', e.data);
+    logger.info('e.data', e.data);
     if (e.data.success) {
       Cookies.set('token', e.data.data.accessToken);
       localStorage.setItem(
@@ -19,7 +20,7 @@ export const setLogin = (props, navigate) => async (dispatch) => {
       );
       navigate();
       dispatch(setSuccessMessage(e.data.message));
-      console.log(e.data.data.permission);
+      logger.info(e.data.data.permission);
       dispatch({
         type: 'GET_LOGIN',
         payload: e.data.data.designation,
@@ -46,7 +47,7 @@ export const setGLogin = (props, navigate) => async (dispatch) => {
       );
       navigate();
       dispatch(setSuccessMessage(e.data.message));
-      console.log(e.data.data.permission);
+      logger.info(e.data.data.permission);
       dispatch({
         type: 'GET_LOGIN',
         payload: e.data.data.designation,
@@ -90,9 +91,9 @@ export const setGsignUp = (props, navigate) => async (dispatch) => {
 
 // fetch sign up user data
 export const getUserData = (props, navigate) => async (dispatch) => {
-  console.log('props', props);
+  logger.info('props', props);
   await postData('/auth/userdata', props).then((e) => {
-    console.log('data', e.data);
+    logger.info('data', e.data);
     if (e.data.success) {
       const jsonString = JSON.stringify(e.data.data);
       Cookies.set('myCookie', jsonString);
@@ -117,10 +118,10 @@ export const getDriverData = (props, navigate) => (dispatch) => {
 
 // make payment using stripe
 export const makePayment = (userData,navigate) => async (dispatch) => {
-  console.log('userData', userData);
+  logger.info('userData', userData);
   const { data } = await postData('/auth/payment', userData);
   if (data.success) {
-    console.log(data.data);
+    logger.info(data.data);
     navigate();
 
     window.location.href = data.next_action.use_stripe_sdk.stripe_js;

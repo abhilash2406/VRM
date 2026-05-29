@@ -1,10 +1,9 @@
+import { logger } from '../config/winston-config.js';
 import jwt from 'jsonwebtoken';
 import login from '../models/login.js';
-import { Op } from 'sequelize';
 // // authentication middleware
 
-
-export default async (req, res, next) => {;
+export default async (req, res, next) => {
   try {
     if (
       req.originalUrl.startsWith('/auth') ||
@@ -50,9 +49,7 @@ export default async (req, res, next) => {;
         message: 'Access Denied',
       });
     }
-    let matchValidity = isAdminExists.password
-      .concat(isAdminExists.id)
-      .concat(isAdminExists.email);
+    let matchValidity = isAdminExists.password.concat(isAdminExists.id).concat(isAdminExists.email);
     if (matchValidity != decoded.validity) {
       return res.send({
         success: false,
@@ -62,7 +59,7 @@ export default async (req, res, next) => {;
     req.user = decoded;
     return next();
   } catch (ex) {
-    console.log('error', ex);
+    logger.info('error', ex);
     res.send({
       success: false,
       message: 'Invalid Token',

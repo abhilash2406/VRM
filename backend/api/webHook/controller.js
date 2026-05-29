@@ -1,7 +1,8 @@
-import users from '../../models/users.js';
+import { logger } from '../../config/winston-config.js';
+import booking from '../../models/booking.js';
 
 export const success = async (req, res) => {
-  console.log('1', req.body.data.envelopeSummary.recipients);
+  logger.info('1', req.body.data.envelopeSummary.recipients);
 
   try {
     let result = await booking.update(
@@ -14,6 +15,6 @@ export const success = async (req, res) => {
     );
     res.json(result);
   } catch (error) {
-    console.log(error);
+    logger.info(error);
   }
 };

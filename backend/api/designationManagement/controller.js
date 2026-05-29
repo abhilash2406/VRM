@@ -1,8 +1,7 @@
+import { logger } from '../../config/winston-config.js';
 import designation from '../../models/designation.js';
 import { Op } from 'sequelize';
 import sequelize from '../../config/sequelize-config.js';
-
-
 
 export const getDesignations = async (req, res, next) => {
   try {
@@ -13,7 +12,7 @@ export const getDesignations = async (req, res, next) => {
         },
       },
     });
-    console.log('data', data)
+    logger.info('data', data);
     res.send({
       success: true,
       message: 'data retrieval success',

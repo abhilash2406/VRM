@@ -68,7 +68,10 @@ describe('Permission Management', () => {
   describe('grantPermissions', () => {
     it('should grant permissions successfully', async () => {
       permissionSetting.default.destroy.mockResolvedValue(1);
-      permissionSetting.default.create.mockResolvedValue({ designationId: 'role-1', permissionId: 'perm-1' });
+      permissionSetting.default.create.mockResolvedValue({
+        designationId: 'role-1',
+        permissionId: 'perm-1',
+      });
       permissionSetting.default.findAll.mockResolvedValue([
         {
           designationId: 'role-1',

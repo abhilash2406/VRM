@@ -1,10 +1,11 @@
+import { logger } from '../../config/winston-config.js';
 import Joi from 'joi';
 
 const driverValidate = async (req, res, next) => {
-//   console.log('re.body', req.body);
+  //   logger.info('re.body', req.body);
   const schema = Joi.object({
     name: Joi.string().required(),
-  email: Joi.string().email().required(),
+    email: Joi.string().email().required(),
     licenseNo: Joi.string().required(),
     phoneNumber: Joi.string().required(),
     licenseType: Joi.string().required(),

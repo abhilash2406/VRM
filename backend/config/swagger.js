@@ -10,9 +10,9 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'truck',
-      version: '1.0.1',
-      description: 'My API description',
+      title: 'Truck Management System',
+      version: '1.0.0',
+      description: 'API documentation for truck management system',
     },
     components: {
       securitySchemes: {

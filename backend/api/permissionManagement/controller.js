@@ -1,3 +1,4 @@
+import { logger } from '../../config/winston-config.js';
 import permissions from '../../models/permission.js';
 import designations from '../../models/designation.js';
 import permissionSetting from '../../models/permissionSetting.js';
@@ -25,7 +26,8 @@ export const grantPermissions = async (req, res, next) => {
     await permissionSetting.destroy({
       where: { designationId: req.params.id },
     });
-    for (item of req.body) {
+    let desId;
+    for (const item of req.body) {
       let a = await permissionSetting.create({
         designationId: item.designationId,
         permissionId: item.permissionId,
@@ -36,16 +38,16 @@ export const grantPermissions = async (req, res, next) => {
       where: { designationId: desId },
       include: permissions,
     });
-    
+
     let role = await designations.findByPk(req.params.id);
-    
+
     const permissionArray = permission_data.map((data) => {
       return {
         menu: data.permission.menu,
         subMenu: data.permission.subMenu,
       };
     });
-    // console.log('mappingArray', mappingArray);
+    // logger.info('mappingArray', mappingArray);
     let { socket } = req.app.locals;
     socket.emit('GetPermissions', {
       data: permissionArray,
@@ -56,7 +58,7 @@ export const grantPermissions = async (req, res, next) => {
       message: 'Updated successfully',
     });
   } catch (e) {
-    console.log('error', e.message);
+    logger.info('error', e.message);
     res.json({
       success: false,
       message: e,
@@ -66,19 +68,18 @@ export const grantPermissions = async (req, res, next) => {
 
 export const getUserData = async (req, res, next) => {
   try {
-   
     const allowed = await permissionSetting.findAll({
       where: {
         designationId: req.params.id,
       },
     });
-    
+
     let a = allowed.map((item) => ({
       permissionId: item.permissionId,
       designationId: item.designationId,
     }));
 
-    // console.log('newData', a);
+    // logger.info('newData', a);
 
     res.send({
       success: true,

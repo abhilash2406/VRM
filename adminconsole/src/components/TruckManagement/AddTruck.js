@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 import React, { useState, useRef, useEffect } from 'react';
 import Joi from 'joi';
 import { useFormik } from 'formik';
@@ -18,7 +19,7 @@ import { setErrorMessage } from '../../action';
 const schema = Joi.object({});
 
 const AddTruck = () => {
-  // console.log(id);
+  // logger.info(id);
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
@@ -43,14 +44,14 @@ const AddTruck = () => {
 
   const [branid, setBrandId] = useState('');
   const [modelid, setModelId] = useState('');
-  console.log(modelid)
+  logger.info(modelid)
 
   const getDataFromDb = (e) => {
     const bid = document.getElementById('brand').value;
     setBrandId(bid);
     const mid = document.getElementById('model').value;
     setModelId(mid);
-    console.log(bid, mid);
+    logger.info(bid, mid);
     dispatch(getCorrespondingData({ brandId: bid, modelId: mid }));
   };
 
@@ -147,7 +148,7 @@ const AddTruck = () => {
         formData.append('truckPhoto', truckPhoto);
         formData.append('rcPhoto', rcPhoto);
         // resetForm({ values: '' });
-        console.log({ ...values });
+        logger.info({ ...values });
         if (id) {
           dispatch(UpdateTruck(id, formData, () => navigate('/trucks')));
         } else {

@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 //driver list
 
 import React, { useEffect, useState } from 'react';
@@ -18,7 +19,7 @@ const DriverList = () => {
   let permissionAllowed = array?.map((e) => e.subMenu);
 
   const { driverData } = useSelector((e) => e.driver);
-  console.log('driverData', driverData);
+  logger.info('driverData', driverData);
 
   const tableData = driverData?.map((data, index) => {
     return (

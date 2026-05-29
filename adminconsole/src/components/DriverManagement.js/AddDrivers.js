@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 import React, { useState, useEffect, useRef } from 'react';
 import styledComponents from 'styled-components';
 import { useNavigate, Link, useParams } from 'react-router-dom';
@@ -15,7 +16,7 @@ const AddDrivers = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
-  console.log(id);
+  logger.info(id);
 
   //multi select
   const options = [
@@ -50,7 +51,7 @@ const AddDrivers = () => {
     }
   }, [id]);
   const { viewDriver } = useSelector((e) => e.driver);
-  // console.log('viewDriver', viewDriver);
+  // logger.info('viewDriver', viewDriver);
 
   const validationSchema1 = Yup.object().shape({
     name: Yup.string().min(3).max(20).required('name is Required'),
@@ -99,7 +100,7 @@ const AddDrivers = () => {
               } else if (selectedOptions.length === 0) {
                 dispatch(setErrorMessage('please select your license'));
               } else {
-                console.log('values', values);
+                logger.info('values', values);
                 const formData = new FormData();
                 formData.append('name', values.name);
                 formData.append('phoneNumber', values.phoneNumber);

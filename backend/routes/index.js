@@ -24,6 +24,4 @@ router.use('/routes', inline_api_routeManagement_index);
 router.use('/trips', inline_api_tripManagement_index);
 router.use('/transactions', inline_api_transactionManagement_index);
 
-
-
 export default router;

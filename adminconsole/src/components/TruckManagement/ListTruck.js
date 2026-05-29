@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 import React, { useEffect } from 'react';
 import NavBar from '../Main/NavBar';
 import { Link } from 'react-router-dom';
@@ -40,7 +41,7 @@ const ListTruck = () => {
   );
   const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
   const { grantedPermissions } = useSelector((state) => state.auth);
-  // console.log('grantedPermissions', grantedPermissions);
+  // logger.info('grantedPermissions', grantedPermissions);
   let array = grantedPermissions?.filter((item) => item.menu === 'Truck');
   let permissionAllowed = array?.map((e) => e.subMenu);
   const columns = [

@@ -1,9 +1,10 @@
+import { logger } from '../../config/winston-config.js';
 import gallery from '../../models/gallery.js';
 import path from 'path';
 
 export const uploadImages = async (req, res, next) => {
-  //   console.log("images")
-  console.log('req.files', req.file);
+  //   logger.info("images")
+  logger.info('req.files', req.file);
   const imagePath = req.file.path.replace(/^public/, '');
   req.body.image = imagePath;
   await gallery.create(req.body);
@@ -35,7 +36,7 @@ export const dltImages = async (req, res) => {
       message: 'image deleted successfully',
     });
   } catch (err) {
-    return es.send({
+    return res.send({
       success: false,
       message: err.message,
     });

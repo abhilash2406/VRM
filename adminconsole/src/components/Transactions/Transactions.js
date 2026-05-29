@@ -1,3 +1,4 @@
+import logger from '../../utils/logger';
 import React, { useEffect } from 'react';
 import NavBar from '../Main/NavBar';
 import { Link } from 'react-router-dom';
@@ -11,7 +12,7 @@ const Transactions = () => {
   }, []);
 
   const { transactions } = useSelector((e) => e.transc);
-  console.log(transactions);
+  logger.info(transactions);
   const tableData = transactions?.map((trans, index) => {
     return (
       <tr>

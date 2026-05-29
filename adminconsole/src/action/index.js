@@ -1,3 +1,4 @@
+import logger from '../utils/logger';
 import Cookies from 'js-cookie';
 import { deleteData, getData, postData, updateData } from '../services';
 
@@ -47,7 +48,7 @@ export const setLogout = (navigate) => async (dispatch) => {
 //for view profile
 export const viewProfile = () => async (dispatch) => {
   const { data } = await getData('/profile/view');
-  console.log('data', data);
+  logger.info('data', data);
   if (data.success) {
     dispatch({
       type: 'SET_USER_DATA',
@@ -76,7 +77,7 @@ export const fetchFeedbacks = (id) => async (dispatch) => {
 //to fetch feedbacks
 export const readFeedback = (id) => async (dispatch) => {
   const { data } = await getData(`/profile/feedback/${id}`);
-  console.log('data', data);
+  logger.info('data', data);
   if (data.success) {
     dispatch({
       type: 'SET_USER_FEEDBACK',
@@ -90,7 +91,7 @@ export const readFeedback = (id) => async (dispatch) => {
 
 // image upload
 export const uploadToGallery = (image, navigate) => async (dispatch) => {
-  console.log('imgs', image);
+  logger.info('imgs', image);
   const { data } = await postData('/gallery', image);
   if (data.success) {
     dispatch(setSuccessMessage(data.message));
@@ -103,9 +104,9 @@ export const uploadToGallery = (image, navigate) => async (dispatch) => {
 
 // fetch images
 export const retrieveImgs = () => async (dispatch) => {
-  console.log('first');
+  logger.info('first');
   const { data } = await getData('/gallery');
-  console.log('data', data);
+  logger.info('data', data);
   dispatch({
     type: 'SET_GALLERY',
     payload: data.data,

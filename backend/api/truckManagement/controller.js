@@ -1,3 +1,4 @@
+import { logger } from '../../config/winston-config.js';
 import Brand from '../../models/brand.js';
 import TruckModel from '../../models/truckModel.js';
 import Variant from '../../models/variant.js';
@@ -56,16 +57,16 @@ export const getTruckVariants = async (req, res, next) => {
 };
 export const correspondingData = async (req, res, next) => {
   try {
-    // console.log(req.body);
+    // logger.info(req.body);
     if (!req.body.brandId && !req.body.modelId) {
-      console.log('not bid entered');
+      logger.info('not bid entered');
       const brand_data = await Brand.findAll({});
       res.send({
         success: true,
         brand: brand_data,
       });
     } else if (req.body.brandId && !req.body.modelId) {
-      console.log('bid entered', req.body);
+      logger.info('bid entered', req.body);
       const brand_data = await Brand.findAll({});
       const model_data = await TruckModel.findAll({
         where: {
@@ -107,7 +108,7 @@ export const correspondingData = async (req, res, next) => {
 // add truck
 export const addTrucks = async (req, res, next) => {
   try {
-    console.log(req.body);
+    logger.info(req.body);
     const truck_exist = await trucks.findAll({
       where: {
         [Op.or]: [
@@ -131,12 +132,9 @@ export const addTrucks = async (req, res, next) => {
         message: 'this truck is already added',
       });
     } else {
-      console.log('req.body', req.body);
+      logger.info('req.body', req.body);
       const rcPhotoPath = req.files['rcPhoto'][0].path.replace(/^public/, '');
-      const truckPhotoPath = req.files['truckPhoto'][0].path.replace(
-        /^public/,
-        ''
-      );
+      const truckPhotoPath = req.files['truckPhoto'][0].path.replace(/^public/, '');
 
       const truckBrand = await Brand.findOne({
         where: {
@@ -159,7 +157,7 @@ export const addTrucks = async (req, res, next) => {
       const token = req.header('Authorization')
         ? req.header('Authorization').replace('Bearer ', '')
         : null;
-      // console.log('token', token);
+      // logger.info('token', token);
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       let who = await login.findByPk(decoded.id);
       let crctUser = await users.findOne({
@@ -167,7 +165,7 @@ export const addTrucks = async (req, res, next) => {
           loginId: who.id,
         },
       });
-      // console.log('crctUser', crctUser)
+      // logger.info('crctUser', crctUser)
 
       const data = await trucks.create({
         brand: truckBrand.name,
@@ -182,15 +180,12 @@ export const addTrucks = async (req, res, next) => {
         truckPhoto: truckPhotoPath,
         condition: req.body.condition,
         status: req.body.status,
-        isActive:
-          req.body.status === 'active' && req.body.condition === 'working'
-            ? true
-            : false,
+        isActive: req.body.status === 'active' && req.body.condition === 'working' ? true : false,
 
         createdBy: crctUser.id,
       });
 
-      console.log(crctUser);
+      logger.info(crctUser);
       res.send({
         success: true,
         message: 'truck added',
@@ -244,7 +239,7 @@ export const getActiveTrucks = async (req, res, next) => {
 // get all trucks
 export const truckToEdit = async (req, res, next) => {
   try {
-    // console.log('req.params.id', req.params.id);
+    // logger.info('req.params.id', req.params.id);
     const data = await trucks.findByPk(req.params.id);
     res.send({
       success: true,
@@ -277,29 +272,26 @@ export const dltTruck = async (req, res) => {
       });
     }
   } catch (err) {
-    return es.send({
+    return res.send({
       success: false,
       message: err.message,
     });
   }
 };
 export const updateTruck = async (req, res, next) => {
-  console.log('req.body', req.body);
+  logger.info('req.body', req.body);
   const id = req.params.id;
-  console.log('id', id);
+  logger.info('id', id);
   const truck_exist = await trucks.findByPk(id);
-  console.log(truck_exist)
-  if(!truck_exist){
+  logger.info(truck_exist);
+  if (!truck_exist) {
     res.send({
       success: false,
-      message:'truck not exists'
-    })
-  }else {
+      message: 'truck not exists',
+    });
+  } else {
     const rcPhotoPath = req.files['rcPhoto'][0].path.replace(/^public/, '');
-    const truckPhotoPath = req.files['truckPhoto'][0].path.replace(
-      /^public/,
-      ''
-    );
+    const truckPhotoPath = req.files['truckPhoto'][0].path.replace(/^public/, '');
 
     const truckBrand = await Brand.findOne({
       where: {
@@ -332,16 +324,11 @@ export const updateTruck = async (req, res, next) => {
       truckPhoto: truckPhotoPath,
       condition: req.body.condition,
       status: req.body.status,
-      isActive:
-        req.body.status === 'active' && req.body.condition === 'working'
-          ? true
-          : false,
-
-     
+      isActive: req.body.status === 'active' && req.body.condition === 'working' ? true : false,
     });
     res.send({
       success: true,
-      message:'updated successfully'
-    })
+      message: 'updated successfully',
+    });
   }
 };
