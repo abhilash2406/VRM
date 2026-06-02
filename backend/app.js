@@ -9,14 +9,15 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import session from 'express-session';
-import indexRouter from './routes/index.js';
+import indexRouter from './src/routes/index.js';
 import helmet from 'helmet';
 import compression from 'compression';
 import swaggerUi from 'swagger-ui-express';
-import swaggerDocument from './config/swagger.js';
-import './models/index.js';
-import './config/sequelize-config.js';
-import { logger } from './config/winston-config.js';
+import swaggerDocument from './src/config/swagger.js';
+import './src/models/index.js';
+import './src/config/sequelize-config.js';
+import { logger } from './src/config/winston-config.js';
+import swaggerAuth from './src/middlewares/swagger-auth.js';
 
 dotenv.config();
 
@@ -31,7 +32,7 @@ app.use(
   })
 );
 
-app.use('/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api/v1', swaggerAuth, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const port = process.env.PORT || '5000';
 logger.info('==================================================');
