@@ -32,12 +32,12 @@ app.use(
   })
 );
 
-app.use('/api/v1', swaggerAuth, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerAuth, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const port = process.env.PORT || '5000';
 logger.info('==================================================');
 logger.info(`🚀 Server is running locally on port: ${port}`);
-logger.info(`📚 Swagger documentation available at: http://localhost:${port}/api`);
+logger.info(`📚 Swagger documentation available at: http://localhost:${port}/api-docs`);
 logger.info('==================================================');
 
 // view engine setup

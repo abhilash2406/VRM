@@ -1,95 +1,29 @@
-import { logger } from '../../config/winston-config.js';
-import permissions from '../../models/permission.js';
-import designations from '../../models/designation.js';
-import permissionSetting from '../../models/permissionSetting.js';
+import * as services from './service.js';
 
-// fetch all permissions
 export const getAllPermissions = async (req, res, next) => {
   try {
-    const data = await permissions.findAll({});
-
-    res.send({
-      success: true,
-      data: data,
-    });
+    const data = await services.getAllPermissionsService();
+    res.send({ success: true, data });
   } catch (e) {
-    res.send({
-      success: false,
-      message: e,
-    });
+    res.send({ success: false, message: e.message || e });
   }
 };
 
-// post user permissions
 export const grantPermissions = async (req, res, next) => {
   try {
-    await permissionSetting.destroy({
-      where: { designationId: req.params.id },
-    });
-    let desId;
-    for (const item of req.body) {
-      let a = await permissionSetting.create({
-        designationId: item.designationId,
-        permissionId: item.permissionId,
-      });
-      desId = a.designationId;
-    }
-    const permission_data = await permissionSetting.findAll({
-      where: { designationId: desId },
-      include: permissions,
-    });
-
-    let role = await designations.findByPk(req.params.id);
-
-    const permissionArray = permission_data.map((data) => {
-      return {
-        menu: data.permission.menu,
-        subMenu: data.permission.subMenu,
-      };
-    });
-    // logger.info('mappingArray', mappingArray);
-    let { socket } = req.app.locals;
-    socket.emit('GetPermissions', {
-      data: permissionArray,
-      role: role.designation,
-    });
-    res.send({
-      success: true,
-      message: 'Updated successfully',
-    });
+    const { socket } = req.app.locals;
+    await services.grantPermissionsService(req.params.id, req.body, socket);
+    res.send({ success: true, message: 'Updated successfully' });
   } catch (e) {
-    logger.info('error', e.message);
-    res.json({
-      success: false,
-      message: e,
-    });
+    res.json({ success: false, message: e.message || e });
   }
 };
 
 export const getUserData = async (req, res, next) => {
   try {
-    const allowed = await permissionSetting.findAll({
-      where: {
-        designationId: req.params.id,
-      },
-    });
-
-    let a = allowed.map((item) => ({
-      permissionId: item.permissionId,
-      designationId: item.designationId,
-    }));
-
-    // logger.info('newData', a);
-
-    res.send({
-      success: true,
-      message: 'successfully fetched data',
-      data: a,
-    });
+    const data = await services.getUserDataService(req.params.id);
+    res.send({ success: true, message: 'successfully fetched data', data });
   } catch (e) {
-    res.send({
-      success: false,
-      message: e.message,
-    });
+    res.send({ success: false, message: e.message });
   }
 };

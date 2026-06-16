@@ -3,7 +3,7 @@ import basicAuth from 'basic-auth';
 const swaggerAuth = (req, res, next) => {
   const env = process.env.NODE_ENV;
 
-  if (env === 'production' || env === 'staging' || env === 'development') {
+  if (env === 'production' || env === 'staging' ) {
     const user = basicAuth(req);
 
     const username = process.env.SWAGGER_USERNAME;

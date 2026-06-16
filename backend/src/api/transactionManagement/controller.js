@@ -1,15 +1,8 @@
-import transactions from '../../models/transaction.js';
-import drivers from '../../models/driver.js';
-import users from '../../models/users.js';
+import * as services from './service.js';
 
 export const TransactionList = async (req, res, next) => {
   try {
-    const data = await transactions.findAll({
-      include: {
-        model: drivers,
-        include: [users],
-      },
-    });
+    const data = await services.transactionListService();
     res.send({
       success: true,
       message: 'transaction listed',

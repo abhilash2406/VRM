@@ -1,44 +1,28 @@
-import { logger } from '../../config/winston-config.js';
-import gallery from '../../models/gallery.js';
-import path from 'path';
+import * as services from './service.js';
 
 export const uploadImages = async (req, res, next) => {
-  //   logger.info("images")
-  logger.info('req.files', req.file);
-  const imagePath = req.file.path.replace(/^public/, '');
-  req.body.image = imagePath;
-  await gallery.create(req.body);
+  try {
+    await services.uploadImagesService(req.body, req.file);
+    res.send({ success: true, message: 'image uploaded successfully' });
+  } catch (e) {
+    res.send({ success: false, message: e.message });
+  }
 };
 
 export const retrieveImages = async (req, res, next) => {
   try {
-    const data = await gallery.findAll();
-    res.send({
-      success: true,
-      data: data,
-      message: 'image fetched successfully',
-    });
+    const data = await services.retrieveImagesService();
+    res.send({ success: true, message: 'image fetched successfully', data });
   } catch (e) {
-    res.send({
-      success: false,
-      message: e.message,
-    });
+    res.send({ success: false, message: e.message });
   }
 };
-//delete
+
 export const dltImages = async (req, res) => {
-  const id = req.params.id;
   try {
-    const Gallery = await gallery.findByPk(id);
-    await Gallery.destroy();
-    return res.send({
-      success: true,
-      message: 'image deleted successfully',
-    });
+    await services.dltImagesService(req.params.id);
+    res.send({ success: true, message: 'image deleted successfully' });
   } catch (err) {
-    return res.send({
-      success: false,
-      message: err.message,
-    });
+    res.send({ success: false, message: err.message });
   }
 };

@@ -1,20 +1,13 @@
+import * as services from './service.js';
 import { logger } from '../../config/winston-config.js';
-import booking from '../../models/booking.js';
 
 export const success = async (req, res) => {
-  logger.info('1', req.body.data.envelopeSummary.recipients);
-
   try {
-    let result = await booking.update(
-      { signed: 'Signed' },
-      {
-        where: {
-          envelopeId: req.body.data.envelopeId,
-        },
-      }
-    );
+    logger.info('1', req.body.data.envelopeSummary.recipients);
+    const result = await services.handleSuccessWebhook(req.body);
     res.json(result);
   } catch (error) {
     logger.info(error);
+    res.status(500).json({ error: error.message });
   }
 };
