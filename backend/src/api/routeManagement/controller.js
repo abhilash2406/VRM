@@ -1,8 +1,8 @@
-import * as services from './service.js';
+import { addRoutesService, getAllRoutesService, deleteRouteService, getRouteService } from './service.js';
 
 export const addRoutes = async (req, res, next) => {
   try {
-    await services.addRoutesService(req.body);
+    await addRoutesService(req.body);
     res.send({ success: true, message: 'route added successfully' });
   } catch (e) {
     res.send({ success: false, message: e.message });
@@ -11,7 +11,7 @@ export const addRoutes = async (req, res, next) => {
 
 export const getAllRoutes = async (req, res) => {
   try {
-    const data = await services.getAllRoutesService();
+    const data = await getAllRoutesService();
     res.send({ success: true, data });
   } catch (e) {
     res.send({ success: false, message: e.message });
@@ -20,7 +20,7 @@ export const getAllRoutes = async (req, res) => {
 
 export const deleteRoute = async (req, res) => {
   try {
-    await services.deleteRouteService(req.params.id);
+    await deleteRouteService(req.params.id);
     res.send({ success: true, message: 'deleted successfully' });
   } catch (e) {
     res.send({ success: false, message: e.message });
@@ -29,7 +29,7 @@ export const deleteRoute = async (req, res) => {
 
 export const getRoute = async (req, res) => {
   try {
-    const data = await services.getRouteService(req.params.id);
+    const data = await getRouteService(req.params.id);
     res.send({ success: true, data });
   } catch (e) {
     res.send({ success: false, message: e.message });

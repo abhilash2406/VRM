@@ -3,7 +3,7 @@ import * as controller from '../contactManagement/controller.js';
 import validate from './validator.js';
 var router = express.Router();
 
-router.route('/').post(validate.contactValidate, controller.setContact);
+router.post('/', validate.contactValidate, controller.setContact);
 /**
  * @swagger
  * tags:

@@ -2,8 +2,8 @@ import express from 'express';
 import * as controller from './controller.js';
 var router = express.Router();
 
-router.route('/').get(controller.getAllPermissions);
-router.route('/:id').post(controller.grantPermissions);
-router.route('/permission/:id').get(controller.getUserData);
+router.get('/', controller.getAllPermissions);
+router.post('/:id', controller.grantPermissions);
+router.get('/permission/:id', controller.getUserData);
 
 export default router;

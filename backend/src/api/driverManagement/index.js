@@ -28,9 +28,9 @@ router
     validator.driverValidate,
     controller.updateDriver
   );
-router.route('/active').get(controller.fetchActiveDrivers);
-router.route('/reject/:id').patch(controller.rejectDriver);
-router.route('/approve/:id').patch(controller.approveDrivers);
+router.get('/active', controller.fetchActiveDrivers);
+router.patch('/reject/:id', controller.rejectDriver);
+router.patch('/approve/:id', controller.approveDrivers);
 
 /**
  * @swagger

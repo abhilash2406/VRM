@@ -1,8 +1,8 @@
-import * as services from './service.js';
+import { transactionListService } from './service.js';
 
 export const TransactionList = async (req, res, next) => {
   try {
-    const data = await services.transactionListService();
+    const data = await transactionListService();
     res.send({
       success: true,
       message: 'transaction listed',

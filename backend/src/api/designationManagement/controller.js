@@ -1,8 +1,8 @@
-import * as services from './service.js';
+import { getDesignationsList } from './service.js';
 
 export const getDesignations = async (req, res, next) => {
   try {
-    const data = await services.getDesignationsList();
+    const data = await getDesignationsList();
     res.send({
       success: true,
       message: 'data retrieval success',

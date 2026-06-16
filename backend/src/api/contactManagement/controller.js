@@ -1,8 +1,8 @@
-import * as services from './service.js';
+import { submitContactForm } from './service.js';
 
 export const setContact = async (req, res, next) => {
   try {
-    const data = await services.submitContactForm(req.body);
+    const data = await submitContactForm(req.body);
     res.send({
       success: true,
       message: 'message posted successfully',

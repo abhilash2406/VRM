@@ -4,11 +4,11 @@ import validate from './validator.js';
 import { upload } from '../../middlewares/uploader.js';
 var router = express.Router();
 
-router.route('/brands').get(controller.getTruckBrands);
-router.route('/models').get(controller.getTruckModels);
-router.route('/variants').get(controller.getTruckVariants);
+router.get('/brands', controller.getTruckBrands);
+router.get('/models', controller.getTruckModels);
+router.get('/variants', controller.getTruckVariants);
 
-router.route('/add').post(
+router.post('/add', 
   upload.fields([
     { name: 'rcPhoto', maxCount: 1 },
     { name: 'truckPhoto', maxCount: 1 },
@@ -16,9 +16,9 @@ router.route('/add').post(
   validate.TruckValidate,
   controller.addTrucks
 );
-router.route('/get-data').post(controller.correspondingData);
-router.route('/').get(controller.getAllTruckData);
-router.route('/activeTrucks').get(controller.getActiveTrucks);
+router.post('/get-data', controller.correspondingData);
+router.get('/', controller.getAllTruckData);
+router.get('/activeTrucks', controller.getActiveTrucks);
 router
   .route('/:id')
   .get(controller.truckToEdit)

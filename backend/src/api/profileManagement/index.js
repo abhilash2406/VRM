@@ -2,11 +2,11 @@ import express from 'express';
 import * as controller from './controller.js';
 var router = express.Router();
 
-router.route('/view').get(controller.viewProfile);
-router.route('/feedback').get(controller.getUserMessages);
+router.get('/view', controller.viewProfile);
+router.get('/feedback', controller.getUserMessages);
 
-router.route('/feedback/:id').get(controller.getMsgToRead).delete(controller.dltFeedback);
-router.route('/permissions').post(controller.ProfilePermissions);
-router.route('/change-password').post(controller.changePassword);
+router.get('/feedback/:id', controller.getMsgToRead).delete(controller.dltFeedback);
+router.post('/permissions', controller.ProfilePermissions);
+router.post('/change-password', controller.changePassword);
 
 export default router;

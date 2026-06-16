@@ -2,7 +2,7 @@ import express from 'express';
 import * as controller from './controller.js';
 import validate from './validator.js';
 import { multiUpload, upload } from '../../middlewares/uploader.js';
-var router = express.Router();
+const router = express.Router();
 
 /**
  * @swagger

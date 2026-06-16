@@ -3,14 +3,14 @@ import * as controller from './controller.js';
 import validate from './validator.js';
 var router = express.Router();
 
-router.route('/').post(validate.tripValidate, controller.addTrips).get(controller.getTrips);
+router.post('/', validate.tripValidate, controller.addTrips).get(controller.getTrips);
 router
   .route('/:id')
   .delete(controller.deleteTrip)
   .get(controller.getTripData)
   .patch(controller.updateTrip);
 
-router.route('/count').post(controller.noOfTrips);
+router.post('/count', controller.noOfTrips);
 
 /**
  * @swagger
