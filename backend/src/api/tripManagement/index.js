@@ -3,12 +3,11 @@ import * as controller from './controller.js';
 import validate from './validator.js';
 var router = express.Router();
 
-router.post('/', validate.tripValidate, controller.addTrips).get(controller.getTrips);
-router
-  .route('/:id')
-  .delete(controller.deleteTrip)
-  .get(controller.getTripData)
-  .patch(controller.updateTrip);
+router.post('/', validate.tripValidate, controller.addTrips);
+router.get('/', controller.getTrips);
+router.delete('/:id', controller.deleteTrip);
+router.get('/:id', controller.getTripData);
+router.patch('/:id', controller.updateTrip);
 
 router.post('/count', controller.noOfTrips);
 

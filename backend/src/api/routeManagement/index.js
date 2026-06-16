@@ -5,7 +5,8 @@ var router = express.Router();
 
 router.post('/add', controller.addRoutes);
 router.get('/', controller.getAllRoutes);
-router.delete('/:id', controller.deleteRoute).get(controller.getRoute);
+router.delete('/:id', controller.deleteRoute);
+router.get('/:id', controller.getRoute);
 
 /**
  * @swagger
