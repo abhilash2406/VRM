@@ -1,6 +1,6 @@
 import fileUpload from 'express-fileupload';
 import path from 'path';
-import BadRequest from '../../common/exceptions/badRequest.js';
+import BadRequest from '../exceptions/badRequest.js';
 
 export const ImageMimeTypes = [
   'image/jpeg',

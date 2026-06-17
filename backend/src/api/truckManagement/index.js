@@ -1,14 +1,15 @@
 import express from 'express';
 import * as controller from './controller.js';
 import validate from './validator.js';
-import { upload } from '../../middlewares/uploader.js';
+import { upload } from '../../common/validation/uploader.js';
 var router = express.Router();
 
 router.get('/brands', controller.getTruckBrands);
 router.get('/models', controller.getTruckModels);
 router.get('/variants', controller.getTruckVariants);
 
-router.post('/add', 
+router.post(
+  '/add',
   upload.fields([
     { name: 'rcPhoto', maxCount: 1 },
     { name: 'truckPhoto', maxCount: 1 },

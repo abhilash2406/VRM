@@ -1,7 +1,7 @@
 import express from 'express';
 import * as controller from './controller.js';
 import validate from './validator.js';
-import { multiUpload, upload } from '../../middlewares/uploader.js';
+import { multiUpload, upload } from '../../common/validation/uploader.js';
 const router = express.Router();
 
 /**
@@ -73,7 +73,7 @@ router.post('/login', controller.Login);
  *               - phone_number
  *     responses:
  *       '200':
- *         description: SignUp successful
+ *         description: Registered successfully
  */
 router.post('/register', validate.registerValidate, controller.register);
 /**
@@ -106,7 +106,8 @@ router.post('/register', validate.registerValidate, controller.register);
  *       '200':
  *         description: Registration completed
  */
-router.post('/userdata',
+router.post(
+  '/userdata',
   upload.fields([
     { name: 'userPhoto', maxCount: 1 },
     { name: 'licensePhoto', maxCount: 1 },
@@ -117,7 +118,5 @@ router.post('/userdata',
 );
 
 router.post('/add-user', validate.addUserValidate, controller.addUsers);
-
-
 
 export default router;

@@ -1,4 +1,12 @@
-import { loginUser, addUsersService, googleLoginService, registerUser, googleSignUpService, signUpDriver, processPayment } from './service.js';
+import {
+  loginUser,
+  addUsersService,
+  googleLoginService,
+  registerUser,
+  googleSignUpService,
+  signUpDriver,
+  processPayment,
+} from './service.js';
 
 export const Login = async (req, res, next) => {
   try {
@@ -23,14 +31,17 @@ export const googleLogin = async (req, res, next) => {
     const data = await googleLoginService(req.body);
     return res.send({ success: true, message: 'Login successfully', data });
   } catch (e) {
-    res.send({ success: false, message: e.message === 'User Not Found' ? 'User Not Found' : 'non registered email' });
+    res.send({
+      success: false,
+      message: e.message === 'User Not Found' ? 'User Not Found' : 'non registered email',
+    });
   }
 };
 
 export const register = async (req, res, next) => {
   try {
     const data = await registerUser(req.body);
-    return res.send({ success: true, message: 'Registration successful', data });
+    return res.send({ success: true, message: 'Registered successfully', data });
   } catch (e) {
     res.send({ success: false, message: e.message });
   }

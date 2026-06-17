@@ -1,7 +1,7 @@
 import express from 'express';
 import * as controller from './controller.js';
 import validator from './validator.js';
-import { upload } from '../../middlewares/uploader.js';
+import { upload } from '../../common/validation/uploader.js';
 var router = express.Router();
 
 router
