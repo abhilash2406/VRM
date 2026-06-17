@@ -6,8 +6,41 @@ import {
   googleSignUpService,
   signUpDriver,
   processPayment,
+  verifyEmailService,
 } from './service.js';
+import { setAuthCookies } from '../../utils/cookies.js';
+import TokenAudience from '../../common/enum/token-audience-enum.js';
 
+/** Read a named cookie off the request without tripping the `any` from cookie-parser. */
+const readCookie = (req, name) => req.cookies?.[name];
+
+/** Persist an issued token pair as the user auth cookies. */
+const applyAuthCookies = (res, tokens) => {
+  setAuthCookies(res, TokenAudience.USER, {
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+    accessTtlMs: tokens.accessTtlMs,
+    refreshTtlMs: tokens.refreshTtlMs,
+  });
+};
+
+export const verifyEmail = async (req, res, next) => {
+  try {
+    const data = await verifyEmailService(req.body);
+
+    applyAuthCookies(res, {
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+      accessTtlMs: (process.env.ACCESS_TOKEN_TTL_SECONDS || 900) * 1000,
+      refreshTtlMs: (process.env.REFRESH_TOKEN_TTL_SECONDS || 2592000) * 1000,
+    });
+
+    return res.send({ success: true, message: 'Email verified', accessToken: data.accessToken });
+  } catch (e) {
+    const status = e.message === 'User not found' ? 404 : e.message.includes('Account') ? 403 : 400;
+    return res.status(status).send({ success: false, message: e.message });
+  }
+};
 export const Login = async (req, res, next) => {
   try {
     const data = await loginUser(req.body);

@@ -13,7 +13,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /auth/v1/login:
+ * /api/v1/auth/login:
  *   post:
  *     tags:
  *       - Authentication
@@ -42,7 +42,7 @@ const router = express.Router();
 router.post('/login', controller.Login);
 /**
  * @swagger
- * /auth/v1/register:
+ * /api/v1/auth/register:
  *   post:
  *     tags:
  *       - Authentication
@@ -78,7 +78,7 @@ router.post('/login', controller.Login);
 router.post('/register', validate.registerValidate, controller.register);
 /**
  * @swagger
- * /auth/userdata:
+ * /api/v1/auth/userdata:
  *   post:
  *     tags:
  *       - Authentication
@@ -118,5 +118,50 @@ router.post(
 );
 
 router.post('/add-user', validate.addUserValidate, controller.addUsers);
+
+router.post('/verify-email', validate.verifyEmailValidate, controller.verifyEmail);
+/**
+ * @swagger
+ * /api/v1/auth/verify-email:
+ *   post:
+ *     summary: Verify an email-verification OTP
+ *     description: >
+ *       Confirms the OTP, activates the account, and logs the user in by
+ *       returning an access token and setting the httpOnly refresh-token
+ *       cookie.
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, otp]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               otp:
+ *                 type: string
+ *                 pattern: '^\\d{6}$'
+ *                 example: '483912'
+ *     responses:
+ *       200:
+ *         description: Email verified — access token returned, refresh cookie set
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: Email verified }
+ *                 accessToken: { type: string }
+ *       400:
+ *         description: Validation error or invalid/expired OTP
+ *       403:
+ *         description: Account is blocked or deleted
+ *       404:
+ *         description: User not found
+ */
 
 export default router;

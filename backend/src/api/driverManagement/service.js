@@ -1,21 +1,22 @@
 import drivers from '../../models/driver.js';
+import { UserType } from '../../common/enum/user-type-enum.js';
 import trucks from '../../models/truck.js';
 import users from '../../models/users.js';
 import trips from '../../models/trip.js';
-import login from '../../models/login.js';
+import loginHistory from '../../models/loginHistory.js';
 import routes from '../../models/route.js';
 import designations from '../../models/designation.js';
 import transactions from '../../models/transaction.js';
-import transporter from '../../modules/mail.js';
+import sendEmails from '../../utils/sendEmail.js';
 
 export const getDriverDatasList = async () => {
   return await drivers.findAll({
-    include: [{ model: users, include: [{ model: login }] }],
+    include: [{ model: users, include: [{ model: loginHistory }] }],
   });
 };
 
 export const addDriversService = async (data, files) => {
-  const userExist = await login.findOne({ where: { email: data.email } });
+  const userExist = await users.findOne({ where: { email: data.email } });
   if (userExist) {
     throw new Error('user already exist with this email');
   }
@@ -26,22 +27,15 @@ export const addDriversService = async (data, files) => {
   }
 
   const randomPassword = Math.random().toString(36).slice(-8);
-  const salt = await login.generateSalt();
-  const hashedPassword = await login.hashPassword(randomPassword, salt);
 
-  const newUser = await designations.findOne({ where: { designation: 'Driver' } });
-
-  const log = await login.create({
-    email: data.email,
-    password: hashedPassword,
-    salt,
-    designationId: newUser.id,
-  });
+  const newDesignation = await designations.findOne({ where: { designation: UserType.DRIVER } });
 
   const user = await users.create({
-    name: data.name,
-    phoneNumber: data.phoneNumber,
-    loginId: log.id,
+    first_name: data.name,
+    phone_number: data.phoneNumber,
+    email: data.email,
+    password_hash: randomPassword,
+    designationId: newDesignation.id,
   });
 
   const licenseTypeString = JSON.stringify(data.licenseType);
@@ -62,7 +56,7 @@ export const addDriversService = async (data, files) => {
     subject: 'Successfully Registered',
     text: `Your username is ${data.name} and password is ${randomPassword} to complete your registration procedures`,
   };
-  await transporter.sendMail(mailOptions);
+  await sendEmails({ mailOptions });
   return true;
 };
 
@@ -74,8 +68,8 @@ export const updateDriverService = async (id, data, files) => {
 
   const user_ext = await users.findByPk(driver_ext.userId);
   await user_ext.update({
-    name: data.name,
-    phoneNumber: data.phoneNumber,
+    first_name: data.name,
+    phone_number: data.phoneNumber,
   });
 
   const licenseTypeString = JSON.stringify(data.licenseType);
@@ -95,7 +89,7 @@ export const viewDriverService = async (id) => {
   return await drivers.findOne({
     where: { id },
     include: [
-      { model: users, include: [{ model: login }] },
+      { model: users, include: [{ model: loginHistory }] },
       { model: trucks },
       { model: routes },
     ],
@@ -105,7 +99,7 @@ export const viewDriverService = async (id) => {
 export const fetchActiveDriversService = async () => {
   return await drivers.findAll({
     where: { status: 'approved' },
-    include: [{ model: users, include: [{ model: login }] }],
+    include: [{ model: users, include: [{ model: loginHistory }] }],
   });
 };
 
@@ -143,11 +137,9 @@ export const deleteDriverService = async (id) => {
 
   const trip = await trips.findOne({ where: { driverId: id } });
   const user = await users.findOne({ where: { id: driver.userId } });
-  const loged = await login.findOne({ where: { id: user.loginId } });
 
   if (trip) await trip.destroy();
-  if (user) await user.destroy();
-  if (loged) await loged.destroy();
+  if (user) await user.destroy(); // Cascade will delete login histories, if configured, or just leave it.
   await driver.destroy();
 
   return true;

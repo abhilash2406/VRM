@@ -2,7 +2,6 @@ import Brand from '../../models/brand.js';
 import TruckModel from '../../models/truckModel.js';
 import Variant from '../../models/variant.js';
 import trucks from '../../models/truck.js';
-import login from '../../models/login.js';
 import users from '../../models/users.js';
 import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
@@ -38,10 +37,7 @@ export const correspondingDataService = async (data) => {
 export const addTrucksService = async (data, files, token) => {
   const truck_exist = await trucks.findAll({
     where: {
-      [Op.or]: [
-        { VIN: { [Op.like]: `%${data.VIN}%` } },
-        { RCNo: { [Op.like]: `%${data.RCNo}%` } },
-      ],
+      [Op.or]: [{ VIN: { [Op.like]: `%${data.VIN}%` } }, { RCNo: { [Op.like]: `%${data.RCNo}%` } }],
     },
   });
 
@@ -57,8 +53,7 @@ export const addTrucksService = async (data, files, token) => {
   const truckVariant = await Variant.findOne({ where: { id: data.variant } });
 
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  const who = await login.findByPk(decoded.id);
-  const crctUser = await users.findOne({ where: { loginId: who.id } });
+  const crctUser = await users.findByPk(decoded.id);
 
   await trucks.create({
     brand: truckBrand.name,

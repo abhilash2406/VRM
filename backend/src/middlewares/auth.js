@@ -1,6 +1,6 @@
 import { logger } from '../config/winston-config.js';
 import jwt from 'jsonwebtoken';
-import login from '../models/login.js';
+import users from '../models/users.js';
 // // authentication middleware
 
 export default async (req, res, next) => {
@@ -21,13 +21,9 @@ export default async (req, res, next) => {
       });
     }
 
-    const access_Token = await login.findOne({ where: { token: token } });
-    if (!access_Token) {
-      return res.send({
-        success: false,
-        msg: 'Invalid or Expired Token',
-      });
-    }
+    // In users model we don't store tokens, we just verify the user logic
+    // Previously we checked if the access_Token existed in the loginHistory
+    // With JWT, verification is usually sufficient unless token invalidation is implemented in DB
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (!decoded) {
@@ -42,14 +38,16 @@ export default async (req, res, next) => {
         message: 'Token expired',
       });
     }
-    const isAdminExists = await login.findOne({ where: { id: decoded.id } });
+    const isAdminExists = await users.findOne({ where: { id: decoded.id } });
     if (!isAdminExists) {
       return res.send({
         success: false,
         message: 'Access Denied',
       });
     }
-    let matchValidity = isAdminExists.password.concat(isAdminExists.id).concat(isAdminExists.email);
+    let matchValidity = isAdminExists.password_hash
+      .concat(isAdminExists.id)
+      .concat(isAdminExists.email);
     if (matchValidity != decoded.validity) {
       return res.send({
         success: false,

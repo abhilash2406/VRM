@@ -1,5 +1,5 @@
-import { logger } from '../../config/winston-config.js';
-import permission from '../permission.js';
+import { logger } from '../config/winston-config.js';
+import permission from '../models/permission.js';
 
 (async () => {
   try {

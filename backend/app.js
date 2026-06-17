@@ -19,8 +19,12 @@ import './src/config/sequelize-config.js';
 import { logger } from './src/config/winston-config.js';
 import swaggerAuth from './src/middlewares/swagger-auth.js';
 
+import { connectRedis } from './src/config/redis-config.js';
+
 dotenv.config();
 
+// Connect to Redis before starting
+connectRedis();
 var app = express();
 app.use(helmet());
 app.use(compression());

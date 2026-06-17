@@ -3,7 +3,7 @@ import routes from '../../models/route.js';
 import drivers from '../../models/driver.js';
 import trips from '../../models/trip.js';
 import users from '../../models/users.js';
-import login from '../../models/login.js';
+import loginHistory from '../../models/loginHistory.js';
 import { Op } from 'sequelize';
 import moment from 'moment';
 
@@ -20,12 +20,13 @@ export const addTripsService = async (data) => {
 
   const today = new Date();
   const inputDate = new Date(data.date);
-  const status = inputDate.getTime() > today.getTime()
-    ? 'scheduled'
-    : ['ongoing', 'completed', 'cancelled'][Math.floor(Math.random() * 3)];
+  const status =
+    inputDate.getTime() > today.getTime()
+      ? 'scheduled'
+      : ['ongoing', 'completed', 'cancelled'][Math.floor(Math.random() * 3)];
 
   const new_date = moment(data.date).format('YYYY-MM-DD');
-  
+
   const tripData = await trips.create({
     driverId: data.driverId,
     truckId: data.truckId,
@@ -47,7 +48,7 @@ export const getTripsService = async () => {
     include: [
       {
         model: drivers,
-        include: [{ model: users, include: [{ model: login }] }],
+        include: [{ model: users, include: [{ model: loginHistory }] }],
       },
       { model: trucks },
       { model: routes },
@@ -60,7 +61,7 @@ export const getTripDataService = async (id) => {
     include: [
       {
         model: drivers,
-        include: [{ model: users, include: [{ model: login }] }],
+        include: [{ model: users, include: [{ model: loginHistory }] }],
       },
       { model: trucks },
       { model: routes },
@@ -94,9 +95,10 @@ export const updateTripService = async (id, data) => {
 
   const today = new Date();
   const inputDate = new Date(data.date);
-  const status = inputDate.getTime() > today.getTime()
-    ? 'scheduled'
-    : ['ongoing', 'completed', 'cancelled'][Math.floor(Math.random() * 3)];
+  const status =
+    inputDate.getTime() > today.getTime()
+      ? 'scheduled'
+      : ['ongoing', 'completed', 'cancelled'][Math.floor(Math.random() * 3)];
 
   const new_date = moment(data.date).format('YYYY-MM-DD');
 

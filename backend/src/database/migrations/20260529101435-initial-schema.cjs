@@ -156,29 +156,27 @@ module.exports = {
       },
     });
 
-    await queryInterface.createTable('logins', {
+    await queryInterface.createTable('login_histories', {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
         defaultValue: Sequelize.UUIDV4,
       },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      password: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      salt: {
-        type: Sequelize.STRING,
-      },
-      token: {
-        type: Sequelize.TEXT,
-      },
-      designationId: {
+      userId: {
         type: Sequelize.UUID,
         allowNull: false,
+      },
+      loginTime: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
+      },
+      status: {
+        type: Sequelize.ENUM('SUCCESS', 'FAILED'),
+        defaultValue: 'SUCCESS',
+      },
+      ipAddress: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -464,21 +462,48 @@ module.exports = {
         primaryKey: true,
         defaultValue: Sequelize.UUIDV4,
       },
-      name: {
+      first_name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      phoneNumber: {
+      last_name: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      phone_number: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      email: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      password_hash: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      designationId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+      },
+      email_verified: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      phone_verified: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      status: {
+        type: Sequelize.ENUM('ACTIVE', 'INACTIVE'),
+        allowNull: false,
+        defaultValue: 'ACTIVE',
       },
       signed: {
         type: Sequelize.ENUM('Signed', 'Unsigned'),
         defaultValue: 'Unsigned',
-      },
-      loginId: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -551,15 +576,15 @@ module.exports = {
       onUpdate: 'CASCADE'
     });
 
-    await queryInterface.addConstraint('logins', {
-      fields: ['designationId'],
+    await queryInterface.addConstraint('login_histories', {
+      fields: ['userId'],
       type: 'foreign key',
-      name: 'logins_designationId_fkey',
+      name: 'login_histories_userId_fkey',
       references: {
-        table: 'designations',
+        table: 'users',
         field: 'id'
       },
-      onDelete: 'NO ACTION',
+      onDelete: 'CASCADE',
       onUpdate: 'CASCADE'
     });
 
@@ -648,11 +673,11 @@ module.exports = {
     });
 
     await queryInterface.addConstraint('users', {
-      fields: ['loginId'],
+      fields: ['designationId'],
       type: 'foreign key',
-      name: 'users_loginId_fkey',
+      name: 'users_designationId_fkey',
       references: {
-        table: 'logins',
+        table: 'designations',
         field: 'id'
       },
       onDelete: 'NO ACTION',
@@ -669,7 +694,7 @@ module.exports = {
     await queryInterface.dropTable('designations', { cascade: true });
     await queryInterface.dropTable('drivers', { cascade: true });
     await queryInterface.dropTable('galleries', { cascade: true });
-    await queryInterface.dropTable('logins', { cascade: true });
+    await queryInterface.dropTable('login_histories', { cascade: true });
     await queryInterface.dropTable('permissions', { cascade: true });
     await queryInterface.dropTable('permissionSettings', { cascade: true });
     await queryInterface.dropTable('routes', { cascade: true });

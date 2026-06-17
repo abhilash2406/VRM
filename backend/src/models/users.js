@@ -1,5 +1,8 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { logger } from '../config/winston-config.js';
 
 const users = sequelize.define(
   'users',
@@ -29,6 +32,10 @@ const users = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    designationId: {
+      type: DataTypes.UUID,
+      allowNull: true, // Making true for now, adapt if required
+    },
     email_verified: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
@@ -40,19 +47,55 @@ const users = sequelize.define(
       defaultValue: false,
     },
     status: {
-      type: DataTypes.ENUM('ACTIVE', 'INACTIVE'),
+      type: DataTypes.ENUM('ACTIVE', 'INACTIVE', 'BLOCKED', 'DELETED'),
       allowNull: false,
       defaultValue: 'ACTIVE',
     },
   },
-
   {
     timestamps: true,
+    hooks: {
+      beforeCreate: async (user) => {
+        if (user.password_hash) {
+          const salt = await bcrypt.genSalt();
+          user.password_hash = await bcrypt.hash(user.password_hash, salt);
+        }
+      },
+      beforeUpdate: async (user) => {
+        if (user.changed('password_hash')) {
+          const salt = await bcrypt.genSalt();
+          user.password_hash = await bcrypt.hash(user.password_hash, salt);
+        }
+      },
+    },
   }
 );
 
+users.prototype.verifyPassword = async function (pass) {
+  return await bcrypt.compare(pass, this.password_hash);
+};
+
+users.prototype.generateAuthToken = function (rememberMe = false) {
+  let numDays = rememberMe ? 720 : 10;
+  const dateObj = new Date();
+  const expiresIn = dateObj.setMinutes(dateObj.getMinutes() + numDays);
+
+  return jwt.sign(
+    {
+      id: this.id,
+      email: this.email,
+      validity: this.password_hash.concat(this.id).concat(this.email),
+    },
+    process.env.JWT_SECRET || 'qwerty',
+    { expiresIn }
+  );
+};
+
 users.associate = (models) => {
-  users.belongsTo(models.login, { foreignKey: 'loginId', allowNull: false });
+  users.hasMany(models.loginHistory, { foreignKey: 'userId' });
+  if (models.designation) {
+    users.belongsTo(models.designation, { foreignKey: 'designationId' });
+  }
 };
 
 export default users;

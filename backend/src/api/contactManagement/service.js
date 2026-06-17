@@ -1,5 +1,5 @@
 import contact from '../../models/contact.js';
-import mail from '../../modules/mail.js';
+import sendEmails from '../../utils/sendEmail.js';
 import { logger } from '../../config/winston-config.js';
 
 export const submitContactForm = async (data) => {
@@ -7,30 +7,30 @@ export const submitContactForm = async (data) => {
   const createdContact = await contact.create(data);
 
   const mailOptions = {
-    from: process.env.USER_MAIL,
     to: data.email,
     subject: 'your review ',
     text: `Hi ${data.name} our representative will contact you shortly `,
   };
 
   const mailOptions2 = {
-    from: process.env.USER_MAIL,
-    to: 'mailto:abhilashkumar@spericorn.com',
+    to: process.env.ADMIN_MAIL,
     subject: 'New Contact Form Submission',
     text: `Hi a new contact form has been submitted by ${data.name} with message ${data.message} and phone number ${data.phoneNumber} `,
   };
 
   try {
-    await mail.sendMail(mailOptions);
+    await sendEmails({ mailOptions });
     logger.info('Email sent');
   } catch (err) {
+    logger.error(`Failed to send contact email: ${err.message}`);
     throw err;
   }
 
   try {
-    await mail.sendMail(mailOptions2);
+    await sendEmails({ mailOptions: mailOptions2 });
     logger.info('Email sent to admin');
   } catch (err) {
+    logger.error(`Failed to send admin notification: ${err.message}`);
     throw err;
   }
 

@@ -1,48 +1,35 @@
-import { logger } from '../../config/winston-config.js';
-import signup from '../users.js';
-import login from '../login.js';
-import designation from '../designation.js';
-
-const hashing = async (password) => {
-  const salt = await login.generateSalt();
-  let newPassword = await login.hashPassword(password, salt);
-  return { salt, newPassword };
-};
+import { logger } from '../config/winston-config.js';
+import users from '../models/users.js';
+import designation from '../models/designation.js'; // corrected import path based on relative position
+import { UserType } from '../common/enum/user-type-enum.js';
 
 (async () => {
   try {
-    let { salt, newPassword } = await hashing('AbhiLash@20');
-
     const adminData = {
-      name: 'Abhilash ',
-      email: 'abhilashkumar@spericorn.com',
-      phoneNumber: '7012139732',
+      first_name: 'Abhilash ',
+      email: process.env.ADMIN_MAIL,
+      phone_number: '7012139732',
     };
 
     const designationDetails = await designation.findOne({
-      where: { designation: 'Admin' },
+      where: { designation: UserType.SUPERADMIN },
     });
 
-    let existingData = await login.findOne({
+    let existingData = await users.findOne({
       where: { email: adminData.email },
     });
 
     if (!existingData) {
-      const loginDetails = await login.create({
+      await users.create({
         ...adminData,
-        password: newPassword,
-        salt,
+        password_hash: process.env.ADMIN_PASS || 'AbhiLash@20', // Hook handles hashing
         designationId: designationDetails.id,
       });
       logger.info('Admin created successfully');
-      await signup.create({
-        ...adminData,
-        loginId: loginDetails.id,
-      });
     } else {
       logger.info(`Data already exists`);
     }
   } catch (e) {
-    logger.info('error', e.message);
+    console.error('Seeder Error:', e);
   }
 })();
