@@ -1,4 +1,5 @@
 import { jest } from '@jest/globals';
+import TokenAudience from '../../../src/common/enum/token-audience-enum.js';
 
 // 1. Mock Stripe
 const mockStripeInstance = {
@@ -17,8 +18,20 @@ jest.unstable_mockModule('stripe', () => {
   };
 });
 
-// 2. Mock mail module to support both callbacks and promises
-jest.unstable_mockModule('../../../modules/mail.js', () => ({
+// 2. Mock the service layer (controllers now delegate to services)
+jest.unstable_mockModule('../../../src/api/authentication/service.js', () => ({
+  loginUser: jest.fn(),
+  addUsersService: jest.fn(),
+  googleLoginService: jest.fn(),
+  registerUser: jest.fn(),
+  googleSignUpService: jest.fn(),
+  signUpDriver: jest.fn(),
+  processPayment: jest.fn(),
+  verifyEmailService: jest.fn(),
+}));
+
+// 3. Mock nodemailer config
+jest.unstable_mockModule('../../../src/config/nodemailer-config.js', () => ({
   default: {
     sendMail: jest.fn((options, callback) => {
       if (callback) {
@@ -30,96 +43,17 @@ jest.unstable_mockModule('../../../modules/mail.js', () => ({
   },
 }));
 
-// 3. Mock Sequelize Models
-jest.unstable_mockModule('../../../models/users.js', () => ({
-  default: {
-    findOne: jest.fn(),
-    create: jest.fn(),
-  },
-}));
-
-jest.unstable_mockModule('../../../models/login.js', () => ({
-  default: {
-    findOne: jest.fn(),
-    findByPk: jest.fn(),
-    create: jest.fn(),
-    verifyPassword: jest.fn(),
-    generateAuthToken: jest.fn(),
-    generateSalt: jest.fn(),
-    hashPassword: jest.fn(),
-    update: jest.fn(),
-  },
-}));
-
-jest.unstable_mockModule('../../../models/designation.js', () => ({
-  default: {
-    findOne: jest.fn(),
-  },
-}));
-
-jest.unstable_mockModule('../../../models/permissionSetting.js', () => ({
-  default: {
-    findAll: jest.fn(),
-  },
-}));
-
-jest.unstable_mockModule('../../../models/permission.js', () => ({
-  default: {},
-}));
-
-jest.unstable_mockModule('../../../models/driver.js', () => ({
-  default: {
-    findOne: jest.fn(),
-    create: jest.fn(),
-  },
-}));
-
-jest.unstable_mockModule('../../../models/transaction.js', () => ({
-  default: {
-    create: jest.fn(),
-  },
-}));
-
-jest.unstable_mockModule('../../../models/brand.js', () => ({
-  default: {
-    findOne: jest.fn(),
-  },
-}));
-
-jest.unstable_mockModule('../../../models/truckModel.js', () => ({
-  default: {
-    findOne: jest.fn(),
-  },
-}));
-
-jest.unstable_mockModule('../../../models/variant.js', () => ({
-  default: {
-    findOne: jest.fn(),
-  },
-}));
-
-jest.unstable_mockModule('../../../models/truck.js', () => ({
-  default: {
-    findAll: jest.fn(),
-    create: jest.fn(),
-  },
+// Mock cookies.js
+const mockSetAuthCookies = jest.fn();
+jest.unstable_mockModule('../../../src/utils/cookies.js', () => ({
+  setAuthCookies: mockSetAuthCookies,
 }));
 
 // 4. Import modules dynamically after defining all mocks
-const { addUserValidate } = await import('../../../api/authentication/validator.js');
-const controller = await import('../../../api/authentication/controller.js');
-const users = await import('../../../models/users.js');
-const login = await import('../../../models/login.js');
-const designations = await import('../../../models/designation.js');
-const permissionSetting = await import('../../../models/permissionSetting.js');
-const permissions = await import('../../../models/permission.js');
-const drivers = await import('../../../models/driver.js');
-const transactions = await import('../../../models/transaction.js');
-const transporter = await import('../../../modules/mail.js');
-const Brand = await import('../../../models/brand.js');
-const TruckModel = await import('../../../models/truckModel.js');
-const Variant = await import('../../../models/variant.js');
-const trucks = await import('../../../models/truck.js');
+const { addUserValidate, registerValidate, verifyEmailValidate } =
+  await import('../../../src/api/authentication/validator.js');
+const controller = await import('../../../src/api/authentication/controller.js');
+const service = await import('../../../src/api/authentication/service.js');
 
 describe('Authentication Module', () => {
   beforeAll(() => {
@@ -164,9 +98,194 @@ describe('Authentication Module', () => {
     });
   });
 
+  describe('Register Validator', () => {
+    it('should validate correctly formatted request body for registering', async () => {
+      const req = {
+        body: {
+          first_name: 'John',
+          last_name: 'Doe',
+          email: 'johndoe@example.com',
+          password: 'Password@123',
+          phone_number: '1234567890',
+        },
+      };
+      const res = { send: jest.fn() };
+      const next = jest.fn();
+
+      await registerValidate(req, res, next);
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('should fail if password does not meet complexity requirements', async () => {
+      const req = {
+        body: {
+          first_name: 'John',
+          last_name: 'Doe',
+          email: 'johndoe@example.com',
+          password: 'weakpassword',
+          phone_number: '1234567890',
+        },
+      };
+      const res = { send: jest.fn() };
+      const next = jest.fn();
+
+      await registerValidate(req, res, next);
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
+    });
+  });
+
+  describe('Verify Email Validator', () => {
+    it('should validate correctly formatted request body for verify email', async () => {
+      const req = {
+        body: {
+          email: 'johndoe@example.com',
+          otp: '123456',
+        },
+      };
+      const res = { send: jest.fn() };
+      const next = jest.fn();
+
+      await verifyEmailValidate(req, res, next);
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('should fail if otp is invalid length', async () => {
+      const req = {
+        body: {
+          email: 'johndoe@example.com',
+          otp: '1234',
+        },
+      };
+      const res = { send: jest.fn() };
+      const next = jest.fn();
+
+      await verifyEmailValidate(req, res, next);
+      expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
+    });
+  });
+
+  describe('Controller - verifyEmail', () => {
+    let originalEnv;
+
+    beforeEach(() => {
+      originalEnv = process.env;
+      process.env = {
+        ...originalEnv,
+        ACCESS_TOKEN_TTL_SECONDS: '900',
+        REFRESH_TOKEN_TTL_SECONDS: '2592000',
+      };
+    });
+
+    afterEach(() => {
+      process.env = originalEnv;
+    });
+
+    it('should verify email and set cookies successfully', async () => {
+      const mockData = { accessToken: 'access-token', refreshToken: 'refresh-token' };
+      service.verifyEmailService.mockResolvedValue(mockData);
+
+      const req = { body: { email: 'test@example.com', otp: '123456' } };
+      const res = { send: jest.fn() };
+
+      await controller.verifyEmail(req, res);
+
+      expect(res.send).toHaveBeenCalledWith({
+        success: true,
+        message: 'Email verified',
+        accessToken: 'access-token',
+      });
+    });
+
+    it('should use default TTL values if env vars are missing', async () => {
+      delete process.env.ACCESS_TOKEN_TTL_SECONDS;
+      delete process.env.REFRESH_TOKEN_TTL_SECONDS;
+      const mockData = { accessToken: 'access-token', refreshToken: 'refresh-token' };
+      service.verifyEmailService.mockResolvedValue(mockData);
+
+      const req = { body: { email: 'test@example.com', otp: '123456' } };
+      const res = { send: jest.fn() };
+
+      await controller.verifyEmail(req, res);
+
+      expect(mockSetAuthCookies).toHaveBeenCalledWith(
+        res,
+        TokenAudience.USER,
+        expect.objectContaining({
+          accessTtlMs: 900000,
+          refreshTtlMs: 2592000000,
+        })
+      );
+    });
+
+    it('should return 404 if user not found', async () => {
+      service.verifyEmailService.mockRejectedValue(new Error('User not found'));
+
+      const req = { body: { email: 'wrong@example.com', otp: '123456' } };
+      const res = { status: jest.fn().mockReturnThis(), send: jest.fn() };
+
+      await controller.verifyEmail(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.send).toHaveBeenCalledWith({ success: false, message: 'User not found' });
+    });
+
+    it('should return 403 if account issues', async () => {
+      service.verifyEmailService.mockRejectedValue(new Error('Account is blocked'));
+
+      const req = { body: { email: 'blocked@example.com', otp: '123456' } };
+      const res = { status: jest.fn().mockReturnThis(), send: jest.fn() };
+
+      await controller.verifyEmail(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.send).toHaveBeenCalledWith({ success: false, message: 'Account is blocked' });
+    });
+
+    it('should return 400 for other errors', async () => {
+      service.verifyEmailService.mockRejectedValue(new Error('Invalid OTP'));
+
+      const req = { body: { email: 'test@example.com', otp: 'wrong' } };
+      const res = { status: jest.fn().mockReturnThis(), send: jest.fn() };
+
+      await controller.verifyEmail(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.send).toHaveBeenCalledWith({ success: false, message: 'Invalid OTP' });
+    });
+  });
+
+  describe('Controller - register', () => {
+    it('should register successfully', async () => {
+      const mockData = { id: 'user-1' };
+      service.registerUser.mockResolvedValue(mockData);
+
+      const req = { body: { email: 'test@example.com', password: 'password' } };
+      const res = { send: jest.fn() };
+
+      await controller.register(req, res);
+
+      expect(res.send).toHaveBeenCalledWith({
+        success: true,
+        message: 'Registered successfully',
+        data: mockData,
+      });
+    });
+
+    it('should handle register failure', async () => {
+      service.registerUser.mockRejectedValue(new Error('Email already exists'));
+
+      const req = { body: { email: 'existing@example.com', password: 'password' } };
+      const res = { send: jest.fn() };
+
+      await controller.register(req, res);
+
+      expect(res.send).toHaveBeenCalledWith({ success: false, message: 'Email already exists' });
+    });
+  });
+
   describe('Controller - Login', () => {
     it('should return error if user does not exist', async () => {
-      login.default.findOne.mockResolvedValue(null);
+      service.loginUser.mockRejectedValue(new Error('Invalid email or password'));
       const req = { body: { email: 'wrong@example.com', password: 'password' } };
       const res = { send: jest.fn() };
 
@@ -179,32 +298,19 @@ describe('Authentication Module', () => {
     });
 
     it('should handle driver login successfully (approved)', async () => {
-      const mockUserLogin = {
-        id: 'login-1',
-        designationId: 'des-driver',
-        password: 'hash',
-        salt: 'salt',
-      };
-      login.default.findOne.mockResolvedValue(mockUserLogin);
-      designations.default.findOne.mockResolvedValue({ id: 'des-driver', designation: 'Driver' });
-      users.default.findOne.mockResolvedValue({ id: 'user-1' });
-      drivers.default.findOne.mockResolvedValue({ id: 'driver-1', status: 'approved' });
-      login.default.verifyPassword.mockResolvedValue(true);
-      login.default.generateAuthToken.mockReturnValue('token');
-
-      const mockUpdate = jest.fn();
-      login.default.findByPk.mockResolvedValue({ id: 'login-1', update: mockUpdate });
-
-      permissionSetting.default.findAll.mockResolvedValue([
-        { permission: { menu: 'Dashboard', subMenu: 'Home' } },
-      ]);
+      service.loginUser.mockResolvedValue({
+        user: 'John Driver',
+        designation: 'Driver',
+        accessToken: 'token',
+        refreshToken: 'refresh-token',
+        permission: [{ menu: 'Dashboard', subMenu: 'Home' }],
+      });
 
       const req = { body: { email: 'driver@example.com', password: 'password' } };
       const res = { send: jest.fn() };
 
       await controller.Login(req, res);
 
-      expect(mockUpdate).toHaveBeenCalledWith({ token: 'token' });
       expect(res.send).toHaveBeenCalledWith({
         success: true,
         message: 'Login successfully',
@@ -213,16 +319,7 @@ describe('Authentication Module', () => {
     });
 
     it('should fail driver login if needs approval', async () => {
-      const mockUserLogin = {
-        id: 'login-1',
-        designationId: 'des-driver',
-        password: 'hash',
-        salt: 'salt',
-      };
-      login.default.findOne.mockResolvedValue(mockUserLogin);
-      designations.default.findOne.mockResolvedValue({ id: 'des-driver', designation: 'Driver' });
-      users.default.findOne.mockResolvedValue({ id: 'user-1' });
-      drivers.default.findOne.mockResolvedValue({ id: 'driver-1', status: 'pending' });
+      service.loginUser.mockRejectedValue(new Error('admin approval needed'));
 
       const req = { body: { email: 'driver@example.com', password: 'password' } };
       const res = { send: jest.fn() };
@@ -236,17 +333,7 @@ describe('Authentication Module', () => {
     });
 
     it('should fail driver login if password is wrong', async () => {
-      const mockUserLogin = {
-        id: 'login-1',
-        designationId: 'des-driver',
-        password: 'hash',
-        salt: 'salt',
-      };
-      login.default.findOne.mockResolvedValue(mockUserLogin);
-      designations.default.findOne.mockResolvedValue({ id: 'des-driver', designation: 'Driver' });
-      users.default.findOne.mockResolvedValue({ id: 'user-1' });
-      drivers.default.findOne.mockResolvedValue({ id: 'driver-1', status: 'approved' });
-      login.default.verifyPassword.mockResolvedValue(false);
+      service.loginUser.mockRejectedValue(new Error('Invalid email or password'));
 
       const req = { body: { email: 'driver@example.com', password: 'wrong' } };
       const res = { send: jest.fn() };
@@ -260,31 +347,19 @@ describe('Authentication Module', () => {
     });
 
     it('should handle standard non-driver login successfully', async () => {
-      const mockUserLogin = {
-        id: 'login-1',
-        designationId: 'des-admin',
-        password: 'hash',
-        salt: 'salt',
-      };
-      login.default.findOne.mockResolvedValue(mockUserLogin);
-      designations.default.findOne.mockResolvedValue({ id: 'des-admin', designation: 'Admin' });
-      login.default.verifyPassword.mockResolvedValue(true);
-      login.default.generateAuthToken.mockReturnValue('token');
-
-      const mockUpdate = jest.fn();
-      login.default.findByPk.mockResolvedValue({ id: 'login-1', update: mockUpdate });
-      users.default.findOne.mockResolvedValue({ name: 'Admin User' });
-
-      permissionSetting.default.findAll.mockResolvedValue([
-        { permission: { menu: 'Dashboard', subMenu: 'Home' } },
-      ]);
+      service.loginUser.mockResolvedValue({
+        user: 'Admin User',
+        designation: 'Admin',
+        accessToken: 'token',
+        refreshToken: 'refresh-token',
+        permission: [{ menu: 'Dashboard', subMenu: 'Home' }],
+      });
 
       const req = { body: { email: 'admin@example.com', password: 'password' } };
       const res = { send: jest.fn() };
 
       await controller.Login(req, res);
 
-      expect(mockUpdate).toHaveBeenCalledWith({ token: 'token' });
       expect(res.send).toHaveBeenCalledWith({
         success: true,
         message: 'Login successfully',
@@ -293,15 +368,7 @@ describe('Authentication Module', () => {
     });
 
     it('should fail standard non-driver login if password is wrong', async () => {
-      const mockUserLogin = {
-        id: 'login-1',
-        designationId: 'des-admin',
-        password: 'hash',
-        salt: 'salt',
-      };
-      login.default.findOne.mockResolvedValue(mockUserLogin);
-      designations.default.findOne.mockResolvedValue({ id: 'des-admin', designation: 'Admin' });
-      login.default.verifyPassword.mockResolvedValue(false);
+      service.loginUser.mockRejectedValue(new Error('Invalid email or password'));
 
       const req = { body: { email: 'admin@example.com', password: 'wrong' } };
       const res = { send: jest.fn() };
@@ -315,7 +382,7 @@ describe('Authentication Module', () => {
     });
 
     it('should handle Login failures', async () => {
-      login.default.findOne.mockRejectedValue(new Error('Login DB fail'));
+      service.loginUser.mockRejectedValue(new Error('Login DB fail'));
       const req = { body: { email: 'admin@example.com', password: 'wrong' } };
       const res = { send: jest.fn() };
 
@@ -330,7 +397,7 @@ describe('Authentication Module', () => {
 
   describe('Controller - addUsers', () => {
     it('should fail if user already exists', async () => {
-      login.default.findOne.mockResolvedValue({ id: 'login-1' });
+      service.addUsersService.mockRejectedValue(new Error('user already exist'));
       const req = { body: { email: 'exists@example.com' } };
       const res = { send: jest.fn() };
 
@@ -343,12 +410,7 @@ describe('Authentication Module', () => {
     });
 
     it('should add user successfully', async () => {
-      login.default.findOne.mockResolvedValue(null);
-      login.default.generateSalt.mockResolvedValue('salt');
-      login.default.hashPassword.mockResolvedValue('hash');
-      designations.default.findOne.mockResolvedValue({ id: 'des-1' });
-      login.default.create.mockResolvedValue({ id: 'login-1' });
-      users.default.create.mockResolvedValue({ id: 'user-1' });
+      service.addUsersService.mockResolvedValue(true);
 
       const req = {
         body: {
@@ -362,8 +424,7 @@ describe('Authentication Module', () => {
 
       await controller.addUsers(req, res);
 
-      expect(login.default.create).toHaveBeenCalled();
-      expect(users.default.create).toHaveBeenCalled();
+      expect(service.addUsersService).toHaveBeenCalled();
       expect(res.send).toHaveBeenCalledWith({
         success: true,
         message: 'Added successfully',
@@ -371,7 +432,7 @@ describe('Authentication Module', () => {
     });
 
     it('should handle addUsers failure', async () => {
-      login.default.findOne.mockRejectedValue(new Error('Add fail'));
+      service.addUsersService.mockRejectedValue(new Error('Add fail'));
       const req = { body: { email: 'exists@example.com' } };
       const res = { send: jest.fn() };
 
@@ -386,7 +447,20 @@ describe('Authentication Module', () => {
 
   describe('Controller - googleLogin', () => {
     it('should fail google login if email is not registered', async () => {
-      login.default.findOne.mockResolvedValue(null);
+      service.googleLoginService.mockRejectedValue(new Error('User Not Found'));
+      const req = { body: { token: 'gtoken', data: { data: { email: 'g@example.com' } } } };
+      const res = { send: jest.fn() };
+
+      await controller.googleLogin(req, res);
+
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: 'User Not Found',
+      });
+    });
+
+    it('should fail google login with generic message for other errors', async () => {
+      service.googleLoginService.mockRejectedValue(new Error('Some other error'));
       const req = { body: { token: 'gtoken', data: { data: { email: 'g@example.com' } } } };
       const res = { send: jest.fn() };
 
@@ -399,23 +473,18 @@ describe('Authentication Module', () => {
     });
 
     it('should handle google login successfully', async () => {
-      const mockLogin = { id: 'login-1', designationId: 'des-1' };
-      login.default.findOne.mockResolvedValue(mockLogin);
-      users.default.findOne.mockResolvedValue({ name: 'Google User' });
-
-      const mockUpdate = jest.fn();
-      login.default.findByPk.mockResolvedValue({ id: 'login-1', update: mockUpdate });
-      designations.default.findOne.mockResolvedValue({ id: 'des-1', designation: 'User' });
-      permissionSetting.default.findAll.mockResolvedValue([
-        { permission: { menu: 'Dashboard', subMenu: 'Home' } },
-      ]);
+      service.googleLoginService.mockResolvedValue({
+        user: 'Google User',
+        designation: 'User',
+        accessToken: 'gtoken',
+        permission: [{ menu: 'Dashboard', subMenu: 'Home' }],
+      });
 
       const req = { body: { token: 'gtoken', data: { data: { email: 'g@example.com' } } } };
       const res = { send: jest.fn() };
 
       await controller.googleLogin(req, res);
 
-      expect(mockUpdate).toHaveBeenCalledWith({ token: 'gtoken' });
       expect(res.send).toHaveBeenCalledWith({
         success: true,
         message: 'Login successfully',
@@ -424,50 +493,9 @@ describe('Authentication Module', () => {
     });
   });
 
-  describe('Controller - SignUp', () => {
-    it('should fail if user already exists', async () => {
-      login.default.findOne.mockResolvedValue({ id: '1' });
-      const req = { body: { email: 'exists@example.com' } };
-      const res = { send: jest.fn() };
-
-      await controller.SignUp(req, res);
-
-      expect(res.send).toHaveBeenCalledWith({
-        success: false,
-        message: 'This user already exists',
-      });
-    });
-
-    it('should sign up successfully', async () => {
-      login.default.findOne.mockResolvedValue(null);
-      const req = { body: { email: 'new@example.com' } };
-      const res = { send: jest.fn() };
-
-      await controller.SignUp(req, res);
-
-      expect(res.send).toHaveBeenCalledWith({
-        success: true,
-        data: 'new@example.com',
-      });
-    });
-
-    it('should handle SignUp failure', async () => {
-      login.default.findOne.mockRejectedValue(new Error('Sign fail'));
-      const req = { body: { email: 'new@example.com' } };
-      const res = { send: jest.fn() };
-
-      await controller.SignUp(req, res);
-
-      expect(res.send).toHaveBeenCalledWith({
-        success: false,
-        message: 'Sign fail',
-      });
-    });
-  });
-
   describe('Controller - googleSignUp', () => {
     it('should fail if google user already exists', async () => {
-      login.default.findOne.mockResolvedValue({ id: '1' });
+      service.googleSignUpService.mockRejectedValue(new Error('This user already exists'));
       const req = { body: { data: { data: { email: 'exists@example.com' } } } };
       const res = { send: jest.fn() };
 
@@ -480,7 +508,7 @@ describe('Authentication Module', () => {
     });
 
     it('should google sign up successfully', async () => {
-      login.default.findOne.mockResolvedValue(null);
+      service.googleSignUpService.mockResolvedValue('new@example.com');
       const req = { body: { data: { data: { email: 'new@example.com' } } } };
       const res = { send: jest.fn() };
 
@@ -493,7 +521,7 @@ describe('Authentication Module', () => {
     });
 
     it('should handle googleSignUp failure', async () => {
-      login.default.findOne.mockRejectedValue(new Error('Google sign fail'));
+      service.googleSignUpService.mockRejectedValue(new Error('Google sign fail'));
       const req = { body: { data: { data: { email: 'new@example.com' } } } };
       const res = { send: jest.fn() };
 
@@ -508,8 +536,7 @@ describe('Authentication Module', () => {
 
   describe('Controller - signUpUser', () => {
     it('should fail if user already exists', async () => {
-      designations.default.findOne.mockResolvedValue({ id: 'des-driver' });
-      login.default.findOne.mockResolvedValue({ id: 'login-1' });
+      service.signUpDriver.mockRejectedValue(new Error('User already exist'));
 
       const req = { body: { email: 'exists@example.com', password: 'pass' } };
       const res = { send: jest.fn() };
@@ -523,16 +550,13 @@ describe('Authentication Module', () => {
     });
 
     it('should register driver successfully with brand and model (create truck)', async () => {
-      designations.default.findOne.mockResolvedValue({ id: 'des-driver' });
-      login.default.findOne.mockResolvedValue(null);
-      login.default.create.mockResolvedValue({ id: 'login-1' });
-      users.default.create.mockResolvedValue({ id: 'user-1' });
-      trucks.default.findAll.mockResolvedValue([]);
-      Brand.default.findOne.mockResolvedValue({ name: 'Volvo' });
-      TruckModel.default.findOne.mockResolvedValue({ name: 'FH16' });
-      Variant.default.findOne.mockResolvedValue({ name: 'Standard' });
-      trucks.default.create.mockResolvedValue({ id: 'truck-1' });
-      drivers.default.create.mockResolvedValue({ id: 'driver-1' });
+      service.signUpDriver.mockResolvedValue({
+        name: 'John',
+        email: 'driver@example.com',
+        phn: '1234',
+        wage: 1000,
+        driver: 'driver-1',
+      });
 
       const req = {
         body: {
@@ -542,30 +566,14 @@ describe('Authentication Module', () => {
           phoneNumber: '1234',
           brand: 'b-1',
           model: 'm-1',
-          variant: 'v-1',
-          VIN: 'VIN123',
-          engineNo: 'ENG123',
-          chassisNo: 'CH123',
-          RCNo: 'RC123',
-          yrManufacture: '2023',
-          condition: 'working',
-          status: 'active',
-          licenseNo: 'LIC123',
-          licenseType: ['Heavy'],
         },
-        files: {
-          rcPhoto: [{ path: 'public/rc.png' }],
-          truckPhoto: [{ path: 'public/truck.png' }],
-          licensePhoto: [{ path: 'public/lic.png' }],
-          userPhoto: [{ path: 'public/usr.png' }],
-        },
+        files: {},
       };
       const res = { send: jest.fn() };
 
       await controller.signUpUser(req, res);
 
-      expect(trucks.default.create).toHaveBeenCalled();
-      expect(drivers.default.create).toHaveBeenCalled();
+      expect(service.signUpDriver).toHaveBeenCalled();
       expect(res.send).toHaveBeenCalledWith({
         success: true,
         data: expect.objectContaining({ driver: 'driver-1' }),
@@ -573,11 +581,13 @@ describe('Authentication Module', () => {
     });
 
     it('should register driver successfully without brand and model', async () => {
-      designations.default.findOne.mockResolvedValue({ id: 'des-driver' });
-      login.default.findOne.mockResolvedValue(null);
-      login.default.create.mockResolvedValue({ id: 'login-1' });
-      users.default.create.mockResolvedValue({ id: 'user-1' });
-      drivers.default.create.mockResolvedValue({ id: 'driver-1' });
+      service.signUpDriver.mockResolvedValue({
+        name: 'John',
+        email: 'driver@example.com',
+        phn: '1234',
+        wage: '500',
+        driver: 'driver-1',
+      });
 
       const req = {
         body: {
@@ -586,20 +596,14 @@ describe('Authentication Module', () => {
           first_name: 'John',
           phoneNumber: '1234',
           licenseNo: 'LIC123',
-          licenseType: ['Heavy'],
           dailyWage: '500',
         },
-        files: {
-          licensePhoto: [{ path: 'public/lic.png' }],
-          userPhoto: [{ path: 'public/usr.png' }],
-        },
+        files: {},
       };
       const res = { send: jest.fn() };
 
       await controller.signUpUser(req, res);
 
-      expect(trucks.default.create).not.toHaveBeenCalled();
-      expect(drivers.default.create).toHaveBeenCalled();
       expect(res.send).toHaveBeenCalledWith({
         success: true,
         data: expect.objectContaining({ wage: '500' }),
@@ -609,10 +613,7 @@ describe('Authentication Module', () => {
 
   describe('Controller - proceedPayment', () => {
     it('should process Stripe payment successfully', async () => {
-      mockStripeInstance.customers.create.mockResolvedValue({ id: 'cust-1' });
-      transactions.default.create.mockResolvedValue({ id: 'tx-1' });
-      mockStripeInstance.paymentIntents.create.mockResolvedValue({ id: 'pi-1' });
-      mockStripeInstance.paymentIntents.confirm.mockResolvedValue({ status: 'succeeded' });
+      service.processPayment.mockResolvedValue({ status: 'succeeded' });
 
       const req = {
         body: {
@@ -630,10 +631,7 @@ describe('Authentication Module', () => {
 
       await controller.proceedPayment(req, res);
 
-      expect(mockStripeInstance.customers.create).toHaveBeenCalled();
-      expect(transactions.default.create).toHaveBeenCalled();
-      expect(mockStripeInstance.paymentIntents.create).toHaveBeenCalled();
-      expect(mockStripeInstance.paymentIntents.confirm).toHaveBeenCalled();
+      expect(service.processPayment).toHaveBeenCalled();
       expect(res.send).toHaveBeenCalledWith({
         success: true,
         data: { status: 'succeeded' },
@@ -641,7 +639,7 @@ describe('Authentication Module', () => {
     });
 
     it('should handle Stripe processing failures in catch block', async () => {
-      mockStripeInstance.customers.create.mockRejectedValue(new Error('Stripe error'));
+      service.processPayment.mockRejectedValue(new Error('Stripe error'));
       const req = {
         body: {
           id: 'pm-1',

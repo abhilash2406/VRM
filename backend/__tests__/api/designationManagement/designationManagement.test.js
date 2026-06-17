@@ -1,15 +1,15 @@
 import { jest } from '@jest/globals';
 
 // 1. Mock the module using unstable_mockModule before importing it or any module that depends on it
-jest.unstable_mockModule('../../../models/designation.js', () => ({
+jest.unstable_mockModule('../../../src/models/designation.js', () => ({
   default: {
     findAll: jest.fn(),
   },
 }));
 
 // 2. Dynamically import the mocked module and the controller that depends on it
-const designation = await import('../../../models/designation.js');
-const controller = await import('../../../api/designationManagement/controller.js');
+const designation = await import('../../../src/models/designation.js');
+const controller = await import('../../../src/api/designationManagement/controller.js');
 
 describe('Designation Management', () => {
   beforeEach(() => {

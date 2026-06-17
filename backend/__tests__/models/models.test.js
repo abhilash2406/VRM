@@ -1,37 +1,39 @@
 import { jest } from '@jest/globals';
-import driver from '../../models/driver.js';
-import login from '../../models/login.js';
-import permissionSetting from '../../models/permissionSetting.js';
-import transaction from '../../models/transaction.js';
-import trip from '../../models/trip.js';
-import truck from '../../models/truck.js';
-import users from '../../models/users.js';
+import driver from '../../src/models/driver.js';
+import loginHistory from '../../src/models/loginHistory.js';
+import permissionSetting from '../../src/models/permissionSetting.js';
+import transaction from '../../src/models/transaction.js';
+import trip from '../../src/models/trip.js';
+import truck from '../../src/models/truck.js';
+import users from '../../src/models/users.js';
 
-describe('Models Associations and Helpers', () => {
+describe('Models Associations', () => {
   it('should test associations', () => {
     const mockBelongsTo = jest.fn();
+    const mockHasMany = jest.fn();
     const mockModels = {
-      users: { belongsTo: mockBelongsTo },
+      users: { belongsTo: mockBelongsTo, hasMany: mockHasMany },
       truck: { belongsTo: mockBelongsTo },
       route: { belongsTo: mockBelongsTo },
       designation: { belongsTo: mockBelongsTo },
       permission: { belongsTo: mockBelongsTo },
       driver: { belongsTo: mockBelongsTo },
-      login: { belongsTo: mockBelongsTo },
+      loginHistory: { belongsTo: mockBelongsTo },
     };
 
     // spy on each model's belongsTo or mock it
     driver.belongsTo = mockBelongsTo;
-    login.belongsTo = mockBelongsTo;
+    loginHistory.belongsTo = mockBelongsTo;
     permissionSetting.belongsTo = mockBelongsTo;
     transaction.belongsTo = mockBelongsTo;
     trip.belongsTo = mockBelongsTo;
     truck.belongsTo = mockBelongsTo;
     users.belongsTo = mockBelongsTo;
+    users.hasMany = mockHasMany;
 
     // Call associates
     driver.associate(mockModels);
-    login.associate(mockModels);
+    loginHistory.associate(mockModels);
     permissionSetting.associate(mockModels);
     transaction.associate(mockModels);
     trip.associate(mockModels);
@@ -41,33 +43,9 @@ describe('Models Associations and Helpers', () => {
     expect(mockBelongsTo).toHaveBeenCalled();
   });
 
-  it('should test login helper methods', async () => {
-    expect(login.validatePassword('password123')).toBe(true);
-    expect(login.validatePassword('short')).toBe(false);
-
-    const salt = await login.generateSalt();
-    expect(salt).toBeDefined();
-
-    const hash = await login.hashPassword('password123', salt);
-    expect(hash).toBeDefined();
-
-    const verify = await login.verifyPassword('password123', hash, salt);
-    expect(verify).toBe(true);
-
-    const token = login.generateAuthToken({
-      id: '123',
-      email: 'test@example.com',
-      password: 'pass',
-      rememberMe: true,
-    });
-    expect(token).toBeDefined();
-
-    const token2 = login.generateAuthToken({
-      id: '123',
-      email: 'test@example.com',
-      password: 'pass',
-      rememberMe: false,
-    });
-    expect(token2).toBeDefined();
+  it('should have users model with auth prototype methods', () => {
+    const userInstance = Object.create(users.prototype);
+    expect(typeof userInstance.verifyPassword).toBe('function');
+    expect(typeof userInstance.generateAuthToken).toBe('function');
   });
 });

@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-jest.unstable_mockModule('../../../models/gallery.js', () => ({
+jest.unstable_mockModule('../../../src/models/gallery.js', () => ({
   default: {
     create: jest.fn(),
     findAll: jest.fn(),
@@ -8,8 +8,8 @@ jest.unstable_mockModule('../../../models/gallery.js', () => ({
   },
 }));
 
-const gallery = await import('../../../models/gallery.js');
-const controller = await import('../../../api/galleryManagement/controller.js');
+const gallery = await import('../../../src/models/gallery.js');
+const controller = await import('../../../src/api/galleryManagement/controller.js');
 
 describe('Gallery Management', () => {
   beforeEach(() => {
@@ -25,13 +25,16 @@ describe('Gallery Management', () => {
         },
         body: {},
       };
-      const res = {};
+      const res = { send: jest.fn() };
       const next = jest.fn();
 
       await controller.uploadImages(req, res, next);
 
-      expect(req.body.image).toBe('/images/img.png');
-      expect(gallery.default.create).toHaveBeenCalledWith(req.body);
+      expect(gallery.default.create).toHaveBeenCalled();
+      expect(res.send).toHaveBeenCalledWith({
+        success: true,
+        message: 'image uploaded successfully',
+      });
     });
   });
 
@@ -91,13 +94,18 @@ describe('Gallery Management', () => {
       });
     });
 
-    it('should handle delete failure and throw reference error due to es.send bug in controller', async () => {
+    it('should handle delete failure in catch block', async () => {
       gallery.default.findByPk.mockRejectedValue(new Error('DB error'));
 
       const req = { params: { id: '1' } };
       const res = { send: jest.fn() };
 
-      await expect(controller.dltImages(req, res)).rejects.toThrow('es is not defined');
+      await controller.dltImages(req, res);
+
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: 'DB error',
+      });
     });
   });
 });

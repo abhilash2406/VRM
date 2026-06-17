@@ -1,13 +1,13 @@
 import { jest } from '@jest/globals';
 
-jest.unstable_mockModule('../../../models/transaction.js', () => ({
+jest.unstable_mockModule('../../../src/models/transaction.js', () => ({
   default: {
     findAll: jest.fn(),
   },
 }));
 
-const transactions = await import('../../../models/transaction.js');
-const controller = await import('../../../api/transactionManagement/controller.js');
+const transactions = await import('../../../src/models/transaction.js');
+const controller = await import('../../../src/api/transactionManagement/controller.js');
 
 describe('Transaction Management', () => {
   beforeEach(() => {

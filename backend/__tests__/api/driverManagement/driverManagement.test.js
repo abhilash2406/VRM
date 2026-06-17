@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-jest.unstable_mockModule('../../../models/driver.js', () => ({
+jest.unstable_mockModule('../../../src/models/driver.js', () => ({
   default: {
     findAll: jest.fn(),
     create: jest.fn(),
@@ -10,7 +10,7 @@ jest.unstable_mockModule('../../../models/driver.js', () => ({
   },
 }));
 
-jest.unstable_mockModule('../../../models/users.js', () => ({
+jest.unstable_mockModule('../../../src/models/users.js', () => ({
   default: {
     create: jest.fn(),
     findByPk: jest.fn(),
@@ -18,50 +18,41 @@ jest.unstable_mockModule('../../../models/users.js', () => ({
   },
 }));
 
-jest.unstable_mockModule('../../../models/login.js', () => ({
+jest.unstable_mockModule('../../../src/models/loginHistory.js', () => ({
   default: {
-    findOne: jest.fn(),
-    generateSalt: jest.fn(),
-    hashPassword: jest.fn(),
     create: jest.fn(),
-    findByPk: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/designation.js', () => ({
+jest.unstable_mockModule('../../../src/models/designation.js', () => ({
   default: {
     findOne: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/transaction.js', () => ({
+jest.unstable_mockModule('../../../src/models/transaction.js', () => ({
   default: {
     findOne: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/trip.js', () => ({
+jest.unstable_mockModule('../../../src/models/trip.js', () => ({
   default: {
     findOne: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../modules/mail.js', () => ({
-  default: {
-    sendMail: jest.fn((options, cb) =>
-      cb ? cb(null, { response: 'ok' }) : Promise.resolve({ response: 'ok' })
-    ),
-  },
+jest.unstable_mockModule('../../../src/utils/sendEmail.js', () => ({
+  default: jest.fn().mockResolvedValue(true),
 }));
 
-const { driverValidate } = await import('../../../api/driverManagement/validator.js');
-const controller = await import('../../../api/driverManagement/controller.js');
-const drivers = await import('../../../models/driver.js');
-const users = await import('../../../models/users.js');
-const login = await import('../../../models/login.js');
-const designations = await import('../../../models/designation.js');
-const transactions = await import('../../../models/transaction.js');
-const trips = await import('../../../models/trip.js');
+const { driverValidate } = await import('../../../src/api/driverManagement/validator.js');
+const controller = await import('../../../src/api/driverManagement/controller.js');
+const drivers = await import('../../../src/models/driver.js');
+const users = await import('../../../src/models/users.js');
+const designations = await import('../../../src/models/designation.js');
+const transactions = await import('../../../src/models/transaction.js');
+const trips = await import('../../../src/models/trip.js');
 
 describe('Driver Management', () => {
   beforeEach(() => {
@@ -147,7 +138,7 @@ describe('Driver Management', () => {
 
     describe('addDrivers', () => {
       it('should fail if user already exists with email', async () => {
-        login.default.findOne.mockResolvedValue({ id: 'login-1' });
+        users.default.findOne.mockResolvedValue({ id: 'user-1' });
 
         const req = { body: { email: 'test@example.com' } };
         const res = { send: jest.fn() };
@@ -162,7 +153,7 @@ describe('Driver Management', () => {
       });
 
       it('should fail if driver license is already submitted', async () => {
-        login.default.findOne.mockResolvedValue(null);
+        users.default.findOne.mockResolvedValue(null);
         drivers.default.findAll.mockResolvedValue([{ id: 'driver-1' }]);
 
         const req = { body: { email: 'test@example.com', licenseNo: 'DL123' } };
@@ -178,12 +169,9 @@ describe('Driver Management', () => {
       });
 
       it('should add driver successfully', async () => {
-        login.default.findOne.mockResolvedValue(null);
+        users.default.findOne.mockResolvedValue(null);
         drivers.default.findAll.mockResolvedValue([]);
-        login.default.generateSalt.mockResolvedValue('salt');
-        login.default.hashPassword.mockResolvedValue('hash');
         designations.default.findOne.mockResolvedValue({ id: 'des-1' });
-        login.default.create.mockResolvedValue({ id: 'login-1' });
         users.default.create.mockResolvedValue({ id: 'user-1' });
         drivers.default.create.mockResolvedValue({ id: 'driver-1' });
 
@@ -215,7 +203,7 @@ describe('Driver Management', () => {
       });
 
       it('should handle catch block', async () => {
-        login.default.findOne.mockRejectedValue(new Error('Catch Error'));
+        users.default.findOne.mockRejectedValue(new Error('Catch Error'));
 
         const req = { body: { email: 'test@example.com' } };
         const res = { send: jest.fn() };
@@ -256,11 +244,8 @@ describe('Driver Management', () => {
         const mockUpdateUser = jest.fn();
         users.default.findByPk.mockResolvedValue({
           id: 'user-1',
-          loginId: 'login-1',
           update: mockUpdateUser,
         });
-
-        login.default.findByPk.mockResolvedValue({ id: 'login-1' });
 
         const req = {
           params: { id: 'drv-1' },
@@ -283,8 +268,8 @@ describe('Driver Management', () => {
         await controller.updateDriver(req, res);
 
         expect(mockUpdateUser).toHaveBeenCalledWith({
-          name: 'New Name',
-          phoneNumber: '4321',
+          first_name: 'New Name',
+          phone_number: '4321',
         });
         expect(mockUpdateDriver).toHaveBeenCalled();
         expect(res.send).toHaveBeenCalledWith({
@@ -505,14 +490,7 @@ describe('Driver Management', () => {
         const mockDestroyUser = jest.fn();
         users.default.findOne.mockResolvedValue({
           id: 'user-1',
-          loginId: 'login-1',
           destroy: mockDestroyUser,
-        });
-
-        const mockDestroyLogin = jest.fn();
-        login.default.findOne.mockResolvedValue({
-          id: 'login-1',
-          destroy: mockDestroyLogin,
         });
 
         const req = { params: { id: 'drv-1' } };
@@ -522,7 +500,6 @@ describe('Driver Management', () => {
 
         expect(mockDestroyTrip).toHaveBeenCalled();
         expect(mockDestroyUser).toHaveBeenCalled();
-        expect(mockDestroyLogin).toHaveBeenCalled();
         expect(mockDestroyDriver).toHaveBeenCalled();
         expect(res.send).toHaveBeenCalledWith({
           success: true,

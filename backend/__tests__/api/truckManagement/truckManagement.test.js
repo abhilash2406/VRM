@@ -1,28 +1,28 @@
 import { jest } from '@jest/globals';
 import jwt from 'jsonwebtoken';
 
-jest.unstable_mockModule('../../../models/brand.js', () => ({
+jest.unstable_mockModule('../../../src/models/brand.js', () => ({
   default: {
     findAll: jest.fn(),
     findOne: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/truckModel.js', () => ({
+jest.unstable_mockModule('../../../src/models/truckModel.js', () => ({
   default: {
     findAll: jest.fn(),
     findOne: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/variant.js', () => ({
+jest.unstable_mockModule('../../../src/models/variant.js', () => ({
   default: {
     findAll: jest.fn(),
     findOne: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/truck.js', () => ({
+jest.unstable_mockModule('../../../src/models/truck.js', () => ({
   default: {
     findAll: jest.fn(),
     create: jest.fn(),
@@ -30,26 +30,26 @@ jest.unstable_mockModule('../../../models/truck.js', () => ({
   },
 }));
 
-jest.unstable_mockModule('../../../models/login.js', () => ({
+jest.unstable_mockModule('../../../src/models/users.js', () => ({
   default: {
+    findOne: jest.fn(),
     findByPk: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/users.js', () => ({
+jest.unstable_mockModule('../../../src/models/loginHistory.js', () => ({
   default: {
-    findOne: jest.fn(),
+    create: jest.fn(),
   },
 }));
 
-const { TruckValidate } = await import('../../../api/truckManagement/validator.js');
-const controller = await import('../../../api/truckManagement/controller.js');
-const Brand = await import('../../../models/brand.js');
-const TruckModel = await import('../../../models/truckModel.js');
-const Variant = await import('../../../models/variant.js');
-const trucks = await import('../../../models/truck.js');
-const login = await import('../../../models/login.js');
-const users = await import('../../../models/users.js');
+const { TruckValidate } = await import('../../../src/api/truckManagement/validator.js');
+const controller = await import('../../../src/api/truckManagement/controller.js');
+const Brand = await import('../../../src/models/brand.js');
+const TruckModel = await import('../../../src/models/truckModel.js');
+const Variant = await import('../../../src/models/variant.js');
+const trucks = await import('../../../src/models/truck.js');
+const users = await import('../../../src/models/users.js');
 
 describe('Truck Management', () => {
   beforeAll(() => {
@@ -285,7 +285,10 @@ describe('Truck Management', () => {
       it('should fail if truck already exists', async () => {
         trucks.default.findAll.mockResolvedValue([{ id: 't-1' }]);
 
-        const req = { body: { VIN: 'VIN123', RCNo: 'RC123' } };
+        const req = {
+          body: { VIN: 'VIN123', RCNo: 'RC123' },
+          header: jest.fn().mockReturnValue(null),
+        };
         const res = { send: jest.fn() };
         const next = jest.fn();
 
@@ -302,7 +305,7 @@ describe('Truck Management', () => {
         Brand.default.findOne.mockResolvedValue({ name: 'Volvo' });
         TruckModel.default.findOne.mockResolvedValue({ name: 'FH16' });
         Variant.default.findOne.mockResolvedValue({ name: 'Standard' });
-        login.default.findByPk.mockResolvedValue({ id: 'login-1' });
+        users.default.findByPk.mockResolvedValue({ id: 'user-1' });
         users.default.findOne.mockResolvedValue({ id: 'user-1' });
         trucks.default.create.mockResolvedValue({ id: 't-1' });
 
@@ -341,7 +344,10 @@ describe('Truck Management', () => {
       it('should handle failure in addTrucks catch block', async () => {
         trucks.default.findAll.mockRejectedValue(new Error('Add Catch Error'));
 
-        const req = { body: { VIN: 'VIN123', RCNo: 'RC123' } };
+        const req = {
+          body: { VIN: 'VIN123', RCNo: 'RC123' },
+          header: jest.fn().mockReturnValue(null),
+        };
         const res = { send: jest.fn() };
         const next = jest.fn();
 
@@ -461,7 +467,7 @@ describe('Truck Management', () => {
 
     describe('dltTruck', () => {
       it('should fail if matching data to delete is not found', async () => {
-        trucks.default.findByPk.mockResolvedValue([]);
+        trucks.default.findByPk.mockResolvedValue(null);
 
         const req = { params: { id: 't-1' } };
         const res = { send: jest.fn() };
@@ -490,13 +496,18 @@ describe('Truck Management', () => {
         });
       });
 
-      it('should handle failure and throw reference error due to es.send bug in controller', async () => {
+      it('should handle error in dltTruck catch block', async () => {
         trucks.default.findByPk.mockRejectedValue(new Error('DB error'));
 
         const req = { params: { id: 't-1' } };
         const res = { send: jest.fn() };
 
-        await expect(controller.dltTruck(req, res)).rejects.toThrow('es is not defined');
+        await controller.dltTruck(req, res);
+
+        expect(res.send).toHaveBeenCalledWith({
+          success: false,
+          message: 'DB error',
+        });
       });
     });
 

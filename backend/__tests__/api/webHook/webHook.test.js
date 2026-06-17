@@ -1,19 +1,29 @@
-import { logger } from '../../../config/winston-config.js';
 import { jest } from '@jest/globals';
-import * as controller from '../../../api/webHook/controller.js';
+
+jest.unstable_mockModule('../../../src/models/booking.js', () => ({
+  default: {
+    update: jest.fn(),
+  },
+}));
+
+jest.unstable_mockModule('../../../src/config/winston-config.js', () => ({
+  logger: {
+    info: jest.fn(),
+  },
+}));
+
+const booking = await import('../../../src/models/booking.js');
+const { logger } = await import('../../../src/config/winston-config.js');
+const controller = await import('../../../src/api/webHook/controller.js');
 
 describe('Webhook Module', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    delete global.booking;
   });
 
   describe('Controller Functions', () => {
     it('should handle webhook success try block', async () => {
-      // Mock global.booking which is referenced but not imported in the controller
-      global.booking = {
-        update: jest.fn().mockResolvedValue({ success: true }),
-      };
+      booking.default.update.mockResolvedValue({ success: true });
 
       const req = {
         body: {
@@ -32,7 +42,7 @@ describe('Webhook Module', () => {
 
       await controller.success(req, res);
 
-      expect(global.booking.update).toHaveBeenCalledWith(
+      expect(booking.default.update).toHaveBeenCalledWith(
         { signed: 'Signed' },
         { where: { envelopeId: 'env-123' } }
       );
@@ -40,7 +50,9 @@ describe('Webhook Module', () => {
     });
 
     it('should handle webhook success catch block on error', async () => {
-      // Intentionally omit global.booking to trigger a ReferenceError in catch block
+      const err = new Error('Database Error');
+      booking.default.update.mockRejectedValue(err);
+
       const req = {
         body: {
           data: {
@@ -53,16 +65,15 @@ describe('Webhook Module', () => {
       };
 
       const res = {
+        status: jest.fn().mockReturnThis(),
         json: jest.fn(),
       };
 
-      // Spying on logger.info to avoid polluting output and verify catch block execution
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-
       await controller.success(req, res);
 
-      expect(consoleSpy).toHaveBeenCalled();
-      consoleSpy.mockRestore();
+      expect(logger.info).toHaveBeenCalledWith(err);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({ error: 'Database Error' });
     });
   });
 });

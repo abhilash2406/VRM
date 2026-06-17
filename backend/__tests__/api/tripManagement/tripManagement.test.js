@@ -1,25 +1,25 @@
 import { jest } from '@jest/globals';
 
-jest.unstable_mockModule('../../../models/truck.js', () => ({
+jest.unstable_mockModule('../../../src/models/truck.js', () => ({
   default: {
     findByPk: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/route.js', () => ({
+jest.unstable_mockModule('../../../src/models/route.js', () => ({
   default: {
     findByPk: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/driver.js', () => ({
+jest.unstable_mockModule('../../../src/models/driver.js', () => ({
   default: {
     findByPk: jest.fn(),
     update: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/trip.js', () => ({
+jest.unstable_mockModule('../../../src/models/trip.js', () => ({
   default: {
     create: jest.fn(),
     findAll: jest.fn(),
@@ -29,12 +29,12 @@ jest.unstable_mockModule('../../../models/trip.js', () => ({
   },
 }));
 
-const { tripValidate } = await import('../../../api/tripManagement/validator.js');
-const controller = await import('../../../api/tripManagement/controller.js');
-const trucks = await import('../../../models/truck.js');
-const routes = await import('../../../models/route.js');
-const drivers = await import('../../../models/driver.js');
-const trips = await import('../../../models/trip.js');
+const { tripValidate } = await import('../../../src/api/tripManagement/validator.js');
+const controller = await import('../../../src/api/tripManagement/controller.js');
+const trucks = await import('../../../src/models/truck.js');
+const routes = await import('../../../src/models/route.js');
+const drivers = await import('../../../src/models/driver.js');
+const trips = await import('../../../src/models/trip.js');
 
 describe('Trip Management', () => {
   beforeEach(() => {
@@ -445,7 +445,7 @@ describe('Trip Management', () => {
         expect(res.send).toHaveBeenCalledWith({
           success: true,
           message: 'Trip updated successfully',
-          data: [1],
+          data: true,
         });
       });
 

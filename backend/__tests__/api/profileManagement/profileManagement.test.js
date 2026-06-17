@@ -2,35 +2,26 @@ import { jest } from '@jest/globals';
 import jwt from 'jsonwebtoken';
 import CryptoJS from 'crypto-js';
 
-jest.unstable_mockModule('../../../models/users.js', () => ({
+jest.unstable_mockModule('../../../src/models/users.js', () => ({
   default: {
     findOne: jest.fn(),
-  },
-}));
-
-jest.unstable_mockModule('../../../models/login.js', () => ({
-  default: {
     findByPk: jest.fn(),
-    verifyPassword: jest.fn(),
-    generateSalt: jest.fn(),
-    hashPassword: jest.fn(),
-    update: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/designation.js', () => ({
+jest.unstable_mockModule('../../../src/models/designation.js', () => ({
   default: {
     findByPk: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/permissionSetting.js', () => ({
+jest.unstable_mockModule('../../../src/models/permissionSetting.js', () => ({
   default: {
     findAll: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/contact.js', () => ({
+jest.unstable_mockModule('../../../src/models/contact.js', () => ({
   default: {
     findAll: jest.fn(),
     findByPk: jest.fn(),
@@ -38,12 +29,11 @@ jest.unstable_mockModule('../../../models/contact.js', () => ({
   },
 }));
 
-const users = await import('../../../models/users.js');
-const login = await import('../../../models/login.js');
-const designations = await import('../../../models/designation.js');
-const permissionSetting = await import('../../../models/permissionSetting.js');
-const contacts = await import('../../../models/contact.js');
-const controller = await import('../../../api/profileManagement/controller.js');
+const users = await import('../../../src/models/users.js');
+const designations = await import('../../../src/models/designation.js');
+const permissionSetting = await import('../../../src/models/permissionSetting.js');
+const contacts = await import('../../../src/models/contact.js');
+const controller = await import('../../../src/api/profileManagement/controller.js');
 
 describe('Profile Management', () => {
   beforeAll(() => {
@@ -52,20 +42,14 @@ describe('Profile Management', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    global.errorMessage = jest.fn();
-  });
-
-  afterEach(() => {
-    delete global.errorMessage;
   });
 
   describe('viewProfile', () => {
     it('should view profile successfully', async () => {
-      const mockUser = { id: 'user-1', name: 'John' };
-      const token = jwt.sign({ id: 'login-1' }, process.env.JWT_SECRET);
+      const mockUser = { id: 'user-1', first_name: 'John' };
+      const token = jwt.sign({ id: 'user-1' }, process.env.JWT_SECRET);
 
-      login.default.findByPk.mockResolvedValue({ id: 'login-1' });
-      users.default.findOne.mockResolvedValue(mockUser);
+      users.default.findByPk.mockResolvedValue(mockUser);
 
       const req = {
         header: jest.fn().mockReturnValue(`Bearer ${token}`),
@@ -74,8 +58,7 @@ describe('Profile Management', () => {
 
       await controller.viewProfile(req, res);
 
-      expect(login.default.findByPk).toHaveBeenCalledWith('login-1');
-      expect(users.default.findOne).toHaveBeenCalledWith({ where: { loginId: 'login-1' } });
+      expect(users.default.findByPk).toHaveBeenCalledWith('user-1');
       expect(res.send).toHaveBeenCalledWith({
         success: true,
         message: 'data fetched successfully',
@@ -201,8 +184,8 @@ describe('Profile Management', () => {
 
   describe('ProfilePermissions', () => {
     it('should fetch profile permissions successfully', async () => {
-      const token = jwt.sign({ id: 'login-1' }, process.env.JWT_SECRET);
-      login.default.findByPk.mockResolvedValue({ id: 'login-1', designationId: 'des-1' });
+      const token = jwt.sign({ id: 'user-1' }, process.env.JWT_SECRET);
+      users.default.findByPk.mockResolvedValue({ id: 'user-1', designationId: 'des-1' });
       permissionSetting.default.findAll.mockResolvedValue([
         { permission: { menu: 'Dashboard', subMenu: 'Home' } },
       ]);
@@ -244,16 +227,15 @@ describe('Profile Management', () => {
       const newPasswordEncrypted = CryptoJS.AES.encrypt('new123', secretKey).toString();
       const confirmPasswordEncrypted = CryptoJS.AES.encrypt('new123', secretKey).toString();
 
-      const token = jwt.sign({ id: 'login-1' }, process.env.JWT_SECRET);
-      login.default.findByPk.mockResolvedValue({
-        id: 'login-1',
-        password: 'old_hashed_password',
-        salt: 'old_salt',
+      const token = jwt.sign({ id: 'user-1' }, process.env.JWT_SECRET);
+      const mockUpdate = jest.fn().mockResolvedValue(true);
+      const mockVerifyPassword = jest.fn().mockResolvedValue(true);
+      users.default.findByPk.mockResolvedValue({
+        id: 'user-1',
+        password_hash: 'old_hashed_password',
+        verifyPassword: mockVerifyPassword,
+        update: mockUpdate,
       });
-      login.default.verifyPassword.mockResolvedValue(true);
-      login.default.generateSalt.mockResolvedValue('new_salt');
-      login.default.hashPassword.mockResolvedValue('new_hashed_password');
-      login.default.update.mockResolvedValue([1]);
 
       const req = {
         body: {
@@ -267,61 +249,21 @@ describe('Profile Management', () => {
 
       await controller.changePassword(req, res);
 
-      expect(login.default.verifyPassword).toHaveBeenCalledWith(
-        'current123',
-        'old_hashed_password',
-        'old_salt'
-      );
-      expect(login.default.update).toHaveBeenCalledWith(
-        { salt: 'new_salt', password: 'new_hashed_password' },
-        { where: { id: 'login-1' } }
-      );
+      expect(mockVerifyPassword).toHaveBeenCalledWith('current123');
+      expect(mockUpdate).toHaveBeenCalledWith({ password_hash: 'new123' });
       expect(res.send).toHaveBeenCalledWith({
         success: true,
         message: 'password changed successfully',
       });
     });
 
-    it('should call errorMessage and throw when user is not found due to controller missing return bug', async () => {
+    it('should fail when user not found', async () => {
       const currentPasswordEncrypted = CryptoJS.AES.encrypt('current123', secretKey).toString();
       const newPasswordEncrypted = CryptoJS.AES.encrypt('new123', secretKey).toString();
       const confirmPasswordEncrypted = CryptoJS.AES.encrypt('new123', secretKey).toString();
 
-      const token = jwt.sign({ id: 'login-1' }, process.env.JWT_SECRET);
-      login.default.findByPk.mockResolvedValue(null);
-
-      const req = {
-        body: {
-          currentPassword: currentPasswordEncrypted,
-          newPassword: newPasswordEncrypted,
-          confirmPassword: confirmPasswordEncrypted,
-        },
-        header: jest.fn().mockReturnValue(`Bearer ${token}`),
-      };
-      const res = { send: jest.fn() };
-
-      await expect(controller.changePassword(req, res)).rejects.toThrow(
-        "Cannot read properties of null (reading 'password')"
-      );
-
-      expect(global.errorMessage).toHaveBeenCalledWith(
-        res,
-        'You dont have the permission to change the password'
-      );
-    });
-
-    it('should call errorMessage when old password verification fails', async () => {
-      const currentPasswordEncrypted = CryptoJS.AES.encrypt('wrongpass', secretKey).toString();
-      const newPasswordEncrypted = CryptoJS.AES.encrypt('new123', secretKey).toString();
-      const confirmPasswordEncrypted = CryptoJS.AES.encrypt('new123', secretKey).toString();
-
-      const token = jwt.sign({ id: 'login-1' }, process.env.JWT_SECRET);
-      login.default.findByPk.mockResolvedValue({
-        id: 'login-1',
-        password: 'old_hashed_password',
-        salt: 'old_salt',
-      });
-      login.default.verifyPassword.mockResolvedValue(false);
+      const token = jwt.sign({ id: 'user-1' }, process.env.JWT_SECRET);
+      users.default.findByPk.mockResolvedValue(null);
 
       const req = {
         body: {
@@ -335,12 +277,42 @@ describe('Profile Management', () => {
 
       await controller.changePassword(req, res);
 
-      expect(login.default.verifyPassword).toHaveBeenCalledWith(
-        'wrongpass',
-        'old_hashed_password',
-        'old_salt'
-      );
-      expect(global.errorMessage).toHaveBeenCalledWith(res, 'You entered the Wrong Password');
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: 'You dont have the permission to change the password',
+      });
+    });
+
+    it('should fail when old password verification fails', async () => {
+      const currentPasswordEncrypted = CryptoJS.AES.encrypt('wrongpass', secretKey).toString();
+      const newPasswordEncrypted = CryptoJS.AES.encrypt('new123', secretKey).toString();
+      const confirmPasswordEncrypted = CryptoJS.AES.encrypt('new123', secretKey).toString();
+
+      const token = jwt.sign({ id: 'user-1' }, process.env.JWT_SECRET);
+      const mockVerifyPassword = jest.fn().mockResolvedValue(false);
+      users.default.findByPk.mockResolvedValue({
+        id: 'user-1',
+        password_hash: 'old_hashed_password',
+        verifyPassword: mockVerifyPassword,
+      });
+
+      const req = {
+        body: {
+          currentPassword: currentPasswordEncrypted,
+          newPassword: newPasswordEncrypted,
+          confirmPassword: confirmPasswordEncrypted,
+        },
+        header: jest.fn().mockReturnValue(`Bearer ${token}`),
+      };
+      const res = { send: jest.fn() };
+
+      await controller.changePassword(req, res);
+
+      expect(mockVerifyPassword).toHaveBeenCalledWith('wrongpass');
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: 'You entered the Wrong Password',
+      });
     });
   });
 });

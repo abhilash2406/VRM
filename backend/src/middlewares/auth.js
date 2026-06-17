@@ -32,7 +32,7 @@ export default async (req, res, next) => {
         message: 'Invalid token',
       });
     }
-    if (decoded.exp < Date.now()) {
+    if (decoded.exp < Date.now() / 1000) {
       return res.send({
         success: false,
         message: 'Token expired',

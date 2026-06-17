@@ -1,18 +1,18 @@
 import { jest } from '@jest/globals';
 
-jest.unstable_mockModule('../../../models/permission.js', () => ({
+jest.unstable_mockModule('../../../src/models/permission.js', () => ({
   default: {
     findAll: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/designation.js', () => ({
+jest.unstable_mockModule('../../../src/models/designation.js', () => ({
   default: {
     findByPk: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../models/permissionSetting.js', () => ({
+jest.unstable_mockModule('../../../src/models/permissionSetting.js', () => ({
   default: {
     destroy: jest.fn(),
     create: jest.fn(),
@@ -20,10 +20,10 @@ jest.unstable_mockModule('../../../models/permissionSetting.js', () => ({
   },
 }));
 
-const permissions = await import('../../../models/permission.js');
-const designations = await import('../../../models/designation.js');
-const permissionSetting = await import('../../../models/permissionSetting.js');
-const controller = await import('../../../api/permissionManagement/controller.js');
+const permissions = await import('../../../src/models/permission.js');
+const designations = await import('../../../src/models/designation.js');
+const permissionSetting = await import('../../../src/models/permissionSetting.js');
+const controller = await import('../../../src/api/permissionManagement/controller.js');
 
 describe('Permission Management', () => {
   beforeEach(() => {
@@ -60,7 +60,7 @@ describe('Permission Management', () => {
 
       expect(res.send).toHaveBeenCalledWith({
         success: false,
-        message: err,
+        message: err.message,
       });
     });
   });
@@ -117,6 +117,7 @@ describe('Permission Management', () => {
       const req = {
         params: { id: 'role-1' },
         body: [],
+        app: { locals: { socket: { emit: jest.fn() } } },
       };
       const res = { send: jest.fn(), json: jest.fn() };
       const next = jest.fn();
@@ -125,7 +126,7 @@ describe('Permission Management', () => {
 
       expect(res.json).toHaveBeenCalledWith({
         success: false,
-        message: err,
+        message: err.message,
       });
     });
   });

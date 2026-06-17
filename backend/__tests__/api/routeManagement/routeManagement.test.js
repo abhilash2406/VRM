@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-jest.unstable_mockModule('../../../models/route.js', () => ({
+jest.unstable_mockModule('../../../src/models/route.js', () => ({
   default: {
     create: jest.fn(),
     findAll: jest.fn(),
@@ -8,9 +8,9 @@ jest.unstable_mockModule('../../../models/route.js', () => ({
   },
 }));
 
-const { routeValidate } = await import('../../../api/routeManagement/validator.js');
-const controller = await import('../../../api/routeManagement/controller.js');
-const routes = await import('../../../models/route.js');
+const { routeValidate } = await import('../../../src/api/routeManagement/validator.js');
+const controller = await import('../../../src/api/routeManagement/controller.js');
+const routes = await import('../../../src/models/route.js');
 
 describe('Route Management', () => {
   beforeEach(() => {

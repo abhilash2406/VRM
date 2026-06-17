@@ -1,21 +1,26 @@
 import { jest } from '@jest/globals';
 
-jest.unstable_mockModule('../../../models/contact.js', () => ({
+jest.unstable_mockModule('../../../src/models/contact.js', () => ({
   default: {
     create: jest.fn(),
   },
 }));
 
-jest.unstable_mockModule('../../../modules/mail.js', () => ({
-  default: {
-    sendMail: jest.fn(),
+jest.unstable_mockModule('../../../src/utils/sendEmail.js', () => ({
+  default: jest.fn().mockResolvedValue(true),
+}));
+
+jest.unstable_mockModule('../../../src/config/winston-config.js', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
   },
 }));
 
-const { contactValidate } = await import('../../../api/contactManagement/validator.js');
-const { setContact } = await import('../../../api/contactManagement/controller.js');
-const mail = await import('../../../modules/mail.js');
-const contact = await import('../../../models/contact.js');
+const { contactValidate } = await import('../../../src/api/contactManagement/validator.js');
+const { setContact } = await import('../../../src/api/contactManagement/controller.js');
+const sendEmails = await import('../../../src/utils/sendEmail.js');
+const contact = await import('../../../src/models/contact.js');
 
 describe('Contact Management', () => {
   describe('Validator', () => {
@@ -55,9 +60,7 @@ describe('Contact Management', () => {
   describe('Controller', () => {
     beforeEach(() => {
       jest.clearAllMocks();
-      mail.default.sendMail.mockImplementation((options, callback) =>
-        callback(null, { response: 'ok' })
-      );
+      sendEmails.default.mockResolvedValue(true);
       contact.default.create.mockResolvedValue({ id: 1 });
     });
 
@@ -79,10 +82,8 @@ describe('Contact Management', () => {
       );
     });
 
-    it('should handle error if user mail sending fails', async () => {
-      mail.default.sendMail.mockImplementationOnce((options, callback) =>
-        callback(new Error('Mail fail'), null)
-      );
+    it('should handle error if email sending fails', async () => {
+      sendEmails.default.mockRejectedValueOnce(new Error('Mail fail'));
       const req = {
         body: {
           name: 'John Doe',
@@ -95,39 +96,10 @@ describe('Contact Management', () => {
       const next = jest.fn();
 
       await setContact(req, res, next);
-      // Fails due to 'e is not defined' ReferenceError on line 28 in the controller, caught in outer block
       expect(res.send).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
     });
 
-    it('should handle error if admin mail sending fails', async () => {
-      // First call (user email) succeeds, second call (admin email) fails
-      mail.default.sendMail
-        .mockImplementationOnce((options, callback) => callback(null, { response: 'ok' }))
-        .mockImplementationOnce((options, callback) =>
-          callback(new Error('Admin mail fail'), null)
-        );
-      const req = {
-        body: {
-          name: 'John Doe',
-          email: 'john@example.com',
-          phoneNumber: '1234567890',
-          message: 'Hello!',
-        },
-      };
-      const res = { send: jest.fn() };
-      const next = jest.fn();
-
-      await setContact(req, res, next);
-      // Verify both calls to res.send
-      expect(res.send).toHaveBeenCalledWith(
-        expect.objectContaining({ success: true, message: 'message posted successfully' })
-      );
-      expect(res.send).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false, message: new Error('Admin mail fail') })
-      );
-    });
-
-    it('should handle errors in catch block', async () => {
+    it('should handle errors in catch block when DB fails', async () => {
       contact.default.create.mockRejectedValue(new Error('Database error'));
       const req = {
         body: {
