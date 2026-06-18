@@ -1,6 +1,8 @@
 import logger from '../utils/logger';
 import React, { useEffect } from 'react';
-import Home from './Home/Home';
+import HomePage from './HomePage/HomePage';
+import ContactUs from './HomePage/ContactUs';
+import GalleryUser from './HomePage/Gallery';
 import Login from './Authentication/Login';
 import Registration from './Authentication/Registration';
 import Dashboard from './Main/Dashboard';
@@ -85,7 +87,9 @@ const App = () => {
 
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />;
+          <Route path="/" element={<HomePage />} />;
+          <Route path="/contact-us" element={<ContactUs />} />;
+          <Route path="/image-gallery" element={<GalleryUser />} />;
           <Route path="/login" element={<Login />} />;
           <Route path="/signup" element={<Registration />} />;
           <Route path="/fill-details" element={<FillDetails />} />;

@@ -1,25 +1,24 @@
-import logger from './logger';
 const isProd = process.env.NODE_ENV === 'production';
 
 const logger = {
   info: (...args) => {
     if (!isProd) {
-      logger.info(...args);
+      console.info(...args);
     }
   },
   error: (...args) => {
     if (!isProd) {
-      logger.error(...args);
+      console.error(...args);
     }
   },
   warn: (...args) => {
     if (!isProd) {
-      logger.warn(...args);
+      console.warn(...args);
     }
   },
   debug: (...args) => {
     if (!isProd) {
-      logger.debug(...args);
+      console.debug(...args);
     }
   },
 };

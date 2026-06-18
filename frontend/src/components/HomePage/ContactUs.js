@@ -9,10 +9,10 @@ const ContactUs = () => {
   return (
     <div className="w-75">
       <Formik
-        initialValues={{ name: '', phoneNumber: '', email: '', message: '' }}
+        initialValues={{ name: '', phone_number: '', email: '', message: '' }}
         validationSchema={Yup.object({
           name: Yup.string().required(' Name Required'),
-          phoneNumber: Yup.string().required(' ph no is Required'),
+          phone_number: Yup.string().required(' ph no is Required'),
           email: Yup.string().required('Email is Required'),
           message: Yup.string().required('Message Required'),
         })}
@@ -49,17 +49,17 @@ const ContactUs = () => {
             <span className="text-danger">
               <ErrorMessage name="name" />
             </span>
-            <label htmlFor="phoneNumber">
+            <label htmlFor="phone_number">
               <b>Phone Number</b>
             </label>
             <Field
-              name="phoneNumber"
+              name="phone_number"
               className="form-control"
               type="string"
               style={{ margin: '0% 0% 2% 0%' }}
             />
             <span className="text-danger">
-              <ErrorMessage name="phoneNumber" />
+              <ErrorMessage name="phone_number" />
             </span>
             <label htmlFor="email">
               <b>Email</b>

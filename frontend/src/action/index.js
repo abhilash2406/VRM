@@ -145,3 +145,10 @@ export const changePass = (props) => async (dispatch) => {
   }
 };
 
+//for post contact form details
+export const contactDetails = (input) => async (dispatch) => {
+  let { data } = await postData('/contact', input);
+  if (data.success) {
+    dispatch(setSuccessMessage(data.message));
+  }
+};
