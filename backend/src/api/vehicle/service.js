@@ -1,28 +1,20 @@
 import vehicle from '../../models/vehicle.js';
-import users from '../../models/users.js';
-import jwt from 'jsonwebtoken';
 import { VehicleStatus, VehicleType } from '../../common/enum/vehicle-enum.js';
 
 /**
  * Registers a new vehicle in the system.
  * @param {Object} data - The vehicle details payload.
- * @param {string} token - The authenticated user's JWT token.
+ * @param {string} userId - The ID of the user creating the record.
  * @returns {Promise<Object>} The created vehicle record.
  * @throws {Error} If a vehicle with the same registration number already exists.
  */
-export const addVehicleService = async (data, token) => {
+export const addVehicleService = async (data, userId) => {
   const existing = await vehicle.findOne({
     where: { registration_number: data.registration_number },
   });
 
   if (existing) {
     throw new Error('A vehicle with this registration number already exists');
-  }
-
-  let user = null;
-  if (token) {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'qwerty');
-    user = await users.findByPk(decoded.id);
   }
 
   const created = await vehicle.create({
@@ -40,7 +32,7 @@ export const addVehicleService = async (data, token) => {
     next_service_date: data.next_service_date || null,
     vehicle_photo: data.vehicle_photo || null,
     rc_photo: data.rc_photo || null,
-    created_by: user ? user.id : null,
+    created_by: userId || null,
   });
 
   return created;

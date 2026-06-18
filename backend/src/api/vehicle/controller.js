@@ -14,10 +14,8 @@ import {
  */
 export const addVehicle = async (req, res) => {
   try {
-    const token = req.header('Authorization')
-      ? req.header('Authorization').replace('Bearer ', '')
-      : null;
-    const data = await addVehicleService(req.body, token);
+    const userId = req.user?.id || null;
+    const data = await addVehicleService(req.body, userId);
     res.send({ success: true, message: 'Vehicle added successfully', data });
   } catch (e) {
     res.send({ success: false, message: e.message });
