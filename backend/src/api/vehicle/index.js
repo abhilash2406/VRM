@@ -85,10 +85,6 @@ var router = express.Router();
  */
 router.post(
   '/add',
-  upload.fields([
-    { name: 'vehicle_photo', maxCount: 1 },
-    { name: 'rc_photo', maxCount: 1 },
-  ]),
   VehicleValidate,
   addVehicle
 );
