@@ -1,4 +1,4 @@
-import trucks from '../../models/truck.js';
+import vehicle from '../../models/vehicle.js';
 import routes from '../../models/route.js';
 import drivers from '../../models/driver.js';
 import trips from '../../models/trip.js';
@@ -18,8 +18,8 @@ import moment from 'moment';
  * @throws {Error} If the driver, truck, or route does not exist or if the driver lacks approval.
  */
 export const addTripsService = async (data) => {
-  const truck_exist = await trucks.findByPk(data.truck_id);
-  if (!truck_exist) throw new Error('This truck does not exist');
+  const truck_exist = await vehicle.findByPk(data.truck_id);
+  if (!truck_exist) throw new Error('This vehicle does not exist');
 
   const route_exist = await routes.findByPk(data.route_id);
   if (!route_exist) throw new Error('This route does not exist');
@@ -64,7 +64,7 @@ export const getTripsService = async () => {
         model: drivers,
         include: [{ model: users, include: [{ model: loginHistory }] }],
       },
-      { model: trucks },
+      { model: vehicle },
       { model: routes },
     ],
   });
@@ -82,7 +82,7 @@ export const getTripDataService = async (id) => {
         model: drivers,
         include: [{ model: users, include: [{ model: loginHistory }] }],
       },
-      { model: trucks },
+      { model: vehicle },
       { model: routes },
     ],
     where: { id },
@@ -115,8 +115,8 @@ export const deleteTripService = async (id) => {
  * @throws {Error} If driver, truck, or route is invalid.
  */
 export const updateTripService = async (id, data) => {
-  const truck_exist = await trucks.findByPk(data.truck_id);
-  if (!truck_exist) throw new Error('This truck does not exist');
+  const truck_exist = await vehicle.findByPk(data.truck_id);
+  if (!truck_exist) throw new Error('This vehicle does not exist');
 
   const route_exist = await routes.findByPk(data.route_id);
   if (!route_exist) throw new Error('This route does not exist');

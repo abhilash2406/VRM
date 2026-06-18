@@ -1,6 +1,6 @@
 import drivers from '../../models/driver.js';
 import { UserType } from '../../common/enum/user-type-enum.js';
-import trucks from '../../models/truck.js';
+import vehicle from '../../models/vehicle.js';
 import users from '../../models/users.js';
 import trips from '../../models/trip.js';
 import loginHistory from '../../models/loginHistory.js';
@@ -114,7 +114,7 @@ export const viewDriverService = async (id) => {
     where: { id },
     include: [
       { model: users, include: [{ model: loginHistory }] },
-      { model: trucks },
+      { model: vehicle },
       { model: routes },
     ],
   });

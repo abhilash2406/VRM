@@ -11,6 +11,15 @@ export const VehicleStatus = {
 };
 
 /**
+ * Vehicle type enum values.
+ */
+export const VehicleType = {
+  TWO_WHEELER: 'two-wheeler',
+  FOUR_WHEELER: 'four-wheeler',
+  HEAVY_VEHICLE: 'heavy-vehicle',
+};
+
+/**
  * Sequelize Model for Vehicles.
  * @typedef {import('sequelize').Model} Vehicle
  */
@@ -47,6 +56,17 @@ const vehicle = sequelize.define(
       type: DataTypes.ENUM(Object.values(VehicleStatus)),
       allowNull: false,
       defaultValue: VehicleStatus.AVAILABLE,
+    },
+    vehicle_type: {
+      type: DataTypes.ENUM(Object.values(VehicleType)),
+      allowNull: false,
+      defaultValue: VehicleType.FOUR_WHEELER,
+      comment: 'two-wheeler | four-wheeler | heavy-vehicle',
+    },
+    rc_number: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      comment: 'RC registration certificate number',
     },
     insurance_expiry: {
       type: DataTypes.DATEONLY,

@@ -27,6 +27,14 @@ export const VehicleValidate = async (req, res, next) => {
       'any.required': 'Year of manufacture is required',
     }),
     status: Joi.string().valid('available', 'booked', 'maintenance').optional(),
+    vehicle_type: Joi.string()
+      .valid('two-wheeler', 'four-wheeler', 'heavy-vehicle')
+      .required()
+      .messages({
+        'any.only': 'vehicle_type must be two-wheeler, four-wheeler, or heavy-vehicle',
+        'any.required': 'Vehicle type is required',
+      }),
+    rc_number: Joi.string().optional().allow(null, ''),
     insurance_expiry: Joi.date().iso().optional().allow(null, ''),
     last_service_date: Joi.date().iso().optional().allow(null, ''),
     next_service_date: Joi.date().iso().optional().allow(null, ''),
