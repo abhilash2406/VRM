@@ -3,7 +3,7 @@ version: '3.8'
 services:
   api:
     build: .
-    container_name: truck-mgt-api
+    container_name: vrm-mgt-api
     restart: unless-stopped
     ports:
       - '5000:5000'
@@ -22,7 +22,7 @@ services:
 
   db:
     image: postgres:15-alpine
-    container_name: truck-mgt-db
+    container_name: vrm-mgt-db
     restart: unless-stopped
     ports:
       - '5432:5432' # Exposing the port so you can connect via GUI tools
