@@ -64,7 +64,7 @@ const driver = sequelize.define(
 
 driver.associate = (models) => {
   driver.belongsTo(models.users, { foreignKey: 'user_id' });
-  driver.belongsTo(models.truck, { foreignKey: 'truck_id' });
+  driver.belongsTo(models.vehicle, { foreignKey: 'truck_id' });
   driver.belongsTo(models.route, {
     foreignKey: 'route_id',
   });
