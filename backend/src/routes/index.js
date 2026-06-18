@@ -13,6 +13,8 @@ import inline_api_transactionManagement_index from '../api/transactionManagement
 import auth from '../middlewares/auth.js';
 var router = express.Router();
 
+import inline_api_FileUpload_index from '../api/FileUpload/index.js';
+
 router.use('/contact', inline_api_contactManagement_index);
 router.use('/auth', inline_api_authentication_index);
 router.use('/profile', auth, inline_api_profileManagement_index);
@@ -24,5 +26,6 @@ router.use('/drivers', auth, inline_api_driverManagement_index);
 router.use('/routes', inline_api_routeManagement_index);
 router.use('/trips', auth, inline_api_tripManagement_index);
 router.use('/transactions', auth, inline_api_transactionManagement_index);
+router.use('/file-upload', auth, inline_api_FileUpload_index);
 
 export default router;

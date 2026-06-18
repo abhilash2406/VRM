@@ -7,9 +7,9 @@ const router = express.Router();
 router.post('/', validator.uploadFile, fileUpload);
 /**
  * @swagger
- * /api/file-upload:
+ * /api/v1/file-upload:
  *   post:
- *      summary: Uplaod Image
+ *      summary: Upload Image
  *      tags:
  *        - Files
  *      requestBody:
@@ -20,12 +20,12 @@ router.post('/', validator.uploadFile, fileUpload);
  *              type: object
  *              properties:
  *                image:
- *                  type: file
- *                  required: true
- *                  description: upload your image here
+ *                  type: string
+ *                  format: binary
+ *                  description: The file to upload
  *      responses:
  *        200:
- *          description: Login successfully
+ *          description: Image uploaded successfully
  *        400:
  *          description: Bad request
  *        500:
@@ -35,7 +35,7 @@ router.post('/', validator.uploadFile, fileUpload);
 router.post('/remove', removeFileUpload);
 /**
  * @swagger
- * /api/file-upload/remove:
+ * /api/v1/file-upload/remove:
  *   post:
  *     summary: Remove an existing Image
  *     tags:
@@ -48,14 +48,11 @@ router.post('/remove', removeFileUpload);
  *             type: object
  *             properties:
  *               name:
- *                 type: array
- *                 items:
- *                   type: string   # Each item in the array is a string
- *                 required: true
- *                 description: Upload your image here
+ *                 type: string
+ *                 description: The key or path of the image to remove (can be comma-separated for multiple)
  *     responses:
  *       200:
- *         description: Blog updated successfully
+ *         description: Image deleted successfully
  *       400:
  *         description: Bad request
  *       500:

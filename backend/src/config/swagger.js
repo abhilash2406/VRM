@@ -41,6 +41,7 @@ const swaggerOptions = {
     path.resolve(__dirname, '../api/profileManagement/index.js'),
     path.resolve(__dirname, '../api/designationManagement/index.js'),
     path.resolve(__dirname, '../api/permissionManagement/index.js'),
+    path.resolve(__dirname, '../api/FileUpload/index.js'),
   ],
 };
 
