@@ -1,5 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
+import { EntityType } from '../common/enum/activity-enum.js';
 
 const driver = sequelize.define(
   'driver',
@@ -9,19 +10,15 @@ const driver = sequelize.define(
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-    licenseNo: {
+    license_no: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    licensePhoto: {
+    license_photo: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    userPhoto: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    licenseType: {
+    license_type: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -29,7 +26,7 @@ const driver = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    dailyWage: {
+    daily_wage: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -38,20 +35,20 @@ const driver = sequelize.define(
       allowNull: true,
     },
     status: {
-      type: DataTypes.ENUM('approved', 'reject', 'pending'),
-      defaultValue: 'pending',
-      allowNull: true,
+      type: DataTypes.ENUM(Object.values(EntityType)),
+      allowNull: false,
+      defaultValue: EntityType.ACTIVE,
     },
-    truckId: {
+    truck_id: {
       type: DataTypes.UUID,
       allowNull: true,
     },
-    routeId: {
+    route_id: {
       type: DataTypes.UUID,
 
       allowNull: true,
     },
-    userId: {
+    user_id: {
       type: DataTypes.UUID,
       allowNull: true,
     },
@@ -62,10 +59,10 @@ const driver = sequelize.define(
 );
 
 driver.associate = (models) => {
-  driver.belongsTo(models.users, { foreignKey: 'userId' });
-  driver.belongsTo(models.truck, { foreignKey: 'truckId' });
+  driver.belongsTo(models.users, { foreignKey: 'user_id' });
+  driver.belongsTo(models.truck, { foreignKey: 'truck_id' });
   driver.belongsTo(models.route, {
-    foreignKey: 'routeId',
+    foreignKey: 'route_id',
   });
 };
 

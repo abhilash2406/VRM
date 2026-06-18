@@ -19,17 +19,17 @@ export const getTruckVariantsService = async () => {
 };
 
 export const correspondingDataService = async (data) => {
-  if (!data.brandId && !data.modelId) {
+  if (!data.brand_id && !data.model_id) {
     const brand_data = await Brand.findAll({});
     return { brand: brand_data };
-  } else if (data.brandId && !data.modelId) {
+  } else if (data.brand_id && !data.model_id) {
     const brand_data = await Brand.findAll({});
-    const model_data = await TruckModel.findAll({ where: { brandId: data.brandId } });
+    const model_data = await TruckModel.findAll({ where: { brand_id: data.brand_id } });
     return { model: model_data, brand: brand_data };
   } else {
     const brand_data = await Brand.findAll({});
-    const model_data = await TruckModel.findAll({ where: { brandId: data.brandId } });
-    const variant_data = await Variant.findAll({ where: { modelId: data.modelId } });
+    const model_data = await TruckModel.findAll({ where: { brand_id: data.brand_id } });
+    const variant_data = await Variant.findAll({ where: { model_id: data.model_id } });
     return { model: model_data, brand: brand_data, variant: variant_data };
   }
 };
@@ -37,7 +37,10 @@ export const correspondingDataService = async (data) => {
 export const addTrucksService = async (data, files, token) => {
   const truck_exist = await trucks.findAll({
     where: {
-      [Op.or]: [{ VIN: { [Op.like]: `%${data.VIN}%` } }, { RCNo: { [Op.like]: `%${data.RCNo}%` } }],
+      [Op.or]: [
+        { VIN: { [Op.like]: `%${data.VIN}%` } },
+        { rc_no: { [Op.like]: `%${data.rc_no}%` } },
+      ],
     },
   });
 
@@ -46,10 +49,10 @@ export const addTrucksService = async (data, files, token) => {
   }
 
   const rcPhotoPath = files['rcPhoto'][0].path.replace(/^public/, '');
-  const truckPhotoPath = files['truckPhoto'][0].path.replace(/^public/, '');
+  const truckPhotoPath = files['truck_photo'][0].path.replace(/^public/, '');
 
-  const truckBrand = await Brand.findOne({ where: { brandId: data.brand } });
-  const truckModel = await TruckModel.findOne({ where: { modelId: data.model } });
+  const truckBrand = await Brand.findOne({ where: { brand_id: data.brand } });
+  const truckModel = await TruckModel.findOne({ where: { model_id: data.model } });
   const truckVariant = await Variant.findOne({ where: { id: data.variant } });
 
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -60,16 +63,16 @@ export const addTrucksService = async (data, files, token) => {
     model: truckModel.name,
     variant: truckVariant.name,
     VIN: data.VIN,
-    engineNo: data.engineNo,
-    chassisNo: data.chassisNo,
-    RCNo: data.RCNo,
+    engine_no: data.engine_no,
+    chassis_no: data.chassis_no,
+    rc_no: data.rc_no,
     yrManufacture: data.yrManufacture,
     rcPhoto: rcPhotoPath,
-    truckPhoto: truckPhotoPath,
+    truck_photo: truckPhotoPath,
     condition: data.condition,
     status: data.status,
-    isActive: data.status === 'active' && data.condition === 'working',
-    createdBy: crctUser.id,
+    is_active: data.status === 'active' && data.condition === 'working',
+    created_by: crctUser.id,
   });
 
   return true;
@@ -80,7 +83,7 @@ export const getAllTruckDataService = async () => {
 };
 
 export const getActiveTrucksService = async () => {
-  return await trucks.findAll({ where: { isActive: true } });
+  return await trucks.findAll({ where: { is_active: true } });
 };
 
 export const truckToEditService = async (id) => {
@@ -103,10 +106,10 @@ export const updateTruckService = async (id, data, files) => {
   }
 
   const rcPhotoPath = files['rcPhoto'][0].path.replace(/^public/, '');
-  const truckPhotoPath = files['truckPhoto'][0].path.replace(/^public/, '');
+  const truckPhotoPath = files['truck_photo'][0].path.replace(/^public/, '');
 
-  const truckBrand = await Brand.findOne({ where: { brandId: data.brand } });
-  const truckModel = await TruckModel.findOne({ where: { modelId: data.model } });
+  const truckBrand = await Brand.findOne({ where: { brand_id: data.brand } });
+  const truckModel = await TruckModel.findOne({ where: { model_id: data.model } });
   const truckVariant = await Variant.findOne({ where: { id: data.variant } });
 
   await truck_exist.update({
@@ -114,15 +117,15 @@ export const updateTruckService = async (id, data, files) => {
     model: truckModel.name,
     variant: truckVariant.name,
     VIN: data.VIN,
-    engineNo: data.engineNo,
-    chassisNo: data.chassisNo,
-    RCNo: data.RCNo,
+    engine_no: data.engine_no,
+    chassis_no: data.chassis_no,
+    rc_no: data.rc_no,
     yrManufacture: data.yrManufacture,
     rcPhoto: rcPhotoPath,
-    truckPhoto: truckPhotoPath,
+    truck_photo: truckPhotoPath,
     condition: data.condition,
     status: data.status,
-    isActive: data.status === 'active' && data.condition === 'working',
+    is_active: data.status === 'active' && data.condition === 'working',
   });
 
   return true;

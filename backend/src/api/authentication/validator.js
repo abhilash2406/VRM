@@ -4,7 +4,7 @@ const addUserValidate = async (req, res, next) => {
   const schema = Joi.object({
     name: Joi.string().min(3).max(30).required(),
     email: Joi.string().email().required(),
-    phoneNumber: Joi.string().required(),
+    phone_number: Joi.string().required(),
     designation: Joi.string().required(),
   });
   try {
@@ -50,5 +50,18 @@ const verifyEmailValidate = async (req, res, next) => {
   }
 };
 
-export { addUserValidate, registerValidate, verifyEmailValidate };
-export default { addUserValidate, registerValidate, verifyEmailValidate };
+const loginValidate = async (req, res, next) => {
+  const schema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  });
+  try {
+    req.body = await schema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    res.send({ success: false, err: err.message });
+  }
+};
+
+export { addUserValidate, registerValidate, verifyEmailValidate, loginValidate };
+export default { addUserValidate, registerValidate, verifyEmailValidate, loginValidate };

@@ -1,11 +1,8 @@
 import {
   loginUser,
-  addUsersService,
   googleLoginService,
   registerUser,
   googleSignUpService,
-  signUpDriver,
-  processPayment,
   verifyEmailService,
 } from './service.js';
 import { setAuthCookies } from '../../utils/cookies.js';
@@ -44,16 +41,23 @@ export const verifyEmail = async (req, res, next) => {
 export const Login = async (req, res, next) => {
   try {
     const data = await loginUser(req.body);
-    return res.send({ success: true, message: 'Login successfully', data });
-  } catch (e) {
-    res.send({ success: false, message: e.message });
-  }
-};
 
-export const addUsers = async (req, res, next) => {
-  try {
-    await addUsersService(req.body);
-    return res.send({ success: true, message: 'Added successfully' });
+    applyAuthCookies(res, {
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+      accessTtlMs: (process.env.ACCESS_TOKEN_TTL_SECONDS || 900) * 1000,
+      refreshTtlMs: (process.env.REFRESH_TOKEN_TTL_SECONDS || 2592000) * 1000,
+    });
+
+    const { accessToken, refreshToken, ...userData } = data;
+
+    return res.send({
+      success: true,
+      message: 'Login successfully',
+      accessToken,
+      refreshToken,
+      data: userData,
+    });
   } catch (e) {
     res.send({ success: false, message: e.message });
   }
@@ -86,23 +90,5 @@ export const googleSignUp = async (req, res, next) => {
     return res.send({ success: true, data });
   } catch (e) {
     res.send({ success: false, message: e.message });
-  }
-};
-
-export const signUpUser = async (req, res, next) => {
-  try {
-    const data = await signUpDriver(req.body, req.files);
-    return res.send({ success: true, data });
-  } catch (e) {
-    res.send({ success: false, message: e.message });
-  }
-};
-
-export const proceedPayment = async (req, res, next) => {
-  try {
-    const data = await processPayment(req.body);
-    return res.send({ success: true, data });
-  } catch (e) {
-    res.json({ success: false, message: e.message });
   }
 };

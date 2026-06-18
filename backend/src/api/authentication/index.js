@@ -39,7 +39,7 @@ const router = express.Router();
  *       '400':
  *         description: Bad request
  */
-router.post('/login', controller.Login);
+router.post('/login', validate.loginValidate, controller.Login);
 /**
  * @swagger
  * /api/v1/auth/register:
@@ -76,50 +76,7 @@ router.post('/login', controller.Login);
  *         description: Registered successfully
  */
 router.post('/register', validate.registerValidate, controller.register);
-/**
- * @swagger
- * /api/v1/auth/userdata:
- *   post:
- *     tags:
- *       - Authentication
- *     summary: Onboard driver with photos and truck details
- *     description: Driver details upload (multipart/form-data).
- *     requestBody:
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *               phone:
- *                 type: string
- *               userPhoto:
- *                 type: string
- *                 format: binary
- *               licensePhoto:
- *                 type: string
- *                 format: binary
- *     responses:
- *       '200':
- *         description: Registration completed
- */
-router.post(
-  '/userdata',
-  upload.fields([
-    { name: 'userPhoto', maxCount: 1 },
-    { name: 'licensePhoto', maxCount: 1 },
-    { name: 'truckPhoto', maxCount: 1 },
-    { name: 'rcPhoto', maxCount: 1 },
-  ]),
-  controller.signUpUser
-);
 
-router.post('/add-user', validate.addUserValidate, controller.addUsers);
-
-router.post('/verify-email', validate.verifyEmailValidate, controller.verifyEmail);
 /**
  * @swagger
  * /api/v1/auth/verify-email:
@@ -163,5 +120,7 @@ router.post('/verify-email', validate.verifyEmailValidate, controller.verifyEmai
  *       404:
  *         description: User not found
  */
+
+router.post('/verify-email', validate.verifyEmailValidate, controller.verifyEmail);
 
 export default router;

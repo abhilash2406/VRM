@@ -1,5 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
+import { EntityType } from '../common/enum/activity-enum.js';
 
 const trip = sequelize.define(
   'trip',
@@ -13,22 +14,27 @@ const trip = sequelize.define(
       type: DataTypes.DATE,
       allowNull: false,
     },
-    driverId: {
+    driver_id: {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
     },
-    truckId: {
+    truck_id: {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
     },
-    routeId: {
+    route_id: {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
     },
-    status: {
+    trip_status: {
       type: DataTypes.ENUM('scheduled', 'ongoing', 'cancelled', 'completed'),
       allowNull: true,
       defaultValue: 'scheduled',
+    },
+    status: {
+      type: DataTypes.ENUM(Object.values(EntityType)),
+      allowNull: false,
+      defaultValue: EntityType.ACTIVE,
     },
   },
   {
@@ -37,9 +43,9 @@ const trip = sequelize.define(
 );
 
 trip.associate = (models) => {
-  trip.belongsTo(models.driver, { foreignKey: 'driverId', allowNull: false });
-  trip.belongsTo(models.truck, { foreignKey: 'truckId', allowNull: false });
-  trip.belongsTo(models.route, { foreignKey: 'routeId', allowNull: false });
+  trip.belongsTo(models.driver, { foreignKey: 'driver_id', allowNull: false });
+  trip.belongsTo(models.truck, { foreignKey: 'truck_id', allowNull: false });
+  trip.belongsTo(models.route, { foreignKey: 'route_id', allowNull: false });
 };
 
 export default trip;

@@ -7,19 +7,19 @@ export const getAllPermissionsService = async () => {
 };
 
 export const grantPermissionsService = async (id, data, socket) => {
-  await permissionSetting.destroy({ where: { designationId: id } });
+  await permissionSetting.destroy({ where: { designation_id: id } });
 
   let desId;
   for (const item of data) {
     let a = await permissionSetting.create({
-      designationId: item.designationId,
+      designation_id: item.designation_id,
       permissionId: item.permissionId,
     });
-    desId = a.designationId;
+    desId = a.designation_id;
   }
 
   const permission_data = await permissionSetting.findAll({
-    where: { designationId: desId },
+    where: { designation_id: desId },
     include: permissions,
   });
 
@@ -27,7 +27,7 @@ export const grantPermissionsService = async (id, data, socket) => {
 
   const permissionArray = permission_data.map((item) => ({
     menu: item.permission.menu,
-    subMenu: item.permission.subMenu,
+    sub_menu: item.permission.sub_menu,
   }));
 
   if (socket) {
@@ -42,11 +42,11 @@ export const grantPermissionsService = async (id, data, socket) => {
 
 export const getUserDataService = async (id) => {
   const allowed = await permissionSetting.findAll({
-    where: { designationId: id },
+    where: { designation_id: id },
   });
 
   return allowed.map((item) => ({
     permissionId: item.permissionId,
-    designationId: item.designationId,
+    designation_id: item.designation_id,
   }));
 };

@@ -1,5 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
+import { EntityType } from '../common/enum/activity-enum.js';
 
 const contact = sequelize.define('contact', {
   id: {
@@ -15,7 +16,7 @@ const contact = sequelize.define('contact', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  phoneNumber: {
+  phone_number: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -24,8 +25,9 @@ const contact = sequelize.define('contact', {
     allowNull: false,
   },
   status: {
-    type: DataTypes.ENUM('read', 'unread'),
-    allowNull: true,
+    type: DataTypes.ENUM(Object.values(EntityType)),
+    allowNull: false,
+    defaultValue: EntityType.ACTIVE,
   },
 });
 

@@ -36,11 +36,11 @@ router.post('/count', controller.noOfTrips);
  *             schema:
  *               type: object
  *               properties:
- *                 driverId:
+ *                 driver_id:
  *                   type: string
- *                 truckId:
+ *                 truck_id:
  *                   type: string
- *                 routeId:
+ *                 route_id:
  *                   type: string
  *       responses:
  *         '200':

@@ -1,5 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
+import { EntityType } from '../common/enum/activity-enum.js';
 
 const truck = sequelize.define('truck', {
   id: {
@@ -23,27 +24,27 @@ const truck = sequelize.define('truck', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  engineNo: {
+  engine_no: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  chassisNo: {
+  chassis_no: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  RCNo: {
+  rc_no: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  yrManufacture: {
+  year_of_manufacture: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  rcPhoto: {
+  rc_photo: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  truckPhoto: {
+  truck_photo: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -52,17 +53,17 @@ const truck = sequelize.define('truck', {
     allowNull: true,
     defaultValue: 'working',
   },
-  isActive: {
+  is_active: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
   status: {
-    type: DataTypes.ENUM('active', 'deactive', 'pending'),
-    allowNull: true,
-    defaultValue: 'active',
+    type: DataTypes.ENUM(Object.values(EntityType)),
+    allowNull: false,
+    defaultValue: EntityType.ACTIVE,
   },
-  createdBy: {
+  created_by: {
     type: DataTypes.UUID,
     defaultValue: Sequelize.UUIDV4,
     allowNull: true,
@@ -70,7 +71,7 @@ const truck = sequelize.define('truck', {
 });
 
 truck.associate = (models) => {
-  truck.belongsTo(models.users, { foreignKey: 'createdBy' });
+  truck.belongsTo(models.users, { foreignKey: 'created_by' });
 };
 
 export default truck;

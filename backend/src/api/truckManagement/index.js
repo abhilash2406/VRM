@@ -12,7 +12,7 @@ router.post(
   '/add',
   upload.fields([
     { name: 'rcPhoto', maxCount: 1 },
-    { name: 'truckPhoto', maxCount: 1 },
+    { name: 'truck_photo', maxCount: 1 },
   ]),
   validate.TruckValidate,
   controller.addTrucks
@@ -27,7 +27,7 @@ router
   .patch(
     upload.fields([
       { name: 'rcPhoto', maxCount: 1 },
-      { name: 'truckPhoto', maxCount: 1 },
+      { name: 'truck_photo', maxCount: 1 },
     ]),
     validate.TruckValidate,
     controller.updateTruck
@@ -78,7 +78,7 @@ router
  *                   type: string
  *                 brand:
  *                   type: string
- *                 truckPhoto:
+ *                 truck_photo:
  *                   type: string
  *                   format: binary
  *                 rcPhoto:

@@ -1,5 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
+import { EntityType } from '../common/enum/activity-enum.js';
 
 const transaction = sequelize.define('transaction', {
   id: {
@@ -27,15 +28,20 @@ const transaction = sequelize.define('transaction', {
     type: DataTypes.DATE,
     allowNull: true,
   },
-  driverId: {
+  driver_id: {
     type: DataTypes.UUID,
     defaultValue: Sequelize.UUIDV4,
+  },
+  status: {
+    type: DataTypes.ENUM(Object.values(EntityType)),
+    allowNull: false,
+    defaultValue: EntityType.ACTIVE,
   },
 });
 
 transaction.associate = (models) => {
   transaction.belongsTo(models.driver, {
-    foreignKey: 'driverId',
+    foreignKey: 'driver_id',
     allowNull: true,
   });
 };

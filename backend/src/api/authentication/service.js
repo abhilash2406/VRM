@@ -19,8 +19,9 @@ import StripeClass from 'stripe';
 import { logger } from '../../config/winston-config.js';
 import { redisClient } from '../../config/redis-config.js';
 import { generateOtp, verifyOtp } from '../../utils/otp.js';
+import BadRequest from '../../common/exceptions/badRequest.js';
 
-const emailVerifyKey = (userId) => `email_verify_${userId}`;
+const emailVerifyKey = (user_id) => `email_verify_${user_id}`;
 
 const Stripe = new StripeClass(stripe.secret_key);
 
@@ -29,14 +30,17 @@ export const loginUser = async (data) => {
   const user = await users.findOne({ where: { email } });
 
   if (!user) {
-    await loginHistory.create({ userId: null, status: 'FAILED' }).catch(() => {}); // Optional tracking of failed logins without user
-    throw new Error('Invalid email or password');
+    throw new BadRequest('Invalid email or password');
   }
 
-  const userDesig = await designations.findOne({ where: { id: user.designationId } });
+  if (user.status === 'BLOCKED') {
+    throw new BadRequest('your account is blocked. please contact admin');
+  }
+
+  const userDesig = await designations.findOne({ where: { id: user.designation_id } });
 
   if (userDesig && userDesig.designation === UserType.DRIVER) {
-    const currentDriv = await drivers.findOne({ where: { userId: user.id } });
+    const currentDriv = await drivers.findOne({ where: { user_id: user.id } });
 
     if (currentDriv && currentDriv.status !== 'approved') {
       throw new Error('admin approval needed');
@@ -44,7 +48,7 @@ export const loginUser = async (data) => {
   }
 
   if (!(await user.verifyPassword(password))) {
-    await loginHistory.create({ userId: user.id, status: 'FAILED' });
+    await loginHistory.create({ user_id: user.id, login_status: 'FAILED' });
     throw new Error('Invalid email or password');
   }
 
@@ -52,19 +56,25 @@ export const loginUser = async (data) => {
   const refreshToken = user.generateAuthToken(true); // rememberMe?
 
   await loginHistory.create({
-    userId: user.id,
-    loginTime: new Date(),
-    status: 'SUCCESS',
+    user_id: user.id,
+    login_time: new Date(),
+    login_status: 'SUCCESS',
   });
 
+  const updateData = { last_login: new Date() };
+  if (user.status === 'INACTIVE') {
+    updateData.status = 'ACTIVE';
+  }
+  await user.update(updateData);
+
   const permission_data = await permissionSetting.findAll({
-    where: { designationId: user.designationId },
+    where: { designation_id: user.designation_id },
     include: permissions,
   });
 
   const mappingArray = permission_data.map((p) => ({
     menu: p.permission.menu,
-    subMenu: p.permission.subMenu,
+    sub_menu: p.permission.sub_menu,
   }));
 
   return {
@@ -74,35 +84,6 @@ export const loginUser = async (data) => {
     refreshToken,
     permission: mappingArray,
   };
-};
-
-export const addUsersService = async (data) => {
-  const userExist = await users.findOne({ where: { email: data.email } });
-
-  if (userExist) {
-    throw new Error('user already exist');
-  }
-
-  const randomPassword = Math.random().toString(36).slice(-8);
-
-  const newDesignation = await designations.findOne({ where: { id: data.designation } });
-
-  await users.create({
-    first_name: data.name,
-    phone_number: data.phoneNumber,
-    email: data.email,
-    password_hash: randomPassword,
-    designationId: newDesignation.id,
-  });
-
-  const mailOptions = {
-    to: data.email,
-    subject: 'Successfully Registered',
-    text: `Your username is ${data.name} and password is ${randomPassword}`,
-  };
-
-  await sendEmails({ mailOptions });
-  return true;
 };
 
 export const verifyEmailService = async (data) => {
@@ -125,6 +106,7 @@ export const verifyEmailService = async (data) => {
   await user.update({
     status: 'ACTIVE',
     email_verified: true,
+    last_login: new Date(),
   });
 
   await redisClient.del(emailVerifyKey(user.id));
@@ -144,20 +126,26 @@ export const googleLoginService = async (data) => {
   }
 
   await loginHistory.create({
-    userId: user.id,
-    loginTime: new Date(),
-    status: 'SUCCESS',
+    user_id: user.id,
+    login_time: new Date(),
+    login_status: 'SUCCESS',
   });
 
-  const currentDesignation = await designations.findOne({ where: { id: user.designationId } });
+  const updateData = { last_login: new Date() };
+  if (user.status === 'INACTIVE') {
+    updateData.status = 'ACTIVE';
+  }
+  await user.update(updateData);
+
+  const currentDesignation = await designations.findOne({ where: { id: user.designation_id } });
   const permission_data = await permissionSetting.findAll({
-    where: { designationId: user.designationId },
+    where: { designation_id: user.designation_id },
     include: permissions,
   });
 
   const mappingArray = permission_data.map((p) => ({
     menu: p.permission.menu,
-    subMenu: p.permission.subMenu,
+    sub_menu: p.permission.sub_menu,
   }));
 
   return {
@@ -168,9 +156,9 @@ export const googleLoginService = async (data) => {
   };
 };
 
-const generateEmailVerificationOtp = async (userId) => {
+const generateEmailVerificationOtp = async (user_id) => {
   const otp = generateOtp();
-  await redisClient.set(emailVerifyKey(userId), otp, {
+  await redisClient.set(emailVerifyKey(user_id), otp, {
     EX: parseInt(process.env.EMAIL_VERIFY_OTP_TTL_SECONDS || 300, 10),
   });
   return otp;
@@ -180,14 +168,14 @@ const generateEmailVerificationOtp = async (userId) => {
  * Send the verification OTP email. Failures are logged but never thrown —
  * registration must still succeed if Redis or the mailer is unavailable.
  */
-const sendVerificationEmail = async (userId, email, fullName) => {
+const sendVerificationEmail = async (user_id, email, fullName) => {
   let otp;
   try {
-    otp = await generateEmailVerificationOtp(userId);
+    otp = await generateEmailVerificationOtp(user_id);
   } catch (err) {
     logger.error('Email-verification OTP store failed', {
       requestId: null,
-      userId,
+      user_id,
       email,
       error: err instanceof Error ? err.message : String(err),
     });
@@ -207,7 +195,7 @@ const sendVerificationEmail = async (userId, email, fullName) => {
   } catch (err) {
     logger.error('Verification email send failed', {
       requestId: null,
-      userId,
+      user_id,
       email,
       error: err instanceof Error ? err.message : String(err),
     });
@@ -243,7 +231,7 @@ export const registerUser = async (data) => {
         phone_number,
         email,
         password_hash: password,
-        designationId: defaultDesignation ? defaultDesignation.id : null,
+        designation_id: defaultDesignation ? defaultDesignation.id : null,
       },
       { transaction: t }
     );
@@ -267,121 +255,4 @@ export const googleSignUpService = async (data) => {
     throw new Error('This user already exists');
   }
   return data.data.data.email;
-};
-
-export const signUpDriver = async (data, files) => {
-  const designationDetails = await designations.findOne({
-    where: { designation: UserType.DRIVER },
-  });
-  const userExist = await users.findOne({ where: { email: data.email } });
-
-  if (userExist) {
-    throw new Error('User already exist');
-  }
-
-  const user = await users.create({
-    first_name: data.first_name, // it was data.first_name in driver sign up
-    phone_number: data.phoneNumber,
-    email: data.email,
-    password_hash: data.password,
-    designationId: designationDetails.id,
-  });
-
-  const licenseTypeString = JSON.stringify(data.licenseType);
-
-  if (data.brand && data.model) {
-    const truckBrand = await Brand.findOne({ where: { brandId: data.brand } });
-    const truckModel = await TruckModel.findOne({ where: { modelId: data.model } });
-    const truckVariant = await Variant.findOne({ where: { id: data.variant } });
-
-    const truckdet = await trucks.create({
-      brand: truckBrand.name,
-      model: truckModel.name,
-      variant: truckVariant.name,
-      VIN: data.VIN,
-      engineNo: data.engineNo,
-      chassisNo: data.chassisNo,
-      RCNo: data.RCNo,
-      yrManufacture: data.yrManufacture,
-      rcPhoto: files['rcPhoto'][0].path.replace(/^public/, ''),
-      truckPhoto: files['truckPhoto'][0].path.replace(/^public/, ''),
-      condition: data.condition,
-      isActive: true,
-      status: data.status,
-      createdBy: user.id,
-    });
-
-    const driver = await drivers.create({
-      licenseNo: data.licenseNo,
-      licensePhoto: files['licensePhoto'][0].path.replace(/^public/, ''),
-      userPhoto: files['userPhoto'][0].path.replace(/^public/, ''),
-      licenseType: licenseTypeString,
-      userId: user.id,
-      truckId: truckdet.id,
-      status: 'pending',
-    });
-
-    return {
-      name: data.first_name,
-      email: data.email,
-      phn: data.phoneNumber,
-      wage: 1000,
-      driver: driver.id,
-    };
-  } else {
-    const driver = await drivers.create({
-      licenseNo: data.licenseNo,
-      licensePhoto: files['licensePhoto'][0].path.replace(/^public/, ''),
-      userPhoto: files['userPhoto'][0].path.replace(/^public/, ''),
-      licenseType: licenseTypeString,
-      userId: user.id,
-      status: 'pending',
-    });
-
-    const mailOptions = {
-      to: data.email,
-      subject: 'Successfully Registered',
-      text: `Your profile naming ${data.first_name} is registered successfully in GOGO-X portal, wait for admin approval `,
-    };
-    await sendEmails({ mailOptions });
-
-    return {
-      name: data.first_name,
-      email: data.email,
-      phn: data.phoneNumber,
-      wage: data.dailyWage,
-      driver: driver.id,
-    };
-  }
-};
-
-export const processPayment = async (data) => {
-  const { id, userData } = data;
-
-  const customer = await Stripe.customers.create({
-    name: userData.name,
-    email: userData.email,
-    phone: userData.phn,
-  });
-
-  const formattedDate = moment(new Date()).format('YYYY-MM-DD');
-
-  await transactions.create({
-    name: userData.name,
-    email: userData.mail,
-    amount: 1000,
-    type: 'card',
-    date: formattedDate,
-    driverId: userData.driver,
-  });
-
-  const intent = await Stripe.paymentIntents.create({
-    payment_method: id,
-    amount: 10 * 100,
-    currency: 'inr',
-    confirm: true,
-    payment_method_types: ['card'],
-  });
-
-  return await Stripe.paymentIntents.confirm(intent.id, { payment_method: id });
 };

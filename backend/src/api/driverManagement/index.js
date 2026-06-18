@@ -10,7 +10,7 @@ router
   .post(
     upload.fields([
       { name: 'userPhoto', maxCount: 1 },
-      { name: 'licensePhoto', maxCount: 1 },
+      { name: 'license_photo', maxCount: 1 },
     ]),
     validator.driverValidate,
     controller.addDrivers
@@ -23,7 +23,7 @@ router
   .patch(
     upload.fields([
       { name: 'userPhoto', maxCount: 1 },
-      { name: 'licensePhoto', maxCount: 1 },
+      { name: 'license_photo', maxCount: 1 },
     ]),
     validator.driverValidate,
     controller.updateDriver
@@ -63,7 +63,7 @@ router.patch('/approve/:id', controller.approveDrivers);
  *                 userPhoto:
  *                   type: string
  *                   format: binary
- *                 licensePhoto:
+ *                 license_photo:
  *                   type: string
  *                   format: binary
  *       responses:

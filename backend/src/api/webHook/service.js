@@ -5,7 +5,7 @@ export const handleSuccessWebhook = async (data) => {
     { signed: 'Signed' },
     {
       where: {
-        envelopeId: data.data.envelopeId,
+        envelope_id: data.data.envelope_id,
       },
     }
   );

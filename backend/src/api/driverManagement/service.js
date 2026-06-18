@@ -21,7 +21,7 @@ export const addDriversService = async (data, files) => {
     throw new Error('user already exist with this email');
   }
 
-  const driver_exist = await drivers.findAll({ where: { licenseNo: data.licenseNo } });
+  const driver_exist = await drivers.findAll({ where: { license_no: data.license_no } });
   if (driver_exist.length !== 0) {
     throw new Error('this license is already submitted');
   }
@@ -32,22 +32,22 @@ export const addDriversService = async (data, files) => {
 
   const user = await users.create({
     first_name: data.name,
-    phone_number: data.phoneNumber,
+    phone_number: data.phone_number,
     email: data.email,
     password_hash: randomPassword,
-    designationId: newDesignation.id,
+    designation_id: newDesignation.id,
   });
 
-  const licenseTypeString = JSON.stringify(data.licenseType);
+  const licenseTypeString = JSON.stringify(data.license_type);
   await drivers.create({
-    licenseNo: data.licenseNo,
-    licensePhoto: files['licensePhoto'][0].path.replace(/^public/, ''),
+    license_no: data.license_no,
+    license_photo: files['license_photo'][0].path.replace(/^public/, ''),
     userPhoto: files['userPhoto'][0].path.replace(/^public/, ''),
-    licenseType: licenseTypeString,
+    license_type: licenseTypeString,
     shift: data.shift,
-    dailyWage: data.dailyWage,
+    daily_wage: data.daily_wage,
     bata: data.bata,
-    userId: user.id,
+    user_id: user.id,
     status: 'approved',
   });
 
@@ -66,20 +66,20 @@ export const updateDriverService = async (id, data, files) => {
     throw new Error('this driver not exists');
   }
 
-  const user_ext = await users.findByPk(driver_ext.userId);
+  const user_ext = await users.findByPk(driver_ext.user_id);
   await user_ext.update({
     first_name: data.name,
-    phone_number: data.phoneNumber,
+    phone_number: data.phone_number,
   });
 
-  const licenseTypeString = JSON.stringify(data.licenseType);
+  const licenseTypeString = JSON.stringify(data.license_type);
   await driver_ext.update({
-    licenseNo: data.licenseNo,
-    licensePhoto: files['licensePhoto'][0].path.replace(/^public/, ''),
+    license_no: data.license_no,
+    license_photo: files['license_photo'][0].path.replace(/^public/, ''),
     userPhoto: files['userPhoto'][0].path.replace(/^public/, ''),
-    licenseType: licenseTypeString,
+    license_type: licenseTypeString,
     shift: data.shift,
-    dailyWage: data.dailyWage,
+    daily_wage: data.daily_wage,
     bata: data.bata,
   });
   return true;
@@ -109,7 +109,7 @@ export const rejectDriverService = async (id) => {
 };
 
 export const approveDriversService = async (id, data) => {
-  const transaction = await transactions.findOne({ where: { driverId: id } });
+  const transaction = await transactions.findOne({ where: { driver_id: id } });
   if (!transaction) {
     throw new Error('not paid');
   }
@@ -117,7 +117,7 @@ export const approveDriversService = async (id, data) => {
   await drivers.update(
     {
       status: 'approved',
-      dailyWage: data.dailyWage,
+      daily_wage: data.daily_wage,
       bata: data.bata,
       shift: data.shift,
     },
@@ -135,8 +135,8 @@ export const deleteDriverService = async (id) => {
     throw new Error('Driver not found');
   }
 
-  const trip = await trips.findOne({ where: { driverId: id } });
-  const user = await users.findOne({ where: { id: driver.userId } });
+  const trip = await trips.findOne({ where: { driver_id: id } });
+  const user = await users.findOne({ where: { id: driver.user_id } });
 
   if (trip) await trip.destroy();
   if (user) await user.destroy(); // Cascade will delete login histories, if configured, or just leave it.

@@ -15,7 +15,7 @@ export const submitContactForm = async (data) => {
   const mailOptions2 = {
     to: process.env.ADMIN_MAIL,
     subject: 'New Contact Form Submission',
-    text: `Hi a new contact form has been submitted by ${data.name} with message ${data.message} and phone number ${data.phoneNumber} `,
+    text: `Hi a new contact form has been submitted by ${data.name} with message ${data.message} and phone number ${data.phone_number} `,
   };
 
   try {

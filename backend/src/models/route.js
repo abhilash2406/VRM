@@ -1,5 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
+import { EntityType } from '../common/enum/activity-enum.js';
 
 const route = sequelize.define(
   'route',
@@ -46,8 +47,9 @@ const route = sequelize.define(
     },
 
     status: {
-      type: DataTypes.ENUM('read', 'unread'),
-      allowNull: true,
+      type: DataTypes.ENUM(Object.values(EntityType)),
+      allowNull: false,
+      defaultValue: EntityType.ACTIVE,
     },
   },
   {

@@ -9,12 +9,12 @@ const permissionSetting = sequelize.define(
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-    designationId: {
+    designation_id: {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
       allowNull: false,
     },
-    permissionId: {
+    permission_id: {
       type: DataTypes.UUID,
       defaultValue: Sequelize.UUIDV4,
       allowNull: false,
@@ -27,11 +27,11 @@ const permissionSetting = sequelize.define(
 
 permissionSetting.associate = (models) => {
   permissionSetting.belongsTo(models.permission, {
-    foreignKey: 'permissionId',
+    foreignKey: 'permission_id',
     allowNull: false,
   });
   permissionSetting.belongsTo(models.designation, {
-    foreignKey: 'designationId',
+    foreignKey: 'designation_id',
     allowNull: false,
   });
 };

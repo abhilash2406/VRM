@@ -25,6 +25,11 @@ dotenv.config();
 
 // Connect to Redis before starting
 connectRedis();
+
+import { initCronJobs } from './src/cron/index.js';
+// Initialize cron jobs
+initCronJobs();
+
 var app = express();
 app.use(helmet());
 app.use(compression());

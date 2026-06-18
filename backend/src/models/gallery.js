@@ -1,5 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
+import { EntityType } from '../common/enum/activity-enum.js';
 
 const gallery = sequelize.define(
   'gallery',
@@ -12,6 +13,11 @@ const gallery = sequelize.define(
     image: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM(Object.values(EntityType)),
+      allowNull: false,
+      defaultValue: EntityType.ACTIVE,
     },
   },
   {

@@ -6,11 +6,11 @@ const driverValidate = async (req, res, next) => {
   const schema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email().required(),
-    licenseNo: Joi.string().required(),
-    phoneNumber: Joi.string().required(),
-    licenseType: Joi.string().required(),
+    license_no: Joi.string().required(),
+    phone_number: Joi.string().required(),
+    license_type: Joi.string().required(),
     shift: Joi.string().required(),
-    dailyWage: Joi.string().required(),
+    daily_wage: Joi.string().required(),
     bata: Joi.string().required(),
   });
   try {

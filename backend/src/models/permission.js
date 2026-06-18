@@ -13,7 +13,7 @@ const permission = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    subMenu: {
+    sub_menu: {
       type: DataTypes.STRING,
       allowNull: false,
     },

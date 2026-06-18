@@ -3,6 +3,7 @@ import sequelize from '../config/sequelize-config.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { logger } from '../config/winston-config.js';
+import { EntityType } from '../common/enum/activity-enum.js';
 
 const users = sequelize.define(
   'users',
@@ -32,7 +33,7 @@ const users = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    designationId: {
+    designation_id: {
       type: DataTypes.UUID,
       allowNull: true, // Making true for now, adapt if required
     },
@@ -47,9 +48,17 @@ const users = sequelize.define(
       defaultValue: false,
     },
     status: {
-      type: DataTypes.ENUM('ACTIVE', 'INACTIVE', 'BLOCKED', 'DELETED'),
+      type: DataTypes.ENUM(Object.values(EntityType)),
       allowNull: false,
-      defaultValue: 'ACTIVE',
+      defaultValue: EntityType.ACTIVE,
+    },
+    last_login: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    photo: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {
@@ -92,9 +101,9 @@ users.prototype.generateAuthToken = function (rememberMe = false) {
 };
 
 users.associate = (models) => {
-  users.hasMany(models.loginHistory, { foreignKey: 'userId' });
+  users.hasMany(models.loginHistory, { foreignKey: 'user_id' });
   if (models.designation) {
-    users.belongsTo(models.designation, { foreignKey: 'designationId' });
+    users.belongsTo(models.designation, { foreignKey: 'designation_id' });
   }
 };
 

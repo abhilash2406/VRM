@@ -1,5 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
+import { EntityType } from '../common/enum/activity-enum.js';
 
 const loginHistory = sequelize.define(
   'loginHistory',
@@ -9,21 +10,26 @@ const loginHistory = sequelize.define(
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
     },
-    userId: {
+    user_id: {
       type: DataTypes.UUID,
       allowNull: false,
     },
-    loginTime: {
+    login_time: {
       type: DataTypes.DATE,
       defaultValue: Sequelize.NOW,
     },
-    status: {
+    login_status: {
       type: DataTypes.ENUM('SUCCESS', 'FAILED'),
       defaultValue: 'SUCCESS',
     },
-    ipAddress: {
+    ip_address: {
       type: DataTypes.STRING,
       allowNull: true,
+    },
+    status: {
+      type: DataTypes.ENUM(Object.values(EntityType)),
+      allowNull: false,
+      defaultValue: EntityType.ACTIVE,
     },
   },
   {
@@ -34,7 +40,7 @@ const loginHistory = sequelize.define(
 
 loginHistory.associate = (models) => {
   loginHistory.belongsTo(models.users, {
-    foreignKey: 'userId',
+    foreignKey: 'user_id',
     allowNull: false,
   });
 };

@@ -41,16 +41,16 @@ router.post('/', validate.contactValidate, controller.setContact);
  *       email:
  *         type: string
  *         description: The email of user
- *       phoneNumber:
+ *       phone_number:
  *         type: string
- *         description: The phoneNumber of user
+ *         description: The phone_number of user
  *       message:
  *          type: string
  *          description: message
  *     required:
  *       - first_name
  *       - email
- *       - phoneNumber
+ *       - phone_number
  *       - message
  */
 

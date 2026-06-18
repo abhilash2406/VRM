@@ -35,16 +35,16 @@ export const profilePermissionsService = async (token) => {
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   const user = await users.findByPk(decoded.id);
   const permission_data = await permissionSetting.findAll({
-    where: { designationId: user.designationId },
+    where: { designation_id: user.designation_id },
     include: permissions,
   });
 
   const mappingArray = permission_data.map((data) => ({
     menu: data.permission.menu,
-    subMenu: data.permission.subMenu,
+    sub_menu: data.permission.sub_menu,
   }));
 
-  const role = await designations.findByPk(user.designationId);
+  const role = await designations.findByPk(user.designation_id);
 
   return { permission: mappingArray, designation: role ? role.designation : UserType.USER };
 };
