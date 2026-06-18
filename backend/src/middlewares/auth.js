@@ -19,9 +19,9 @@ export default async (req, res, next) => {
       req.originalUrl.startsWith('/gallery')
     )
       return next();
-    const token = req.header('Authorization')
-      ? req.header('Authorization').replace('Bearer ', '')
-      : null;
+    const authHeader = req.header('Authorization');
+    const token = authHeader ? authHeader.replace('Bearer ', '') : null;
+
     if (!token) {
       return res.send({
         success: false,
@@ -65,6 +65,7 @@ export default async (req, res, next) => {
     req.user = decoded;
     return next();
   } catch (ex) {
+    console.error('TOKEN VERIFICATION ERROR:', ex);
     logger.info('error', ex);
     res.send({
       success: false,

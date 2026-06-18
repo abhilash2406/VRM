@@ -41,7 +41,16 @@ app.use(
   })
 );
 
-app.use('/api-docs', swaggerAuth, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(
+  '/api-docs',
+  swaggerAuth,
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  })
+);
 
 const port = process.env.PORT || '5000';
 logger.info('==================================================');

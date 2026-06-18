@@ -15,11 +15,8 @@ import {
  */
 export const viewProfile = async (req, res, next) => {
   try {
-    const token = req.header('Authorization')
-      ? req.header('Authorization').replace('Bearer ', '')
-      : null;
-    const data = await viewProfileService(token);
-    res.send({ success: true, message: 'data fetched successfully', data });
+    const data = await viewProfileService(req.user.id);
+    res.send({ data, success: true, message: 'data fetched successfully' });
   } catch (e) {
     res.send({ success: false, message: e.message });
   }
@@ -77,10 +74,7 @@ export const dltFeedback = async (req, res) => {
  */
 export const ProfilePermissions = async (req, res, next) => {
   try {
-    const token = req.header('Authorization')
-      ? req.header('Authorization').replace('Bearer ', '')
-      : null;
-    const data = await profilePermissionsService(token);
+    const data = await profilePermissionsService(req.user.id);
     res.send({ success: true, data });
   } catch (e) {
     res.send({ success: false, message: e.message });
@@ -94,10 +88,7 @@ export const ProfilePermissions = async (req, res, next) => {
  */
 export const changePassword = async (req, res) => {
   try {
-    const token = req.header('Authorization')
-      ? req.header('Authorization').replace('Bearer ', '')
-      : null;
-    await changePasswordService(req.body, token);
+    await changePasswordService(req.body, req.user.id);
     res.send({ success: true, message: 'password changed successfully' });
   } catch (e) {
     res.send({ success: false, message: e.message });
