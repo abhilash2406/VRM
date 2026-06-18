@@ -20,6 +20,9 @@ import { logger } from '../../config/winston-config.js';
 import { redisClient } from '../../config/redis-config.js';
 import { generateOtp, verifyOtp } from '../../utils/otp.js';
 import BadRequest from '../../common/exceptions/badRequest.js';
+import { OAuth2Client } from 'google-auth-library';
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const emailVerifyKey = (user_id) => `email_verify_${user_id}`;
 
@@ -143,7 +146,16 @@ export const verifyEmailService = async (data) => {
  */
 export const googleLoginService = async (data) => {
   const googleToken = data.token;
-  const user = await users.findOne({ where: { email: data.data.data.email } });
+
+  const ticket = await googleClient.verifyIdToken({
+    idToken: googleToken,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const payload = ticket.getPayload();
+  const googleEmail = payload.email;
+
+  const user = await users.findOne({ where: { email: googleEmail } });
 
   if (!user) {
     throw new Error('User Not Found');
@@ -172,10 +184,14 @@ export const googleLoginService = async (data) => {
     sub_menu: p.permission.sub_menu,
   }));
 
+  const accessToken = user.generateAuthToken();
+  const refreshToken = user.generateAuthToken(true);
+
   return {
     user: user.first_name,
     designation: currentDesignation ? currentDesignation.designation : UserType.USER,
-    accessToken: googleToken,
+    accessToken,
+    refreshToken,
     permission: mappingArray,
   };
 };
@@ -287,19 +303,4 @@ export const registerUser = async (data) => {
       phone_number: newUser.phone_number,
     };
   });
-};
-
-/**
- * Handles the Google sign-up process by ensuring the user does not already exist.
- * @param {Object} data - The Google signup payload.
- * @param {Object} data.data.data - Nested object containing the user's Google email.
- * @returns {Promise<string>} The user's email if signup can proceed.
- * @throws {Error} If the user already exists in the system.
- */
-export const googleSignUpService = async (data) => {
-  const user = await users.findOne({ where: { email: data.data.data.email } });
-  if (user) {
-    throw new Error('This user already exists');
-  }
-  return data.data.data.email;
 };

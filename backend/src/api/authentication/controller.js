@@ -1,10 +1,4 @@
-import {
-  loginUser,
-  googleLoginService,
-  registerUser,
-  googleSignUpService,
-  verifyEmailService,
-} from './service.js';
+import { loginUser, googleLoginService, registerUser, verifyEmailService } from './service.js';
 import { setAuthCookies } from '../../utils/cookies.js';
 import TokenAudience from '../../common/enum/token-audience-enum.js';
 
@@ -87,7 +81,23 @@ export const Login = async (req, res, next) => {
 export const googleLogin = async (req, res, next) => {
   try {
     const data = await googleLoginService(req.body);
-    return res.send({ success: true, message: 'Login successfully', data });
+
+    applyAuthCookies(res, {
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+      accessTtlMs: (process.env.ACCESS_TOKEN_TTL_SECONDS || 900) * 1000,
+      refreshTtlMs: (process.env.REFRESH_TOKEN_TTL_SECONDS || 2592000) * 1000,
+    });
+
+    const { accessToken, refreshToken, ...userData } = data;
+
+    return res.send({
+      success: true,
+      message: 'Login successfully',
+      accessToken,
+      refreshToken,
+      data: userData,
+    });
   } catch (e) {
     res.send({
       success: false,
@@ -107,22 +117,6 @@ export const register = async (req, res, next) => {
   try {
     const data = await registerUser(req.body);
     return res.send({ success: true, message: 'Registered successfully', data });
-  } catch (e) {
-    res.send({ success: false, message: e.message });
-  }
-};
-
-/**
- * Handles sign up via Google.
- * @param {import('express').Request} req - The Express request object.
- * @param {import('express').Response} res - The Express response object.
- * @param {import('express').NextFunction} next - The Express next middleware function.
- * @returns {Promise<Object>} JSON response confirming the signup.
- */
-export const googleSignUp = async (req, res, next) => {
-  try {
-    const data = await googleSignUpService(req.body);
-    return res.send({ success: true, data });
   } catch (e) {
     res.send({ success: false, message: e.message });
   }

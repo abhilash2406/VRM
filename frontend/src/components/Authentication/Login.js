@@ -37,16 +37,11 @@ const Login = () => {
   const { setLoading } = useSelector((state) => state.auth);
 
   async function verifyGoogleAccessToken(access_token) {
-    const url = `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${access_token}`;
-    const response = await axios.get(url);
-    const data = response;
-    logger.info(data);
     dispatch(
-      setGLogin({ token: access_token, data: data }, () =>
-        navigate('/dashboard')
-      )
+      setGLogin({ token: access_token }, () => navigate('/dashboard'))
     );
   }
+
 
   return setLoading ? (
     <Loaders />

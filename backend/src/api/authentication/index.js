@@ -123,4 +123,29 @@ router.post('/register', validate.registerValidate, controller.register);
 
 router.post('/verify-email', validate.verifyEmailValidate, controller.verifyEmail);
 
+/**
+ * @swagger
+ * /api/v1/auth/google-login:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Login via Google
+ *     description: Authenticate user using a Google OAuth token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               token:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Login successful
+ *       '400':
+ *         description: User Not Found or non registered email
+ */
+router.post('/google-login', controller.googleLogin);
+
 export default router;
