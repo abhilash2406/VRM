@@ -32,7 +32,7 @@ const router = express.Router();
  *     tags:
  *       - Authentication
  *     summary: Login a user
- *     description: Authenticate user using email and password.
+ *     description: Authenticate user using either email and password, or phone number only.
  *     requestBody:
  *       required: true
  *       content:
@@ -42,11 +42,16 @@ const router = express.Router();
  *             properties:
  *               email:
  *                 type: string
+ *                 description: The user's email address
  *               password:
  *                 type: string
- *             required:
- *               - email
- *               - password
+ *                 description: Required if using email
+ *               phone_number:
+ *                 type: string
+ *                 description: The user's phone number (password not required)
+ *               country_code:
+ *                 type: string
+ *                 description: Required if using phone_number
  *     responses:
  *       '200':
  *         description: Login successful
@@ -78,6 +83,8 @@ router.post('/login', loginValidate, Login);
  *               last_name:
  *                 type: string
  *               phone_number:
+ *                 type: string
+ *               country_code:
  *                 type: string
  *             required:
  *               - email

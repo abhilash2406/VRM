@@ -38,11 +38,19 @@ const Stripe = new StripeClass(stripe.secret_key);
  * @throws {Error} If credentials are invalid, or if the account is blocked/needs approval.
  */
 export const loginUser = async (data) => {
-  const { email, password } = data;
-  const user = await users.findOne({ where: { email, status: EntityType.ACTIVE } });
+  const { email, password, phone_number, country_code } = data;
 
-  if (!user) {
-    throw new BadRequest('Invalid email or password');
+  let user;
+  if (email && password) {
+    user = await users.findOne({ where: { email, status: EntityType.ACTIVE } });
+    if (!user) throw new BadRequest('Invalid email or password');
+  } else if (phone_number && country_code) {
+    user = await users.findOne({
+      where: { phone_number, country_code, status: EntityType.ACTIVE },
+    });
+    if (!user) throw new BadRequest('Phone number not registered');
+  } else {
+    throw new BadRequest('Invalid login payload');
   }
 
   if (user.status === EntityType.BLOCKED) {
@@ -67,9 +75,11 @@ export const loginUser = async (data) => {
     }
   }
 
-  if (!(await user.verifyPassword(password))) {
-    await loginHistory.create({ user_id: user.id, login_status: 'FAILED' });
-    throw new Error('Invalid email or password');
+  if (email && password) {
+    if (!(await user.verifyPassword(password))) {
+      await loginHistory.create({ user_id: user.id, login_status: 'FAILED' });
+      throw new Error('Invalid email or password');
+    }
   }
 
   const accessToken = user.generateAuthToken();
@@ -268,7 +278,7 @@ const sendVerificationEmail = async (user_id, email, fullName) => {
  * @throws {Error} If the user already exists or the account is blocked/deleted.
  */
 export const registerUser = async (data) => {
-  const { email, password, first_name, last_name, phone_number } = data;
+  const { email, password, first_name, last_name, phone_number, country_code } = data;
 
   return await sequelize.transaction(async (t) => {
     const user = await users.findOne({ where: { email }, transaction: t });
@@ -294,6 +304,7 @@ export const registerUser = async (data) => {
         first_name,
         last_name,
         phone_number,
+        country_code,
         email,
         password_hash: password,
         designation_id: defaultDesignation ? defaultDesignation.id : null,

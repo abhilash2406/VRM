@@ -40,6 +40,7 @@ export const registerValidate = async (req, res, next) => {
       )
       .required(),
     phone_number: Joi.string().required(),
+    country_code: Joi.string().optional(),
   });
   try {
     req.body = await schema.validateAsync(req.body);
@@ -76,9 +77,19 @@ export const verifyEmailValidate = async (req, res, next) => {
  */
 export const loginValidate = async (req, res, next) => {
   const schema = Joi.object({
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
-  });
+    email: Joi.string().email().optional(),
+    password: Joi.string().optional(),
+    phone_number: Joi.string().optional(),
+    country_code: Joi.string().optional(),
+  })
+    .xor('email', 'phone_number')
+    .with('email', 'password')
+    .with('phone_number', 'country_code')
+    .messages({
+      'object.xor': 'You must provide either an email or a phone_number, but not both.',
+      'object.with':
+        'Password is required with email, and country_code is required with phone_number.',
+    });
   try {
     req.body = await schema.validateAsync(req.body);
     next();

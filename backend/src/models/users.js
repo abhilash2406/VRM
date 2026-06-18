@@ -29,6 +29,10 @@ const users = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    country_code: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
