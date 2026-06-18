@@ -1,8 +1,10 @@
 import express from 'express';
+import fileUploadMiddleware from 'express-fileupload';
 import { fileUpload, removeFileUpload } from './controller.js';
 import validator from './validator.js';
 
 const router = express.Router();
+router.use(fileUploadMiddleware({ limits: { fileSize: 10 * 1024 * 1024 } }));
 
 router.post('/', validator.uploadFile, fileUpload);
 /**

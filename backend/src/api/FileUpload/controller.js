@@ -1,5 +1,5 @@
 import { handleFileUpload, deleteUploadedImage } from './service.js';
-import { goodResponse } from '../../helper/response.js';
+import { goodResponse } from '../../common/response.js';
 
 export const fileUpload = async (req, res) => {
     const data = await handleFileUpload(req.files);
