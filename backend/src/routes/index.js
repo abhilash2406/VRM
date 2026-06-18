@@ -5,7 +5,7 @@ import inline_api_profileManagement_index from '../api/profileManagement/index.j
 import inline_api_designationManagement_index from '../api/designationManagement/index.js';
 import inline_api_permissionManagement_index from '../api/permissionManagement/index.js';
 import inline_api_galleryManagement_index from '../api/galleryManagement/index.js';
-import inline_api_vehicleManagement_index from '../api/vehicleManagement/index.js';
+import inline_api_vehicle_index from '../api/vehicle/index.js';
 import inline_api_driverManagement_index from '../api/driverManagement/index.js';
 import inline_api_routeManagement_index from '../api/routeManagement/index.js';
 import inline_api_tripManagement_index from '../api/tripManagement/index.js';
@@ -19,7 +19,7 @@ router.use('/profile', auth, inline_api_profileManagement_index);
 router.use('/designations', auth, inline_api_designationManagement_index);
 router.use('/permissions', auth, inline_api_permissionManagement_index);
 router.use('/gallery', auth, inline_api_galleryManagement_index);
-router.use('/trucks', auth, inline_api_vehicleManagement_index);
+router.use('/trucks', auth, inline_api_vehicle_index);
 router.use('/drivers', auth, inline_api_driverManagement_index);
 router.use('/routes', inline_api_routeManagement_index);
 router.use('/trips', auth, inline_api_tripManagement_index);
