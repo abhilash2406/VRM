@@ -1,7 +1,7 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
 
-import { VehicleStatus, VehicleType } from '../common/enum/vehicle-enum.js';
+import { VehicleStatus, VehicleType, VehicleSubtype } from '../common/enum/vehicle-enum.js';
 
 /**
  * Sequelize Model for Vehicles.
@@ -46,6 +46,16 @@ const vehicle = sequelize.define(
       allowNull: false,
       defaultValue: VehicleType.FOUR_WHEELER,
       comment: 'two-wheeler | four-wheeler | heavy-vehicle',
+    },
+    vehicle_subtype: {
+      type: DataTypes.ENUM(Object.values(VehicleSubtype)),
+      allowNull: true,
+      comment: 'sedan | suv | mini-bus | truck | etc.',
+    },
+    seating_capacity: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: 'Number of seats available',
     },
     rc_number: {
       type: DataTypes.STRING,

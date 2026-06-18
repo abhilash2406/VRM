@@ -34,6 +34,21 @@ export const VehicleValidate = async (req, res, next) => {
         'any.only': 'vehicle_type must be two-wheeler, four-wheeler, or heavy-vehicle',
         'any.required': 'Vehicle type is required',
       }),
+    vehicle_subtype: Joi.string()
+      .valid(
+        'motorcycle', 'scooter',
+        'sedan', 'suv', 'mpv', 'hatchback',
+        'truck', 'mini-bus', 'full-bus', 'tempo'
+      )
+      .optional()
+      .messages({
+        'any.only': 'Invalid vehicle subtype',
+      }),
+    seating_capacity: Joi.number().integer().min(1).optional().messages({
+      'number.base': 'Seating capacity must be a number',
+      'number.integer': 'Seating capacity must be a whole number',
+      'number.min': 'Seating capacity must be at least 1',
+    }),
     rc_number: Joi.string().optional().allow(null, ''),
     insurance_expiry: Joi.date().iso().optional().allow(null, ''),
     last_service_date: Joi.date().iso().optional().allow(null, ''),
