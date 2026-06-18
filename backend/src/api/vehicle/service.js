@@ -6,12 +6,11 @@ import { VehicleStatus, VehicleType } from '../../common/enum/vehicle-enum.js';
 /**
  * Registers a new vehicle in the system.
  * @param {Object} data - The vehicle details payload.
- * @param {Object} files - Uploaded files (vehicle_photo, rc_photo).
  * @param {string} token - The authenticated user's JWT token.
  * @returns {Promise<Object>} The created vehicle record.
  * @throws {Error} If a vehicle with the same registration number already exists.
  */
-export const addVehicleService = async (data, files, token) => {
+export const addVehicleService = async (data, token) => {
   const existing = await vehicle.findOne({
     where: { registration_number: data.registration_number },
   });
@@ -20,13 +19,11 @@ export const addVehicleService = async (data, files, token) => {
     throw new Error('A vehicle with this registration number already exists');
   }
 
-  const decoded = jwt.verify(token, process.env.JWT_SECRET || 'qwerty');
-  const user = await users.findByPk(decoded.id);
-
-  const vehiclePhotoPath =
-    files && files['vehicle_photo'] ? files['vehicle_photo'][0].path.replace(/^public/, '') : null;
-  const rcPhotoPath =
-    files && files['rc_photo'] ? files['rc_photo'][0].path.replace(/^public/, '') : null;
+  let user = null;
+  if (token) {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'qwerty');
+    user = await users.findByPk(decoded.id);
+  }
 
   const created = await vehicle.create({
     registration_number: data.registration_number,
@@ -41,8 +38,8 @@ export const addVehicleService = async (data, files, token) => {
     insurance_expiry: data.insurance_expiry || null,
     last_service_date: data.last_service_date || null,
     next_service_date: data.next_service_date || null,
-    vehicle_photo: vehiclePhotoPath,
-    rc_photo: rcPhotoPath,
+    vehicle_photo: data.vehicle_photo || null,
+    rc_photo: data.rc_photo || null,
     created_by: user ? user.id : null,
   });
 
@@ -83,11 +80,10 @@ export const getVehicleByIdService = async (id) => {
  * Updates an existing vehicle record.
  * @param {string} id - The vehicle UUID.
  * @param {Object} data - The updated vehicle payload.
- * @param {Object} files - Newly uploaded files (optional).
  * @returns {Promise<Object>} The updated vehicle record.
  * @throws {Error} If the vehicle does not exist.
  */
-export const updateVehicleService = async (id, data, files) => {
+export const updateVehicleService = async (id, data) => {
   const found = await vehicle.findByPk(id);
   if (!found) {
     throw new Error('Vehicle not found');
@@ -106,14 +102,9 @@ export const updateVehicleService = async (id, data, files) => {
     insurance_expiry: data.insurance_expiry ?? found.insurance_expiry,
     last_service_date: data.last_service_date ?? found.last_service_date,
     next_service_date: data.next_service_date ?? found.next_service_date,
+    vehicle_photo: data.vehicle_photo ?? found.vehicle_photo,
+    rc_photo: data.rc_photo ?? found.rc_photo,
   };
-
-  if (files && files['vehicle_photo']) {
-    updates.vehicle_photo = files['vehicle_photo'][0].path.replace(/^public/, '');
-  }
-  if (files && files['rc_photo']) {
-    updates.rc_photo = files['rc_photo'][0].path.replace(/^public/, '');
-  }
 
   await found.update(updates);
   return found;

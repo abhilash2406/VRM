@@ -71,10 +71,10 @@ var router = express.Router();
  *                 example: 2026-07-15
  *               vehicle_photo:
  *                 type: string
- *                 format: binary
+ *                 description: Image key returned from the file upload API
  *               rc_photo:
  *                 type: string
- *                 format: binary
+ *                 description: Image key returned from the file upload API
  *     responses:
  *       '200':
  *         description: Vehicle added successfully
@@ -161,7 +161,7 @@ router.get('/active', getActiveVehicles);
  *         description: Vehicle UUID
  *     requestBody:
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
  *             type: object
  *             properties:
@@ -187,10 +187,8 @@ router.get('/active', getActiveVehicles);
  *                 format: date
  *               vehicle_photo:
  *                 type: string
- *                 format: binary
  *               rc_photo:
  *                 type: string
- *                 format: binary
  *     responses:
  *       '200':
  *         description: Vehicle updated successfully
@@ -220,10 +218,6 @@ router
   .get(getVehicleById)
   .delete(deleteVehicle)
   .patch(
-    upload.fields([
-      { name: 'vehicle_photo', maxCount: 1 },
-      { name: 'rc_photo', maxCount: 1 },
-    ]),
     VehicleValidate,
     updateVehicle
   );

@@ -50,6 +50,8 @@ export const VehicleValidate = async (req, res, next) => {
       'number.min': 'Seating capacity must be at least 1',
     }),
     rc_number: Joi.string().optional().allow(null, ''),
+    vehicle_photo: Joi.string().optional().allow(null, ''),
+    rc_photo: Joi.string().optional().allow(null, ''),
     insurance_expiry: Joi.date().iso().optional().allow(null, ''),
     last_service_date: Joi.date().iso().optional().allow(null, ''),
     next_service_date: Joi.date().iso().optional().allow(null, ''),
