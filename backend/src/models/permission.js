@@ -1,6 +1,10 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
 
+/**
+ * Sequelize Model for Permissions.
+ * @typedef {import('sequelize').Model} Permission
+ */
 const permission = sequelize.define(
   'permission',
   {

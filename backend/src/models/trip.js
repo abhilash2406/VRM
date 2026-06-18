@@ -2,6 +2,10 @@ import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
 import { EntityType } from '../common/enum/activity-enum.js';
 
+/**
+ * Sequelize Model for Trips.
+ * @typedef {import('sequelize').Model} Trip
+ */
 const trip = sequelize.define(
   'trip',
   {

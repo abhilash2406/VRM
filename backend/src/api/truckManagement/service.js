@@ -6,18 +6,35 @@ import users from '../../models/users.js';
 import jwt from 'jsonwebtoken';
 import { Op } from 'sequelize';
 
+/**
+ * Retrieves all truck brands.
+ * @returns {Promise<Array>} List of brand records.
+ */
 export const getTruckBrandsService = async () => {
   return await Brand.findAll();
 };
 
+/**
+ * Retrieves all truck models.
+ * @returns {Promise<Array>} List of truck model records.
+ */
 export const getTruckModelsService = async () => {
   return await TruckModel.findAll();
 };
 
+/**
+ * Retrieves all truck variants.
+ * @returns {Promise<Array>} List of variant records.
+ */
 export const getTruckVariantsService = async () => {
   return await Variant.findAll();
 };
 
+/**
+ * Dynamically fetches brands, models, or variants depending on the provided payload IDs.
+ * @param {Object} data - Payload containing optional brand_id or model_id.
+ * @returns {Promise<Object>} Object containing the corresponding lookup data.
+ */
 export const correspondingDataService = async (data) => {
   if (!data.brand_id && !data.model_id) {
     const brand_data = await Brand.findAll({});
@@ -34,6 +51,14 @@ export const correspondingDataService = async (data) => {
   }
 };
 
+/**
+ * Registers a new truck in the system.
+ * @param {Object} data - The truck details payload.
+ * @param {Object} files - The uploaded files (rcPhoto, truck_photo).
+ * @param {string} token - The authenticated user's JWT token.
+ * @returns {Promise<boolean>} True if the truck is added.
+ * @throws {Error} If the truck VIN or RC No already exists.
+ */
 export const addTrucksService = async (data, files, token) => {
   const truck_exist = await trucks.findAll({
     where: {
@@ -78,18 +103,37 @@ export const addTrucksService = async (data, files, token) => {
   return true;
 };
 
+/**
+ * Retrieves all registered trucks.
+ * @returns {Promise<Array>} List of all trucks.
+ */
 export const getAllTruckDataService = async () => {
   return await trucks.findAll();
 };
 
+/**
+ * Retrieves only active trucks that are in working condition.
+ * @returns {Promise<Array>} List of active trucks.
+ */
 export const getActiveTrucksService = async () => {
   return await trucks.findAll({ where: { is_active: true } });
 };
 
+/**
+ * Fetches a single truck's record by ID.
+ * @param {string} id - The truck UUID.
+ * @returns {Promise<Object>} The truck record.
+ */
 export const truckToEditService = async (id) => {
   return await trucks.findByPk(id);
 };
 
+/**
+ * Deletes a truck record.
+ * @param {string} id - The truck UUID.
+ * @returns {Promise<boolean>} True if deleted successfully.
+ * @throws {Error} If the truck is not found.
+ */
 export const dltTruckService = async (id) => {
   const feedback = await trucks.findByPk(id);
   if (!feedback) {
@@ -99,6 +143,14 @@ export const dltTruckService = async (id) => {
   return true;
 };
 
+/**
+ * Updates an existing truck record.
+ * @param {string} id - The truck UUID.
+ * @param {Object} data - The updated truck payload.
+ * @param {Object} files - The newly uploaded files.
+ * @returns {Promise<boolean>} True if successfully updated.
+ * @throws {Error} If the truck does not exist.
+ */
 export const updateTruckService = async (id, data, files) => {
   const truck_exist = await trucks.findByPk(id);
   if (!truck_exist) {

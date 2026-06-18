@@ -1,6 +1,12 @@
 import { logger } from '../../config/winston-config.js';
 import Joi from 'joi';
 
+/**
+ * Middleware to validate driver payload details during creation or update.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 const driverValidate = async (req, res, next) => {
   //   logger.info('re.body', req.body);
   const schema = Joi.object({

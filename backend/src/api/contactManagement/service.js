@@ -2,6 +2,16 @@ import contact from '../../models/contact.js';
 import sendEmails from '../../utils/sendEmail.js';
 import { logger } from '../../config/winston-config.js';
 
+/**
+ * Processes a contact form submission, saves it to the database, and sends email notifications.
+ * @param {Object} data - The contact form payload.
+ * @param {string} data.name - The sender's name.
+ * @param {string} data.email - The sender's email.
+ * @param {string} data.phone_number - The sender's phone number.
+ * @param {string} data.message - The content of the contact message.
+ * @returns {Promise<Object>} The created contact record.
+ * @throws {Error} If emails fail to send or database insert fails.
+ */
 export const submitContactForm = async (data) => {
   data.status = 'unread';
   const createdContact = await contact.create(data);

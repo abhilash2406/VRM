@@ -11,6 +11,15 @@ const __dirname = path.dirname(__filename);
 
 const TEMPLATES_DIR = path.join(__dirname, '..', 'public', 'templates');
 
+/**
+ * Renders an EJS template and sends an email via Nodemailer.
+ * @param {Object} params - The email parameters.
+ * @param {Object} params.mailOptions - Standard Nodemailer options (to, subject, text, etc.).
+ * @param {string} [params.fileName] - Optional EJS template filename in the templates directory.
+ * @param {Object} [params.contentVariables] - Optional variables to render within the EJS template.
+ * @returns {Promise<Object>} Information about the sent email.
+ * @throws {BadRequest} If the email fails to send.
+ */
 const sendEmails = async ({ mailOptions, fileName, contentVariables = {} }) => {
   try {
     let html;

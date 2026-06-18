@@ -1,5 +1,20 @@
-import { getDriverDatasList, addDriversService, updateDriverService, viewDriverService, fetchActiveDriversService, rejectDriverService, approveDriversService, deleteDriverService } from './service.js';
+import {
+  getDriverDatasList,
+  addDriversService,
+  updateDriverService,
+  viewDriverService,
+  fetchActiveDriversService,
+  rejectDriverService,
+  approveDriversService,
+  deleteDriverService,
+} from './service.js';
 
+/**
+ * Fetches the list of all drivers along with their associated user and login history.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 export const getDriverDatas = async (req, res, next) => {
   try {
     const data = await getDriverDatasList();
@@ -9,6 +24,12 @@ export const getDriverDatas = async (req, res, next) => {
   }
 };
 
+/**
+ * Adds a new driver to the system. Also creates a linked user account and sends an email.
+ * @param {import('express').Request} req - The Express request object containing driver details.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 export const addDrivers = async (req, res, next) => {
   try {
     await addDriversService(req.body, req.files);
@@ -18,6 +39,11 @@ export const addDrivers = async (req, res, next) => {
   }
 };
 
+/**
+ * Updates an existing driver's details and associated user profile.
+ * @param {import('express').Request} req - The Express request object containing driver details and files.
+ * @param {import('express').Response} res - The Express response object.
+ */
 export const updateDriver = async (req, res) => {
   try {
     await updateDriverService(req.params.id, req.body, req.files);
@@ -27,6 +53,11 @@ export const updateDriver = async (req, res) => {
   }
 };
 
+/**
+ * Retrieves a single driver's profile by ID.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ */
 export const viewDriver = async (req, res) => {
   try {
     const data = await viewDriverService(req.params.id);
@@ -36,6 +67,11 @@ export const viewDriver = async (req, res) => {
   }
 };
 
+/**
+ * Fetches all drivers with an 'approved' status.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ */
 export const fetchActiveDrivers = async (req, res) => {
   try {
     const data = await fetchActiveDriversService();
@@ -45,6 +81,12 @@ export const fetchActiveDrivers = async (req, res) => {
   }
 };
 
+/**
+ * Rejects a driver's application.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 export const rejectDriver = async (req, res, next) => {
   try {
     await rejectDriverService(req.params.id);
@@ -54,6 +96,12 @@ export const rejectDriver = async (req, res, next) => {
   }
 };
 
+/**
+ * Approves a driver's application after verifying payment transaction.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 export const approveDrivers = async (req, res, next) => {
   try {
     await approveDriversService(req.params.id, req.body);
@@ -63,6 +111,11 @@ export const approveDrivers = async (req, res, next) => {
   }
 };
 
+/**
+ * Deletes a driver along with their associated user and trip records.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ */
 export const deleteDriver = async (req, res) => {
   try {
     await deleteDriverService(req.params.id);

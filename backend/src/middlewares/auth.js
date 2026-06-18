@@ -3,6 +3,14 @@ import jwt from 'jsonwebtoken';
 import users from '../models/users.js';
 // // authentication middleware
 
+/**
+ * Global authentication middleware.
+ * Verifies JWT tokens present in the 'Authorization' header.
+ * Skips authentication for public routes like /auth, /contact, and /gallery.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 export default async (req, res, next) => {
   try {
     if (

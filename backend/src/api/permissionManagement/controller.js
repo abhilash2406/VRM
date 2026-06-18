@@ -1,5 +1,15 @@
-import { getAllPermissionsService, grantPermissionsService, getUserDataService } from './service.js';
+import {
+  getAllPermissionsService,
+  grantPermissionsService,
+  getUserDataService,
+} from './service.js';
 
+/**
+ * Fetches all available system permissions.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 export const getAllPermissions = async (req, res, next) => {
   try {
     const data = await getAllPermissionsService();
@@ -9,6 +19,13 @@ export const getAllPermissions = async (req, res, next) => {
   }
 };
 
+/**
+ * Grants specific permissions to a given designation/role.
+ * Also emits a socket event to update connected clients in real-time.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 export const grantPermissions = async (req, res, next) => {
   try {
     const { socket } = req.app.locals;
@@ -19,6 +36,12 @@ export const grantPermissions = async (req, res, next) => {
   }
 };
 
+/**
+ * Fetches the currently assigned permissions for a given designation.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 export const getUserData = async (req, res, next) => {
   try {
     const data = await getUserDataService(req.params.id);

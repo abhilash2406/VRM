@@ -1,5 +1,11 @@
 import Joi from 'joi';
 
+/**
+ * Middleware to validate contact form payloads.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 const contactValidate = async (req, res, next) => {
   const schema = Joi.object({
     name: Joi.string().min(3).max(30).required(),

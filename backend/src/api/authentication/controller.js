@@ -21,6 +21,13 @@ const applyAuthCookies = (res, tokens) => {
   });
 };
 
+/**
+ * Handles email verification using OTP.
+ * @param {import('express').Request} req - The Express request object containing email and otp in the body.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ * @returns {Promise<Object>} JSON response containing the success status, message, and access token.
+ */
 export const verifyEmail = async (req, res, next) => {
   try {
     const data = await verifyEmailService(req.body);
@@ -38,6 +45,13 @@ export const verifyEmail = async (req, res, next) => {
     return res.status(status).send({ success: false, message: e.message });
   }
 };
+/**
+ * Handles standard user login.
+ * @param {import('express').Request} req - The Express request object containing email and password in the body.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ * @returns {Promise<Object>} JSON response containing tokens and user data on success, or an error message on failure.
+ */
 export const Login = async (req, res, next) => {
   try {
     const data = await loginUser(req.body);
@@ -63,6 +77,13 @@ export const Login = async (req, res, next) => {
   }
 };
 
+/**
+ * Handles login via Google OAuth token.
+ * @param {import('express').Request} req - The Express request object containing the Google token in the body.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ * @returns {Promise<Object>} JSON response containing user data and permissions on success.
+ */
 export const googleLogin = async (req, res, next) => {
   try {
     const data = await googleLoginService(req.body);
@@ -75,6 +96,13 @@ export const googleLogin = async (req, res, next) => {
   }
 };
 
+/**
+ * Handles new user registration.
+ * @param {import('express').Request} req - The Express request object containing user details.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ * @returns {Promise<Object>} JSON response containing the registered user data.
+ */
 export const register = async (req, res, next) => {
   try {
     const data = await registerUser(req.body);
@@ -84,6 +112,13 @@ export const register = async (req, res, next) => {
   }
 };
 
+/**
+ * Handles sign up via Google.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ * @returns {Promise<Object>} JSON response confirming the signup.
+ */
 export const googleSignUp = async (req, res, next) => {
   try {
     const data = await googleSignUpService(req.body);

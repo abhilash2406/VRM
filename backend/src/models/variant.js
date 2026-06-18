@@ -2,6 +2,10 @@ import { DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
 import { EntityType } from '../common/enum/activity-enum.js';
 
+/**
+ * Sequelize Model for Truck Variants.
+ * @typedef {import('sequelize').Model} Variant
+ */
 const variant = sequelize.define(
   'variant',
   {

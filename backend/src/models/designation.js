@@ -2,6 +2,10 @@ import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
 import { EntityType } from '../common/enum/activity-enum.js';
 
+/**
+ * Sequelize Model for Designations (User Roles).
+ * @typedef {import('sequelize').Model} Designation
+ */
 const designation = sequelize.define(
   'designation',
   {

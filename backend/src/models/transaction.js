@@ -2,6 +2,10 @@ import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
 import { EntityType } from '../common/enum/activity-enum.js';
 
+/**
+ * Sequelize Model for Transactions.
+ * @typedef {import('sequelize').Model} Transaction
+ */
 const transaction = sequelize.define('transaction', {
   id: {
     type: DataTypes.UUID,

@@ -9,12 +9,23 @@ import designations from '../../models/designation.js';
 import transactions from '../../models/transaction.js';
 import sendEmails from '../../utils/sendEmail.js';
 
+/**
+ * Retrieves a list of all drivers, including their associated user data and login histories.
+ * @returns {Promise<Array>} A list of driver objects.
+ */
 export const getDriverDatasList = async () => {
   return await drivers.findAll({
     include: [{ model: users, include: [{ model: loginHistory }] }],
   });
 };
 
+/**
+ * Registers a new driver, creates a user account, and sends an introductory email.
+ * @param {Object} data - The driver details (name, phone, email, license_no, etc.).
+ * @param {Object} files - The uploaded files (license_photo, userPhoto).
+ * @returns {Promise<boolean>} True if successfully created.
+ * @throws {Error} If the user email or license number already exists.
+ */
 export const addDriversService = async (data, files) => {
   const userExist = await users.findOne({ where: { email: data.email } });
   if (userExist) {
@@ -60,6 +71,14 @@ export const addDriversService = async (data, files) => {
   return true;
 };
 
+/**
+ * Updates an existing driver and their associated user account.
+ * @param {string} id - The UUID of the driver to update.
+ * @param {Object} data - The driver details to update.
+ * @param {Object} files - The uploaded files (license_photo, userPhoto).
+ * @returns {Promise<boolean>} True if successfully updated.
+ * @throws {Error} If the driver does not exist.
+ */
 export const updateDriverService = async (id, data, files) => {
   const driver_ext = await drivers.findByPk(id);
   if (!driver_ext) {
@@ -85,6 +104,11 @@ export const updateDriverService = async (id, data, files) => {
   return true;
 };
 
+/**
+ * Fetches a single driver by their ID, including users, login history, trucks, and routes.
+ * @param {string} id - The UUID of the driver.
+ * @returns {Promise<Object>} The driver object with associated entities.
+ */
 export const viewDriverService = async (id) => {
   return await drivers.findOne({
     where: { id },
@@ -96,6 +120,10 @@ export const viewDriverService = async (id) => {
   });
 };
 
+/**
+ * Retrieves a list of all drivers who have an 'approved' status.
+ * @returns {Promise<Array>} A list of approved driver objects.
+ */
 export const fetchActiveDriversService = async () => {
   return await drivers.findAll({
     where: { status: 'approved' },
@@ -103,11 +131,23 @@ export const fetchActiveDriversService = async () => {
   });
 };
 
+/**
+ * Rejects a driver's application by updating their status to 'reject'.
+ * @param {string} id - The UUID of the driver to reject.
+ * @returns {Promise<boolean>} True if successfully rejected.
+ */
 export const rejectDriverService = async (id) => {
   await drivers.update({ status: 'reject' }, { where: { id } });
   return true;
 };
 
+/**
+ * Approves a driver's application, setting wage and shift info, provided they have a transaction.
+ * @param {string} id - The UUID of the driver.
+ * @param {Object} data - Contains daily_wage, bata, and shift details.
+ * @returns {Promise<boolean>} True if successfully approved.
+ * @throws {Error} If the driver does not have a recorded transaction (payment).
+ */
 export const approveDriversService = async (id, data) => {
   const transaction = await transactions.findOne({ where: { driver_id: id } });
   if (!transaction) {
@@ -126,6 +166,12 @@ export const approveDriversService = async (id, data) => {
   return true;
 };
 
+/**
+ * Deletes a driver, and cascades the deletion to their user record and associated trips.
+ * @param {string} id - The UUID of the driver to delete.
+ * @returns {Promise<boolean>} True if successfully deleted.
+ * @throws {Error} If the driver does not exist.
+ */
 export const deleteDriverService = async (id) => {
   const driver = await drivers.findByPk(id, {
     include: [{ model: users, onDelete: 'cascade' }],

@@ -25,6 +25,14 @@ const emailVerifyKey = (user_id) => `email_verify_${user_id}`;
 
 const Stripe = new StripeClass(stripe.secret_key);
 
+/**
+ * Authenticates a user with email and password.
+ * @param {Object} data - The login payload.
+ * @param {string} data.email - The user's email.
+ * @param {string} data.password - The user's password.
+ * @returns {Promise<Object>} An object containing the user's name, designation, tokens, and permissions.
+ * @throws {Error} If credentials are invalid, or if the account is blocked/needs approval.
+ */
 export const loginUser = async (data) => {
   const { email, password } = data;
   const user = await users.findOne({ where: { email } });
@@ -86,6 +94,14 @@ export const loginUser = async (data) => {
   };
 };
 
+/**
+ * Verifies a user's email using an OTP.
+ * @param {Object} data - The verification payload.
+ * @param {string} data.email - The user's email.
+ * @param {string} data.otp - The one-time password sent to the user.
+ * @returns {Promise<Object>} An object containing the new access and refresh tokens.
+ * @throws {Error} If the user is not found, OTP is invalid, or account is blocked.
+ */
 export const verifyEmailService = async (data) => {
   const { email, otp } = data;
 
@@ -117,6 +133,14 @@ export const verifyEmailService = async (data) => {
   return { accessToken, refreshToken };
 };
 
+/**
+ * Authenticates a user using a Google OAuth token.
+ * @param {Object} data - The Google login payload.
+ * @param {string} data.token - The Google access token.
+ * @param {Object} data.data.data - Nested object containing the user's Google email.
+ * @returns {Promise<Object>} An object containing the user's name, designation, access token, and permissions.
+ * @throws {Error} If the user is not found.
+ */
 export const googleLoginService = async (data) => {
   const googleToken = data.token;
   const user = await users.findOne({ where: { email: data.data.data.email } });
@@ -156,6 +180,11 @@ export const googleLoginService = async (data) => {
   };
 };
 
+/**
+ * Generates an OTP for email verification and stores it in Redis.
+ * @param {string} user_id - The UUID of the user.
+ * @returns {Promise<string>} The generated OTP string.
+ */
 const generateEmailVerificationOtp = async (user_id) => {
   const otp = generateOtp();
   await redisClient.set(emailVerifyKey(user_id), otp, {
@@ -202,6 +231,17 @@ const sendVerificationEmail = async (user_id, email, fullName) => {
   }
 };
 
+/**
+ * Registers a new user into the system.
+ * @param {Object} data - The registration payload.
+ * @param {string} data.email - The user's email address.
+ * @param {string} data.password - The user's raw password.
+ * @param {string} data.first_name - The user's first name.
+ * @param {string} [data.last_name] - The user's last name.
+ * @param {string} [data.phone_number] - The user's phone number.
+ * @returns {Promise<Object>} The newly created user's basic details.
+ * @throws {Error} If the user already exists or the account is blocked/deleted.
+ */
 export const registerUser = async (data) => {
   const { email, password, first_name, last_name, phone_number } = data;
 
@@ -249,6 +289,13 @@ export const registerUser = async (data) => {
   });
 };
 
+/**
+ * Handles the Google sign-up process by ensuring the user does not already exist.
+ * @param {Object} data - The Google signup payload.
+ * @param {Object} data.data.data - Nested object containing the user's Google email.
+ * @returns {Promise<string>} The user's email if signup can proceed.
+ * @throws {Error} If the user already exists in the system.
+ */
 export const googleSignUpService = async (data) => {
   const user = await users.findOne({ where: { email: data.data.data.email } });
   if (user) {

@@ -6,6 +6,12 @@ const locationSchema = Joi.object({
   latitude: Joi.string().required(),
 });
 
+/**
+ * Middleware to validate trip creation and update payloads.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 const tripValidate = async (req, res, next) => {
   logger.info(req.body);
   const schema = Joi.object({

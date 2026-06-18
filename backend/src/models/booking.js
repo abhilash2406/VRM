@@ -2,6 +2,10 @@ import { DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
 import { EntityType } from '../common/enum/activity-enum.js';
 
+/**
+ * Sequelize Model for Bookings.
+ * @typedef {import('sequelize').Model} Booking
+ */
 const booking = sequelize.define('booking', {
   id: {
     type: DataTypes.UUID,

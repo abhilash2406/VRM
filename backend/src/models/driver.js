@@ -2,6 +2,10 @@ import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
 import { EntityType } from '../common/enum/activity-enum.js';
 
+/**
+ * Sequelize Model for Drivers.
+ * @typedef {import('sequelize').Model} Driver
+ */
 const driver = sequelize.define(
   'driver',
   {

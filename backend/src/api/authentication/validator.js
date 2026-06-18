@@ -1,5 +1,11 @@
 import Joi from 'joi';
 
+/**
+ * Middleware to validate adding a new user.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 const addUserValidate = async (req, res, next) => {
   const schema = Joi.object({
     name: Joi.string().min(3).max(30).required(),
@@ -15,6 +21,12 @@ const addUserValidate = async (req, res, next) => {
   }
 };
 
+/**
+ * Middleware to validate user registration payloads.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 const registerValidate = async (req, res, next) => {
   const schema = Joi.object({
     first_name: Joi.string().min(2).max(30).required(),
@@ -37,6 +49,12 @@ const registerValidate = async (req, res, next) => {
   }
 };
 
+/**
+ * Middleware to validate email verification payloads (OTP).
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 const verifyEmailValidate = async (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
@@ -50,6 +68,12 @@ const verifyEmailValidate = async (req, res, next) => {
   }
 };
 
+/**
+ * Middleware to validate login payloads.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
 const loginValidate = async (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),

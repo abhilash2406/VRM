@@ -2,6 +2,10 @@ import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
 import { EntityType } from '../common/enum/activity-enum.js';
 
+/**
+ * Sequelize Model for Routes.
+ * @typedef {import('sequelize').Model} Route
+ */
 const route = sequelize.define(
   'route',
   {

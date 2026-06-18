@@ -5,6 +5,10 @@ import jwt from 'jsonwebtoken';
 import { logger } from '../config/winston-config.js';
 import { EntityType } from '../common/enum/activity-enum.js';
 
+/**
+ * Sequelize Model for Users.
+ * @typedef {import('sequelize').Model} Users
+ */
 const users = sequelize.define(
   'users',
   {
