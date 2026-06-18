@@ -1,23 +1,7 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
 
-/**
- * Vehicle status enum values.
- */
-export const VehicleStatus = {
-  AVAILABLE: 'available',
-  BOOKED: 'booked',
-  MAINTENANCE: 'maintenance',
-};
-
-/**
- * Vehicle type enum values.
- */
-export const VehicleType = {
-  TWO_WHEELER: 'two-wheeler',
-  FOUR_WHEELER: 'four-wheeler',
-  HEAVY_VEHICLE: 'heavy-vehicle',
-};
+import { VehicleStatus, VehicleType } from '../common/enum/vehicle-enum.js';
 
 /**
  * Sequelize Model for Vehicles.
@@ -37,7 +21,7 @@ const vehicle = sequelize.define(
       unique: true,
       comment: 'e.g. KL-01-AB-1234',
     },
-    make: {
+    manufacturer: {
       type: DataTypes.STRING,
       allowNull: false,
       comment: 'e.g. Hyundai',
@@ -47,7 +31,7 @@ const vehicle = sequelize.define(
       allowNull: false,
       comment: 'e.g. Creta',
     },
-    year: {
+    manufacturing_year: {
       type: DataTypes.INTEGER,
       allowNull: false,
       comment: 'e.g. 2024',

@@ -12,19 +12,19 @@ export const VehicleValidate = async (req, res, next) => {
       'string.empty': 'Registration number is required',
       'any.required': 'Registration number is required',
     }),
-    make: Joi.string().required().messages({
-      'string.empty': 'Vehicle make (brand) is required',
-      'any.required': 'Vehicle make (brand) is required',
+    manufacturer: Joi.string().required().messages({
+      'string.empty': 'Vehicle manufacturer (brand) is required',
+      'any.required': 'Vehicle manufacturer (brand) is required',
     }),
     model_name: Joi.string().required().messages({
       'string.empty': 'Vehicle model name is required',
       'any.required': 'Vehicle model name is required',
     }),
-    year: Joi.number().integer().min(1900).max(new Date().getFullYear() + 1).required().messages({
-      'number.base': 'Year must be a number',
-      'number.integer': 'Year must be a whole number',
-      'number.min': 'Year must be 1900 or later',
-      'any.required': 'Year of manufacture is required',
+    manufacturing_year: Joi.number().integer().min(1900).max(new Date().getFullYear() + 1).required().messages({
+      'number.base': 'Manufacturing year must be a number',
+      'number.integer': 'Manufacturing year must be a whole number',
+      'number.min': 'Manufacturing year must be 1900 or later',
+      'any.required': 'Manufacturing year is required',
     }),
     status: Joi.string().valid('available', 'booked', 'maintenance').optional(),
     vehicle_type: Joi.string()

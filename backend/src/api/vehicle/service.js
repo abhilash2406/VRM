@@ -1,6 +1,7 @@
 import vehicle from '../../models/vehicle.js';
 import users from '../../models/users.js';
 import jwt from 'jsonwebtoken';
+import { VehicleStatus, VehicleType } from '../../common/enum/vehicle-enum.js';
 
 /**
  * Registers a new vehicle in the system.
@@ -29,11 +30,11 @@ export const addVehicleService = async (data, files, token) => {
 
   const created = await vehicle.create({
     registration_number: data.registration_number,
-    make: data.make,
+    manufacturer: data.manufacturer,
     model_name: data.model_name,
-    year: data.year,
-    status: data.status || 'available',
-    vehicle_type: data.vehicle_type || 'four-wheeler',
+    manufacturing_year: data.manufacturing_year,
+    status: data.status || VehicleStatus.AVAILABLE,
+    vehicle_type: data.vehicle_type || VehicleType.FOUR_WHEELER,
     rc_number: data.rc_number || null,
     insurance_expiry: data.insurance_expiry || null,
     last_service_date: data.last_service_date || null,
@@ -92,9 +93,9 @@ export const updateVehicleService = async (id, data, files) => {
 
   const updates = {
     registration_number: data.registration_number ?? found.registration_number,
-    make: data.make ?? found.make,
+    manufacturer: data.manufacturer ?? found.manufacturer,
     model_name: data.model_name ?? found.model_name,
-    year: data.year ?? found.year,
+    manufacturing_year: data.manufacturing_year ?? found.manufacturing_year,
     status: data.status ?? found.status,
     vehicle_type: data.vehicle_type ?? found.vehicle_type,
     rc_number: data.rc_number ?? found.rc_number,
