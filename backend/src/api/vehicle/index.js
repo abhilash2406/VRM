@@ -37,22 +37,34 @@ var router = express.Router();
  *             type: object
  *             required:
  *               - registration_number
- *               - make
+ *               - manufacturer
  *               - model_name
- *               - year
+ *               - manufacturing_year
+ *               - vehicle_type
  *             properties:
  *               registration_number:
  *                 type: string
  *                 example: KL-01-AB-1234
- *               make:
+ *               manufacturer:
  *                 type: string
  *                 example: Hyundai
  *               model_name:
  *                 type: string
  *                 example: Creta
- *               year:
+ *               manufacturing_year:
  *                 type: integer
  *                 example: 2024
+ *               vehicle_type:
+ *                 type: string
+ *                 enum: [two-wheeler, four-wheeler, heavy-vehicle]
+ *                 example: four-wheeler
+ *               vehicle_subtype:
+ *                 type: string
+ *                 enum: [motorcycle, scooter, sedan, suv, mpv, hatchback, truck, mini-bus, full-bus, tempo]
+ *                 example: suv
+ *               seating_capacity:
+ *                 type: integer
+ *                 example: 5
  *               status:
  *                 type: string
  *                 enum: [available, booked, maintenance]
@@ -167,11 +179,19 @@ router.get('/active', getActiveVehicles);
  *             properties:
  *               registration_number:
  *                 type: string
- *               make:
+ *               manufacturer:
  *                 type: string
  *               model_name:
  *                 type: string
- *               year:
+ *               manufacturing_year:
+ *                 type: integer
+ *               vehicle_type:
+ *                 type: string
+ *                 enum: [two-wheeler, four-wheeler, heavy-vehicle]
+ *               vehicle_subtype:
+ *                 type: string
+ *                 enum: [motorcycle, scooter, sedan, suv, mpv, hatchback, truck, mini-bus, full-bus, tempo]
+ *               seating_capacity:
  *                 type: integer
  *               status:
  *                 type: string
