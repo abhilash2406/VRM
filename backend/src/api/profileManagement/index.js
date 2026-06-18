@@ -7,6 +7,7 @@ import {
   ProfilePermissions,
   changePassword,
 } from './controller.js';
+import { changePasswordValidate } from './validator.js';
 var router = express.Router();
 
 /**
@@ -132,7 +133,7 @@ router.post('/permissions', ProfilePermissions);
  *     tags:
  *       - Profile Management
  *     summary: Change user password
- *     description: Changes the authenticated user's password using an encrypted payload.
+ *     description: Changes the authenticated user's password. Requires the current (old) password for verification, along with the new password and a confirmation value.
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -141,18 +142,53 @@ router.post('/permissions', ProfilePermissions);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *               - confirmPassword
  *             properties:
- *               passwordData:
+ *               oldPassword:
  *                 type: string
- *                 description: Encrypted payload containing old and new passwords
+ *                 description: The user's current password
+ *                 example: OldPass@123
+ *               newPassword:
+ *                 type: string
+ *                 description: The desired new password (min 8 chars, must include uppercase, lowercase, number, and special character)
+ *                 example: NewPass@456
+ *               confirmPassword:
+ *                 type: string
+ *                 description: Must match newPassword exactly
+ *                 example: NewPass@456
  *     responses:
  *       '200':
  *         description: Password changed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: password changed successfully
  *       '400':
- *         description: Bad request or validation error
+ *         description: Validation error or wrong old password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: The old password you entered is incorrect
  *       '401':
  *         description: Unauthorized
  */
-router.post('/change-password', changePassword);
+router.post('/change-password', changePasswordValidate, changePassword);
 
 export default router;

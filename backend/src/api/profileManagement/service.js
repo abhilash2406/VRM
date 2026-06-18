@@ -5,7 +5,6 @@ import permissions from '../../models/permission.js';
 import contacts from '../../models/contact.js';
 import jwt from 'jsonwebtoken';
 import permissionSetting from '../../models/permissionSetting.js';
-import CryptoJS from 'crypto-js';
 
 /**
  * Validates a user ID and fetches the user's profile.
@@ -74,33 +73,35 @@ export const profilePermissionsService = async (userId) => {
 };
 
 /**
- * Changes a user's password using AES-decrypted payload data.
- * @param {Object} data - Contains AES-encrypted currentPassword, newPassword, and confirmPassword.
- * @param {string|number} userId - The ID of the user.
+ * Changes a user's password.
+ * Expects plain-text oldPassword, newPassword, and confirmPassword (validated upstream by Joi).
+ * @param {Object} data - Contains oldPassword, newPassword, and confirmPassword.
+ * @param {string} data.oldPassword - The user's current password.
+ * @param {string} data.newPassword - The desired new password.
+ * @param {string} data.confirmPassword - Must match newPassword.
+ * @param {string|number} userId - The ID of the authenticated user.
  * @returns {Promise<boolean>} True if the password is changed successfully.
- * @throws {Error} If the user doesn't exist or the current password doesn't match.
+ * @throws {Error} If the user doesn't exist, the old password is wrong, or passwords don't match.
  */
 export const changePasswordService = async (data, userId) => {
-  const decrypted = CryptoJS.AES.decrypt(data.currentPassword, 'XkhZG4fW2t2W');
-  const decrypted2 = CryptoJS.AES.decrypt(data.newPassword, 'XkhZG4fW2t2W');
-  const decrypted3 = CryptoJS.AES.decrypt(data.confirmPassword, 'XkhZG4fW2t2W');
+  const { oldPassword, newPassword, confirmPassword } = data;
 
-  const currentPassword = decrypted.toString(CryptoJS.enc.Utf8);
-  const newPassword = decrypted2.toString(CryptoJS.enc.Utf8);
-  const confirmPassword = decrypted3.toString(CryptoJS.enc.Utf8);
+  if (newPassword !== confirmPassword) {
+    throw new Error('New password and confirm password do not match');
+  }
 
   const who = await users.findByPk(userId);
 
   if (!who) {
-    throw new Error('You dont have the permission to change the password');
+    throw new Error('You do not have permission to change the password');
   }
 
-  const verifyPassword = await who.verifyPassword(currentPassword);
+  const verifyPassword = await who.verifyPassword(oldPassword);
   if (!verifyPassword) {
-    throw new Error('You entered the Wrong Password');
+    throw new Error('The old password you entered is incorrect');
   }
 
-  // Hook handles hashing
+  // beforeUpdate hook in users model handles hashing automatically
   await who.update({ password_hash: newPassword });
 
   return true;
