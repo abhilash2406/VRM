@@ -21,7 +21,7 @@ router.use('/profile', auth, inline_api_profileManagement_index);
 router.use('/designations', auth, inline_api_designationManagement_index);
 router.use('/permissions', auth, inline_api_permissionManagement_index);
 router.use('/gallery', auth, inline_api_galleryManagement_index);
-router.use('/trucks', auth, inline_api_vehicle_index);
+router.use('/vehicles', auth, inline_api_vehicle_index);
 router.use('/drivers', auth, inline_api_driverManagement_index);
 router.use('/routes', inline_api_routeManagement_index);
 router.use('/trips', auth, inline_api_tripManagement_index);

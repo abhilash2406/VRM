@@ -21,7 +21,7 @@ var router = express.Router();
 
 /**
  * @swagger
- * /api/v1/trucks/add:
+ * /api/v1/vehicles/add:
  *   post:
  *     tags:
  *       - Vehicle Management
@@ -103,7 +103,7 @@ router.post(
 
 /**
  * @swagger
- * /api/v1/trucks/:
+ * /api/v1/vehicles/:
  *   get:
  *     tags:
  *       - Vehicle Management
@@ -121,7 +121,7 @@ router.get('/', getAllVehicles);
 
 /**
  * @swagger
- * /api/v1/trucks/active:
+ * /api/v1/vehicles/active:
  *   get:
  *     tags:
  *       - Vehicle Management
@@ -139,7 +139,7 @@ router.get('/active', getActiveVehicles);
 
 /**
  * @swagger
- * /api/v1/trucks/{id}:
+ * /api/v1/vehicles/{id}:
  *   get:
  *     tags:
  *       - Vehicle Management
