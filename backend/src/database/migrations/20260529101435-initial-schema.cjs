@@ -546,10 +546,10 @@ module.exports = {
       name: 'drivers_truckId_fkey',
       references: {
         table: 'trucks',
-        field: 'id'
+        field: 'id',
       },
       onDelete: 'SET NULL',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
 
     await queryInterface.addConstraint('drivers', {
@@ -558,10 +558,10 @@ module.exports = {
       name: 'drivers_routeId_fkey',
       references: {
         table: 'routes',
-        field: 'id'
+        field: 'id',
       },
       onDelete: 'SET NULL',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
 
     await queryInterface.addConstraint('drivers', {
@@ -570,10 +570,10 @@ module.exports = {
       name: 'drivers_userId_fkey',
       references: {
         table: 'users',
-        field: 'id'
+        field: 'id',
       },
       onDelete: 'SET NULL',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
 
     await queryInterface.addConstraint('login_histories', {
@@ -582,10 +582,10 @@ module.exports = {
       name: 'login_histories_userId_fkey',
       references: {
         table: 'users',
-        field: 'id'
+        field: 'id',
       },
       onDelete: 'CASCADE',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
 
     await queryInterface.addConstraint('permissionSettings', {
@@ -594,10 +594,10 @@ module.exports = {
       name: 'permissionSettings_designationId_fkey',
       references: {
         table: 'designations',
-        field: 'id'
+        field: 'id',
       },
       onDelete: 'NO ACTION',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
 
     await queryInterface.addConstraint('permissionSettings', {
@@ -606,10 +606,10 @@ module.exports = {
       name: 'permissionSettings_permissionId_fkey',
       references: {
         table: 'permissions',
-        field: 'id'
+        field: 'id',
       },
       onDelete: 'NO ACTION',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
 
     await queryInterface.addConstraint('transactions', {
@@ -618,10 +618,10 @@ module.exports = {
       name: 'transactions_driverId_fkey',
       references: {
         table: 'drivers',
-        field: 'id'
+        field: 'id',
       },
       onDelete: 'NO ACTION',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
 
     await queryInterface.addConstraint('trips', {
@@ -630,10 +630,10 @@ module.exports = {
       name: 'trips_driverId_fkey',
       references: {
         table: 'drivers',
-        field: 'id'
+        field: 'id',
       },
       onDelete: 'NO ACTION',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
 
     await queryInterface.addConstraint('trips', {
@@ -642,10 +642,10 @@ module.exports = {
       name: 'trips_truckId_fkey',
       references: {
         table: 'trucks',
-        field: 'id'
+        field: 'id',
       },
       onDelete: 'NO ACTION',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
 
     await queryInterface.addConstraint('trips', {
@@ -654,10 +654,10 @@ module.exports = {
       name: 'trips_routeId_fkey',
       references: {
         table: 'routes',
-        field: 'id'
+        field: 'id',
       },
       onDelete: 'NO ACTION',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
 
     await queryInterface.addConstraint('trucks', {
@@ -666,10 +666,10 @@ module.exports = {
       name: 'trucks_createdBy_fkey',
       references: {
         table: 'users',
-        field: 'id'
+        field: 'id',
       },
       onDelete: 'SET NULL',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
 
     await queryInterface.addConstraint('users', {
@@ -678,13 +678,11 @@ module.exports = {
       name: 'users_designationId_fkey',
       references: {
         table: 'designations',
-        field: 'id'
+        field: 'id',
       },
       onDelete: 'NO ACTION',
-      onUpdate: 'CASCADE'
+      onUpdate: 'CASCADE',
     });
-
-
   },
 
   down: async (queryInterface, Sequelize) => {
@@ -704,6 +702,5 @@ module.exports = {
     await queryInterface.dropTable('truckModels', { cascade: true });
     await queryInterface.dropTable('users', { cascade: true });
     await queryInterface.dropTable('variants', { cascade: true });
-
-  }
+  },
 };

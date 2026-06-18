@@ -6,7 +6,7 @@ const locationSchema = Joi.object({
   latitude: Joi.string().required(),
 });
 
-const routeValidate = async (req, res, next) => {
+export const routeValidate = async (req, res, next) => {
   logger.info(req.body);
   const schema = Joi.object({
     from: Joi.string().required(),
@@ -22,6 +22,3 @@ const routeValidate = async (req, res, next) => {
     res.send({ success: false, err: err.message });
   }
 };
-
-export { routeValidate };
-export default { routeValidate };

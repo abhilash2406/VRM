@@ -10,5 +10,5 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     await queryInterface.renameColumn('trucks', 'year_of_manufacture', 'yrManufacture');
     await queryInterface.renameColumn('trucks', 'rc_photo', 'rcPhoto');
-  }
+  },
 };

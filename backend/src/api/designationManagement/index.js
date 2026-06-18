@@ -1,7 +1,7 @@
 import express from 'express';
-import * as controller from './controller.js';
+import { getDesignations } from './controller.js';
 var router = express.Router();
 
-router.get('/', controller.getDesignations);
+router.get('/', getDesignations);
 
 export default router;

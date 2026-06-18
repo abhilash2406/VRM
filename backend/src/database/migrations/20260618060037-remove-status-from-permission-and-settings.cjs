@@ -17,5 +17,5 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     // Reverting not fully implemented, as adding it back requires ENUM knowledge.
-  }
+  },
 };

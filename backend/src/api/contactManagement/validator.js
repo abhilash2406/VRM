@@ -6,7 +6,7 @@ import Joi from 'joi';
  * @param {import('express').Response} res - The Express response object.
  * @param {import('express').NextFunction} next - The Express next middleware function.
  */
-const contactValidate = async (req, res, next) => {
+export const contactValidate = async (req, res, next) => {
   const schema = Joi.object({
     name: Joi.string().min(3).max(30).required(),
     email: Joi.string().email().required(),
@@ -20,6 +20,3 @@ const contactValidate = async (req, res, next) => {
     res.send({ success: false, err: err.message });
   }
 };
-
-export { contactValidate };
-export default { contactValidate };

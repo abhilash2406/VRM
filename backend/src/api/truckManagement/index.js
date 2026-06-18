@@ -1,12 +1,23 @@
 import express from 'express';
-import * as controller from './controller.js';
-import validate from './validator.js';
+import {
+  getTruckBrands,
+  getTruckModels,
+  getTruckVariants,
+  addTrucks,
+  correspondingData,
+  getAllTruckData,
+  getActiveTrucks,
+  truckToEdit,
+  dltTruck,
+  updateTruck,
+} from './controller.js';
+import { TruckValidate } from './validator.js';
 import { upload } from '../../common/validation/uploader.js';
 var router = express.Router();
 
-router.get('/brands', controller.getTruckBrands);
-router.get('/models', controller.getTruckModels);
-router.get('/variants', controller.getTruckVariants);
+router.get('/brands', getTruckBrands);
+router.get('/models', getTruckModels);
+router.get('/variants', getTruckVariants);
 
 router.post(
   '/add',
@@ -14,23 +25,23 @@ router.post(
     { name: 'rcPhoto', maxCount: 1 },
     { name: 'truck_photo', maxCount: 1 },
   ]),
-  validate.TruckValidate,
-  controller.addTrucks
+  TruckValidate,
+  addTrucks
 );
-router.post('/get-data', controller.correspondingData);
-router.get('/', controller.getAllTruckData);
-router.get('/activeTrucks', controller.getActiveTrucks);
+router.post('/get-data', correspondingData);
+router.get('/', getAllTruckData);
+router.get('/activeTrucks', getActiveTrucks);
 router
   .route('/:id')
-  .get(controller.truckToEdit)
-  .delete(controller.dltTruck)
+  .get(truckToEdit)
+  .delete(dltTruck)
   .patch(
     upload.fields([
       { name: 'rcPhoto', maxCount: 1 },
       { name: 'truck_photo', maxCount: 1 },
     ]),
-    validate.TruckValidate,
-    controller.updateTruck
+    TruckValidate,
+    updateTruck
   );
 
 /**

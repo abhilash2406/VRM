@@ -1,7 +1,21 @@
 import express from 'express';
-import * as controller from './controller.js';
-import validate from './validator.js';
-import { multiUpload, upload } from '../../common/validation/uploader.js';
+import {
+  Login,
+  register,
+  verifyEmail,
+  googleLogin,
+  forgotPassword,
+  verifyResetOtp,
+  resetPassword,
+} from './controller.js';
+import {
+  loginValidate,
+  registerValidate,
+  verifyEmailValidate,
+  forgotPasswordValidate,
+  verifyResetOtpValidate,
+  resetPasswordValidate,
+} from './validator.js';
 const router = express.Router();
 
 /**
@@ -39,7 +53,7 @@ const router = express.Router();
  *       '400':
  *         description: Bad request
  */
-router.post('/login', validate.loginValidate, controller.Login);
+router.post('/login', loginValidate, Login);
 /**
  * @swagger
  * /api/v1/auth/register:
@@ -75,7 +89,7 @@ router.post('/login', validate.loginValidate, controller.Login);
  *       '200':
  *         description: Registered successfully
  */
-router.post('/register', validate.registerValidate, controller.register);
+router.post('/register', registerValidate, register);
 
 /**
  * @swagger
@@ -121,7 +135,7 @@ router.post('/register', validate.registerValidate, controller.register);
  *         description: User not found
  */
 
-router.post('/verify-email', validate.verifyEmailValidate, controller.verifyEmail);
+router.post('/verify-email', verifyEmailValidate, verifyEmail);
 
 /**
  * @swagger
@@ -146,6 +160,104 @@ router.post('/verify-email', validate.verifyEmailValidate, controller.verifyEmai
  *       '400':
  *         description: User Not Found or non registered email
  */
-router.post('/google-login', controller.googleLogin);
+router.post('/google-login', googleLogin);
+
+/**
+ * @swagger
+ * /api/v1/auth/forgot-password:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Request a password reset
+ *     description: Generates an OTP and sends it to the user's email.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *             required:
+ *               - email
+ *     responses:
+ *       '200':
+ *         description: Password reset OTP sent to email
+ *       '400':
+ *         description: User not found
+ */
+router.post('/forgot-password', forgotPasswordValidate, forgotPassword);
+
+/**
+ * @swagger
+ * /api/v1/auth/verify-reset-otp:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Verify password reset OTP
+ *     description: Checks if the provided OTP matches the one stored in Redis.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               otp:
+ *                 type: string
+ *                 pattern: '^\\d{6}$'
+ *             required:
+ *               - email
+ *               - otp
+ *     responses:
+ *       '200':
+ *         description: OTP verified successfully
+ *       '400':
+ *         description: Invalid or expired OTP
+ */
+router.post('/verify-reset-otp', verifyResetOtpValidate, verifyResetOtp);
+
+/**
+ * @swagger
+ * /api/v1/auth/reset-password:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Reset password
+ *     description: Verifies the OTP and updates the user's password.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               otp:
+ *                 type: string
+ *                 pattern: '^\\d{6}$'
+ *               password:
+ *                 type: string
+ *               confirm_password:
+ *                 type: string
+ *             required:
+ *               - email
+ *               - otp
+ *               - password
+ *               - confirm_password
+ *     responses:
+ *       '200':
+ *         description: Password reset successfully
+ *       '400':
+ *         description: Invalid or expired OTP, or validation error
+ */
+router.post('/reset-password', resetPasswordValidate, resetPassword);
 
 export default router;

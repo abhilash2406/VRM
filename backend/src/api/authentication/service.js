@@ -304,3 +304,86 @@ export const registerUser = async (data) => {
     };
   });
 };
+
+const passwordResetKey = (user_id) => `password_reset_${user_id}`;
+
+/**
+ * Initiates the password reset process by generating an OTP and sending it via email.
+ * @param {Object} data - Payload containing user email.
+ * @returns {Promise<Object>} Status message.
+ */
+export const forgotPasswordService = async (data) => {
+  const { email } = data;
+  const user = await users.findOne({ where: { email } });
+  if (!user) {
+    throw new BadRequest('User not found');
+  }
+
+  const otp = generateOtp();
+  const expireMinutes = parseInt(process.env.PASSWORD_RESET_EXPIRE_MINUTES || '15', 10);
+
+  await redisClient.set(passwordResetKey(user.id), otp, {
+    EX: expireMinutes * 60,
+  });
+
+  try {
+    await sendEmails({
+      mailOptions: { to: email, subject: 'Password Reset Request' },
+      fileName: 'forgot-password.ejs',
+      contentVariables: {
+        name: `${user.first_name} ${user.last_name || ''}`,
+        otp,
+        expireMinutes,
+      },
+    });
+  } catch (err) {
+    logger.error('Password reset email failed', { user_id: user.id, error: err.message });
+    throw new BadRequest('Failed to send reset email');
+  }
+
+  return { message: 'Password reset OTP sent to email' };
+};
+
+/**
+ * Verifies the password reset OTP.
+ * @param {Object} data - Payload containing email and OTP.
+ * @returns {Promise<Object>} Status message.
+ */
+export const verifyResetOtpService = async (data) => {
+  const { email, otp } = data;
+  const user = await users.findOne({ where: { email } });
+  if (!user) {
+    throw new BadRequest('User not found');
+  }
+
+  const storedOtp = await redisClient.get(passwordResetKey(user.id));
+  if (!storedOtp || !verifyOtp(otp, storedOtp)) {
+    throw new BadRequest('Invalid or expired OTP');
+  }
+
+  return { message: 'OTP verified successfully' };
+};
+
+/**
+ * Resets the user's password securely.
+ * @param {Object} data - Payload containing email, OTP, and new password.
+ * @returns {Promise<Object>} Status message.
+ */
+export const resetPasswordService = async (data) => {
+  const { email, otp, password } = data;
+  const user = await users.findOne({ where: { email } });
+  if (!user) {
+    throw new BadRequest('User not found');
+  }
+
+  const storedOtp = await redisClient.get(passwordResetKey(user.id));
+  if (!storedOtp || !verifyOtp(otp, storedOtp)) {
+    throw new BadRequest('Invalid or expired OTP');
+  }
+
+  // Update password (model hooks should handle hashing)
+  await user.update({ password_hash: password });
+  await redisClient.del(passwordResetKey(user.id));
+
+  return { message: 'Password reset successfully' };
+};

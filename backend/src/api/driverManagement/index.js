@@ -1,36 +1,45 @@
 import express from 'express';
-import * as controller from './controller.js';
-import validator from './validator.js';
+import {
+  getDriverDatas,
+  addDrivers,
+  viewDriver,
+  deleteDriver,
+  updateDriver,
+  fetchActiveDrivers,
+  rejectDriver,
+  approveDrivers,
+} from './controller.js';
+import { driverValidate } from './validator.js';
 import { upload } from '../../common/validation/uploader.js';
 var router = express.Router();
 
 router
   .route('/')
-  .get(controller.getDriverDatas)
+  .get(getDriverDatas)
   .post(
     upload.fields([
       { name: 'userPhoto', maxCount: 1 },
       { name: 'license_photo', maxCount: 1 },
     ]),
-    validator.driverValidate,
-    controller.addDrivers
+    driverValidate,
+    addDrivers
   );
 
 router
   .route('/:id')
-  .get(controller.viewDriver)
-  .delete(controller.deleteDriver)
+  .get(viewDriver)
+  .delete(deleteDriver)
   .patch(
     upload.fields([
       { name: 'userPhoto', maxCount: 1 },
       { name: 'license_photo', maxCount: 1 },
     ]),
-    validator.driverValidate,
-    controller.updateDriver
+    driverValidate,
+    updateDriver
   );
-router.get('/active', controller.fetchActiveDrivers);
-router.patch('/reject/:id', controller.rejectDriver);
-router.patch('/approve/:id', controller.approveDrivers);
+router.get('/active', fetchActiveDrivers);
+router.patch('/reject/:id', rejectDriver);
+router.patch('/approve/:id', approveDrivers);
 
 /**
  * @swagger

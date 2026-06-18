@@ -1,15 +1,22 @@
 import express from 'express';
-import * as controller from './controller.js';
-import validate from './validator.js';
+import {
+  addTrips,
+  getTrips,
+  deleteTrip,
+  getTripData,
+  updateTrip,
+  noOfTrips,
+} from './controller.js';
+import { tripValidate } from './validator.js';
 var router = express.Router();
 
-router.post('/', validate.tripValidate, controller.addTrips);
-router.get('/', controller.getTrips);
-router.delete('/:id', controller.deleteTrip);
-router.get('/:id', controller.getTripData);
-router.patch('/:id', controller.updateTrip);
+router.post('/', tripValidate, addTrips);
+router.get('/', getTrips);
+router.delete('/:id', deleteTrip);
+router.get('/:id', getTripData);
+router.patch('/:id', updateTrip);
 
-router.post('/count', controller.noOfTrips);
+router.post('/count', noOfTrips);
 
 /**
  * @swagger

@@ -11,5 +11,5 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     await queryInterface.removeColumn('users', 'last_login');
-  }
+  },
 };

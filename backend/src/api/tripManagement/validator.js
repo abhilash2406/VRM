@@ -12,7 +12,7 @@ const locationSchema = Joi.object({
  * @param {import('express').Response} res - The Express response object.
  * @param {import('express').NextFunction} next - The Express next middleware function.
  */
-const tripValidate = async (req, res, next) => {
+export const tripValidate = async (req, res, next) => {
   logger.info(req.body);
   const schema = Joi.object({
     date: Joi.date().min('1900-01-01').required(),
@@ -27,6 +27,3 @@ const tripValidate = async (req, res, next) => {
     res.send({ success: false, err: err.message });
   }
 };
-
-export { tripValidate };
-export default { tripValidate };

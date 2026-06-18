@@ -1,12 +1,12 @@
 import express from 'express';
-import * as controller from './controller.js';
-import validator from './validator.js';
+import { addRoutes, getAllRoutes, deleteRoute, getRoute } from './controller.js';
+import { routeValidate } from './validator.js';
 var router = express.Router();
 
-router.post('/add', controller.addRoutes);
-router.get('/', controller.getAllRoutes);
-router.delete('/:id', controller.deleteRoute);
-router.get('/:id', controller.getRoute);
+router.post('/add', addRoutes);
+router.get('/', getAllRoutes);
+router.delete('/:id', deleteRoute);
+router.get('/:id', getRoute);
 
 /**
  * @swagger

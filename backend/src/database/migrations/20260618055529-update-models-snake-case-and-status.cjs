@@ -12,13 +12,17 @@ module.exports = {
           allowNull: false,
           defaultValue: 'ACTIVE',
         });
-      } catch (e) { console.log(e); }
+      } catch (e) {
+        console.log(e);
+      }
     };
 
     const rename = async (tableName, oldCol, newCol) => {
       try {
         await queryInterface.renameColumn(tableName, oldCol, newCol);
-      } catch (e) { console.log(e); }
+      } catch (e) {
+        console.log(e);
+      }
     };
 
     // brands
@@ -27,7 +31,9 @@ module.exports = {
 
     // contacts
     await rename('contacts', 'phoneNumber', 'phone_number');
-    try { await queryInterface.removeColumn('contacts', 'status'); } catch(e){}
+    try {
+      await queryInterface.removeColumn('contacts', 'status');
+    } catch (e) {}
     await addStatus('contacts');
 
     // designations
@@ -41,7 +47,9 @@ module.exports = {
     await rename('drivers', 'truckId', 'truck_id');
     await rename('drivers', 'routeId', 'route_id');
     await rename('drivers', 'userId', 'user_id');
-    try { await queryInterface.removeColumn('drivers', 'status'); } catch(e){}
+    try {
+      await queryInterface.removeColumn('drivers', 'status');
+    } catch (e) {}
     await addStatus('drivers');
 
     // loginHistories
@@ -61,7 +69,9 @@ module.exports = {
     await addStatus('permissionSettings');
 
     // routes
-    try { await queryInterface.removeColumn('routes', 'status'); } catch(e){}
+    try {
+      await queryInterface.removeColumn('routes', 'status');
+    } catch (e) {}
     await addStatus('routes');
 
     // transactions
@@ -82,7 +92,9 @@ module.exports = {
     await rename('trucks', 'truckPhoto', 'truck_photo');
     await rename('trucks', 'isActive', 'is_active');
     await rename('trucks', 'createdBy', 'created_by');
-    try { await queryInterface.removeColumn('trucks', 'status'); } catch(e){}
+    try {
+      await queryInterface.removeColumn('trucks', 'status');
+    } catch (e) {}
     await addStatus('trucks');
 
     // truckModels
@@ -107,5 +119,5 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     // Reverting this mass migration is omitted for brevity as it's purely destructive/one-way
-  }
+  },
 };

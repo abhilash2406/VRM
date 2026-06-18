@@ -1,9 +1,9 @@
 import express from 'express';
-import * as controller from '../contactManagement/controller.js';
-import validate from './validator.js';
+import { setContact } from '../contactManagement/controller.js';
+import { contactValidate } from './validator.js';
 var router = express.Router();
 
-router.post('/', validate.contactValidate, controller.setContact);
+router.post('/', contactValidate, setContact);
 /**
  * @swagger
  * tags:

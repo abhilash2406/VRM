@@ -7,7 +7,7 @@ import Joi from 'joi';
  * @param {import('express').Response} res - The Express response object.
  * @param {import('express').NextFunction} next - The Express next middleware function.
  */
-const driverValidate = async (req, res, next) => {
+export const driverValidate = async (req, res, next) => {
   //   logger.info('re.body', req.body);
   const schema = Joi.object({
     name: Joi.string().required(),
@@ -26,6 +26,3 @@ const driverValidate = async (req, res, next) => {
     res.send({ success: false, err: err.message });
   }
 };
-
-export { driverValidate };
-export default { driverValidate };

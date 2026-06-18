@@ -6,7 +6,7 @@ import Joi from 'joi';
  * @param {import('express').Response} res - The Express response object.
  * @param {import('express').NextFunction} next - The Express next middleware function.
  */
-const TruckValidate = async (req, res, next) => {
+export const TruckValidate = async (req, res, next) => {
   const schema = Joi.object({
     brand: Joi.string().required(),
     model: Joi.string().required(),
@@ -26,6 +26,3 @@ const TruckValidate = async (req, res, next) => {
     res.send({ success: false, err: err.message });
   }
 };
-
-export { TruckValidate };
-export default { TruckValidate };

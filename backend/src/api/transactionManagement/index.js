@@ -1,7 +1,7 @@
 import express from 'express';
-import * as controller from './controller.js';
+import { TransactionList } from './controller.js';
 var router = express.Router();
 
-router.get('/', controller.TransactionList);
+router.get('/', TransactionList);
 
 export default router;

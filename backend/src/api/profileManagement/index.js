@@ -1,13 +1,20 @@
 import express from 'express';
-import * as controller from './controller.js';
+import {
+  viewProfile,
+  getUserMessages,
+  getMsgToRead,
+  dltFeedback,
+  ProfilePermissions,
+  changePassword,
+} from './controller.js';
 var router = express.Router();
 
-router.get('/view', controller.viewProfile);
-router.get('/feedback', controller.getUserMessages);
+router.get('/view', viewProfile);
+router.get('/feedback', getUserMessages);
 
-router.get('/feedback/:id', controller.getMsgToRead);
-router.delete('/feedback/:id', controller.dltFeedback);
-router.post('/permissions', controller.ProfilePermissions);
-router.post('/change-password', controller.changePassword);
+router.get('/feedback/:id', getMsgToRead);
+router.delete('/feedback/:id', dltFeedback);
+router.post('/permissions', ProfilePermissions);
+router.post('/change-password', changePassword);
 
 export default router;

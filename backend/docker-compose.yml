@@ -6,7 +6,7 @@ services:
     container_name: truck-mgt-api
     restart: unless-stopped
     ports:
-      - "5000:5000"
+      - '5000:5000'
     environment:
       - DB_HOST=db
       - DB_PORT=5432
@@ -25,7 +25,7 @@ services:
     container_name: truck-mgt-db
     restart: unless-stopped
     ports:
-      - "5432:5432" # Exposing the port so you can connect via GUI tools
+      - '5432:5432' # Exposing the port so you can connect via GUI tools
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -33,7 +33,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d truck-mgt"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d truck-mgt']
       interval: 10s
       timeout: 5s
       retries: 5

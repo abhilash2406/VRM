@@ -6,7 +6,7 @@ import Joi from 'joi';
  * @param {import('express').Response} res - The Express response object.
  * @param {import('express').NextFunction} next - The Express next middleware function.
  */
-const addUserValidate = async (req, res, next) => {
+export const addUserValidate = async (req, res, next) => {
   const schema = Joi.object({
     name: Joi.string().min(3).max(30).required(),
     email: Joi.string().email().required(),
@@ -27,7 +27,7 @@ const addUserValidate = async (req, res, next) => {
  * @param {import('express').Response} res - The Express response object.
  * @param {import('express').NextFunction} next - The Express next middleware function.
  */
-const registerValidate = async (req, res, next) => {
+export const registerValidate = async (req, res, next) => {
   const schema = Joi.object({
     first_name: Joi.string().min(2).max(30).required(),
     last_name: Joi.string().min(1).max(30).required(),
@@ -55,7 +55,7 @@ const registerValidate = async (req, res, next) => {
  * @param {import('express').Response} res - The Express response object.
  * @param {import('express').NextFunction} next - The Express next middleware function.
  */
-const verifyEmailValidate = async (req, res, next) => {
+export const verifyEmailValidate = async (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
     otp: Joi.string().length(6).pattern(/^\d+$/).required(),
@@ -74,7 +74,7 @@ const verifyEmailValidate = async (req, res, next) => {
  * @param {import('express').Response} res - The Express response object.
  * @param {import('express').NextFunction} next - The Express next middleware function.
  */
-const loginValidate = async (req, res, next) => {
+export const loginValidate = async (req, res, next) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().required(),
@@ -86,6 +86,50 @@ const loginValidate = async (req, res, next) => {
     res.send({ success: false, err: err.message });
   }
 };
+export const forgotPasswordValidate = async (req, res, next) => {
+  const schema = Joi.object({
+    email: Joi.string().email().required(),
+  });
+  try {
+    req.body = await schema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    res.send({ success: false, err: err.message });
+  }
+};
 
-export { addUserValidate, registerValidate, verifyEmailValidate, loginValidate };
-export default { addUserValidate, registerValidate, verifyEmailValidate, loginValidate };
+export const verifyResetOtpValidate = async (req, res, next) => {
+  const schema = Joi.object({
+    email: Joi.string().email().required(),
+    otp: Joi.string().length(6).pattern(/^\d+$/).required(),
+  });
+  try {
+    req.body = await schema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    res.send({ success: false, err: err.message });
+  }
+};
+
+export const resetPasswordValidate = async (req, res, next) => {
+  const schema = Joi.object({
+    email: Joi.string().email().required(),
+    otp: Joi.string().length(6).pattern(/^\d+$/).required(),
+    password: Joi.string()
+      .min(8)
+      .pattern(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])/)
+      .message(
+        'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+      )
+      .required(),
+    confirm_password: Joi.any().valid(Joi.ref('password')).required().messages({
+      'any.only': 'Confirm password does not match password',
+    }),
+  });
+  try {
+    req.body = await schema.validateAsync(req.body);
+    next();
+  } catch (err) {
+    res.send({ success: false, err: err.message });
+  }
+};

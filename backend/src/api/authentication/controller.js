@@ -1,4 +1,12 @@
-import { loginUser, googleLoginService, registerUser, verifyEmailService } from './service.js';
+import {
+  loginUser,
+  googleLoginService,
+  registerUser,
+  verifyEmailService,
+  forgotPasswordService,
+  verifyResetOtpService,
+  resetPasswordService,
+} from './service.js';
 import { setAuthCookies } from '../../utils/cookies.js';
 import TokenAudience from '../../common/enum/token-audience-enum.js';
 
@@ -117,6 +125,51 @@ export const register = async (req, res, next) => {
   try {
     const data = await registerUser(req.body);
     return res.send({ success: true, message: 'Registered successfully', data });
+  } catch (e) {
+    res.send({ success: false, message: e.message });
+  }
+};
+
+/**
+ * Handles forgot password request.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const data = await forgotPasswordService(req.body);
+    return res.send({ success: true, message: data.message });
+  } catch (e) {
+    res.send({ success: false, message: e.message });
+  }
+};
+
+/**
+ * Handles reset OTP verification.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
+export const verifyResetOtp = async (req, res, next) => {
+  try {
+    const data = await verifyResetOtpService(req.body);
+    return res.send({ success: true, message: data.message });
+  } catch (e) {
+    res.send({ success: false, message: e.message });
+  }
+};
+
+/**
+ * Handles password reset.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ * @param {import('express').NextFunction} next - The Express next middleware function.
+ */
+export const resetPassword = async (req, res, next) => {
+  try {
+    const data = await resetPasswordService(req.body);
+    return res.send({ success: true, message: data.message });
   } catch (e) {
     res.send({ success: false, message: e.message });
   }
