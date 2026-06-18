@@ -54,7 +54,7 @@ const users = sequelize.define(
     status: {
       type: DataTypes.ENUM(Object.values(EntityType)),
       allowNull: false,
-      defaultValue: EntityType.ACTIVE,
+      defaultValue: EntityType.INACTIVE,
     },
     last_login: {
       type: DataTypes.DATE,

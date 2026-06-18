@@ -1,5 +1,6 @@
 import loginHistory from '../../models/loginHistory.js';
 import { UserType } from '../../common/enum/user-type-enum.js';
+import { EntityType } from '../../common/enum/activity-enum.js';
 import users from '../../models/users.js';
 import designations from '../../models/designation.js';
 import permissionSetting from '../../models/permissionSetting.js';
@@ -38,14 +39,22 @@ const Stripe = new StripeClass(stripe.secret_key);
  */
 export const loginUser = async (data) => {
   const { email, password } = data;
-  const user = await users.findOne({ where: { email } });
+  const user = await users.findOne({ where: { email, status: EntityType.ACTIVE } });
 
   if (!user) {
     throw new BadRequest('Invalid email or password');
   }
 
-  if (user.status === 'BLOCKED') {
+  if (user.status === EntityType.BLOCKED) {
     throw new BadRequest('your account is blocked. please contact admin');
+  }
+
+  if (!user.email_verified) {
+    throw new BadRequest('Please verify your email before logging in.');
+  }
+
+  if (user.status === EntityType.INACTIVE) {
+    throw new BadRequest('Your account is inactive. Please verify your email or contact admin.');
   }
 
   const userDesig = await designations.findOne({ where: { id: user.designation_id } });
@@ -73,8 +82,8 @@ export const loginUser = async (data) => {
   });
 
   const updateData = { last_login: new Date() };
-  if (user.status === 'INACTIVE') {
-    updateData.status = 'ACTIVE';
+  if (user.status === EntityType.INACTIVE) {
+    updateData.status = EntityType.ACTIVE;
   }
   await user.update(updateData);
 
@@ -118,12 +127,12 @@ export const verifyEmailService = async (data) => {
     throw new Error('Invalid or expired verification code');
   }
 
-  if (user.status === 'BLOCKED' || user.status === 'DELETED') {
+  if (user.status === EntityType.BLOCKED || user.status === EntityType.DELETED) {
     throw new Error('This account is blocked or deleted');
   }
 
   await user.update({
-    status: 'ACTIVE',
+    status: EntityType.ACTIVE,
     email_verified: true,
     last_login: new Date(),
   });
@@ -168,8 +177,8 @@ export const googleLoginService = async (data) => {
   });
 
   const updateData = { last_login: new Date() };
-  if (user.status === 'INACTIVE') {
-    updateData.status = 'ACTIVE';
+  if (user.status === EntityType.INACTIVE) {
+    updateData.status = EntityType.ACTIVE;
   }
   await user.update(updateData);
 
@@ -264,9 +273,9 @@ export const registerUser = async (data) => {
   return await sequelize.transaction(async (t) => {
     const user = await users.findOne({ where: { email }, transaction: t });
     if (user) {
-      if (user.status === 'BLOCKED') {
+      if (user.status === EntityType.BLOCKED) {
         throw new Error('This account is blocked. Please contact support.');
-      } else if (user.status === 'DELETED') {
+      } else if (user.status === EntityType.DELETED) {
         throw new Error('This account was deleted.');
       }
       throw new Error('This user already exists');
