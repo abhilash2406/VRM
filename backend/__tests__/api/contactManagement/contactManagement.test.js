@@ -29,7 +29,7 @@ describe('Contact Management', () => {
         body: {
           name: 'John Doe',
           email: 'john@example.com',
-          phoneNumber: '1234567890',
+          phone_number: '1234567890',
           message: 'Hello!',
         },
       };
@@ -45,7 +45,7 @@ describe('Contact Management', () => {
         body: {
           name: 'Jo',
           email: 'john@example.com',
-          phoneNumber: '1234567890',
+          phone_number: '1234567890',
           message: 'Hello!',
         },
       };
@@ -69,7 +69,7 @@ describe('Contact Management', () => {
         body: {
           name: 'John Doe',
           email: 'john@example.com',
-          phoneNumber: '1234567890',
+          phone_number: '1234567890',
           message: 'Hello!',
         },
       };
@@ -88,7 +88,7 @@ describe('Contact Management', () => {
         body: {
           name: 'John Doe',
           email: 'john@example.com',
-          phoneNumber: '1234567890',
+          phone_number: '1234567890',
           message: 'Hello!',
         },
       };
@@ -105,7 +105,7 @@ describe('Contact Management', () => {
         body: {
           name: 'John Doe',
           email: 'john@example.com',
-          phoneNumber: '1234567890',
+          phone_number: '1234567890',
           message: 'Hello!',
         },
       };

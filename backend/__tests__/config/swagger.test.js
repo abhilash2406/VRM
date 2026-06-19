@@ -22,13 +22,12 @@ describe('Swagger Config', () => {
     const callArgs = swaggerJsdoc.mock.calls[0][0];
 
     expect(callArgs.definition.openapi).toBe('3.0.0');
-    expect(callArgs.definition.info.title).toBe('Truck Management System');
+    expect(callArgs.definition.info.title).toBe('VRM System');
 
-    // Check if APIs are constructed correctly (ending with index.js for routes)
     expect(callArgs.apis).toEqual(
       expect.arrayContaining([
         expect.stringMatching(/api\/authentication\/index\.js$/),
-        expect.stringMatching(/api\/truckManagement\/index\.js$/),
+        expect.stringMatching(/api\/vehicle\/index\.js$/),
       ])
     );
 
