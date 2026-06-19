@@ -64,3 +64,41 @@ export const VehicleValidate = async (req, res, next) => {
     res.send({ success: false, message: err.message });
   }
 };
+
+/**
+ * Middleware to validate vehicle lifecycle status payload.
+ */
+export const VehicleStatusValidate = async (req, res, next) => {
+  const schema = Joi.object({
+    status: Joi.string().valid('ACTIVE', 'BLOCKED', 'INACTIVE', 'DELETED').required().messages({
+      'any.required': 'Lifecycle status is required',
+      'any.only': 'Lifecycle status must be one of: ACTIVE, BLOCKED, INACTIVE, DELETED',
+    }),
+  });
+
+  try {
+    req.body = await schema.validateAsync(req.body, { abortEarly: true });
+    next();
+  } catch (err) {
+    res.send({ success: false, message: err.message });
+  }
+};
+
+/**
+ * Middleware to validate vehicle business availability status payload.
+ */
+export const VehicleAvailabilityValidate = async (req, res, next) => {
+  const schema = Joi.object({
+    availability_status: Joi.string().valid('available', 'booked', 'maintenance').required().messages({
+      'any.required': 'Availability status is required',
+      'any.only': 'Availability status must be one of: available, booked, maintenance',
+    }),
+  });
+
+  try {
+    req.body = await schema.validateAsync(req.body, { abortEarly: true });
+    next();
+  } catch (err) {
+    res.send({ success: false, message: err.message });
+  }
+};

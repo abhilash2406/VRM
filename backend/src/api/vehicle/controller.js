@@ -1,10 +1,10 @@
 import {
   addVehicleService,
   getAllVehiclesService,
-  getActiveVehiclesService,
   getVehicleByIdService,
   updateVehicleService,
-  deleteVehicleService,
+  updateVehicleStatusService,
+  updateVehicleAvailabilityService,
 } from './service.js';
 
 /**
@@ -36,19 +36,7 @@ export const getAllVehicles = async (req, res) => {
   }
 };
 
-/**
- * Retrieves only available vehicles.
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- */
-export const getActiveVehicles = async (req, res) => {
-  try {
-    const data = await getActiveVehiclesService();
-    res.send({ success: true, message: 'Available vehicles retrieved', data });
-  } catch (e) {
-    res.send({ success: false, message: e.message });
-  }
-};
+
 
 /**
  * Retrieves a single vehicle by ID.
@@ -79,15 +67,31 @@ export const updateVehicle = async (req, res) => {
 };
 
 /**
- * Deletes a vehicle record by ID.
+ * Updates the lifecycle status of a vehicle.
  * @param {import('express').Request} req
  * @param {import('express').Response} res
  */
-export const deleteVehicle = async (req, res) => {
+export const updateVehicleStatus = async (req, res) => {
   try {
-    await deleteVehicleService(req.params.id);
-    res.send({ success: true, message: 'Vehicle deleted successfully' });
+    const data = await updateVehicleStatusService(req.params.id, req.body.status);
+    res.send({ success: true, message: 'Vehicle status updated successfully', data });
   } catch (e) {
     res.send({ success: false, message: e.message });
   }
 };
+
+/**
+ * Updates the business availability status of a vehicle.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+export const updateVehicleAvailability = async (req, res) => {
+  try {
+    const data = await updateVehicleAvailabilityService(req.params.id, req.body.availability_status);
+    res.send({ success: true, message: 'Vehicle availability updated successfully', data });
+  } catch (e) {
+    res.send({ success: false, message: e.message });
+  }
+};
+
+

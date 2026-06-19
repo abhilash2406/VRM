@@ -2,13 +2,12 @@ import express from 'express';
 import {
   addVehicle,
   getAllVehicles,
-  getActiveVehicles,
   getVehicleById,
   updateVehicle,
-  deleteVehicle,
+  updateVehicleStatus,
+  updateVehicleAvailability,
 } from './controller.js';
-import { VehicleValidate } from './validator.js';
-import { upload } from '../../common/validation/uploader.js';
+import { VehicleValidate, VehicleStatusValidate, VehicleAvailabilityValidate } from './validator.js';
 
 var router = express.Router();
 
@@ -119,23 +118,7 @@ router.post(
  */
 router.get('/', getAllVehicles);
 
-/**
- * @swagger
- * /api/v1/vehicles/active:
- *   get:
- *     tags:
- *       - Vehicle Management
- *     summary: Get available vehicles
- *     description: Retrieves vehicles whose status is 'available'.
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       '200':
- *         description: List of available vehicles
- *       '401':
- *         description: Unauthorized
- */
-router.get('/active', getActiveVehicles);
+
 
 /**
  * @swagger
@@ -214,10 +197,22 @@ router.get('/active', getActiveVehicles);
  *         description: Vehicle updated successfully
  *       '404':
  *         description: Vehicle not found
- *   delete:
+ */
+router
+  .route('/:id')
+  .get(getVehicleById)
+  .patch(
+    VehicleValidate,
+    updateVehicle
+  );
+
+/**
+ * @swagger
+ * /api/v1/vehicles/{id}/status:
+ *   patch:
  *     tags:
  *       - Vehicle Management
- *     summary: Delete a vehicle
+ *     summary: Update vehicle lifecycle status
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -227,19 +222,58 @@ router.get('/active', getActiveVehicles);
  *         schema:
  *           type: string
  *         description: Vehicle UUID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [ACTIVE, BLOCKED, INACTIVE, DELETED]
+ *                 example: INACTIVE
  *     responses:
  *       '200':
- *         description: Vehicle deleted successfully
- *       '404':
- *         description: Vehicle not found
+ *         description: Status updated successfully
+ *       '400':
+ *         description: Invalid status value
  */
-router
-  .route('/:id')
-  .get(getVehicleById)
-  .delete(deleteVehicle)
-  .patch(
-    VehicleValidate,
-    updateVehicle
-  );
+router.patch('/:id/status', VehicleStatusValidate, updateVehicleStatus);
+
+/**
+ * @swagger
+ * /api/v1/vehicles/{id}/availability:
+ *   patch:
+ *     tags:
+ *       - Vehicle Management
+ *     summary: Update vehicle availability status
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Vehicle UUID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               availability_status:
+ *                 type: string
+ *                 enum: [available, booked, maintenance]
+ *                 example: maintenance
+ *     responses:
+ *       '200':
+ *         description: Availability status updated successfully
+ *       '400':
+ *         description: Invalid availability status value
+ */
+router.patch('/:id/availability', VehicleAvailabilityValidate, updateVehicleAvailability);
 
 export default router;

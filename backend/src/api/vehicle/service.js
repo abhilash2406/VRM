@@ -1,5 +1,7 @@
 import vehicle from '../../models/vehicle.js';
 import { VehicleStatus, VehicleType } from '../../common/enum/vehicle-enum.js';
+import { EntityType } from '../../common/enum/activity-enum.js';
+import { Op } from 'sequelize';
 
 /**
  * Registers a new vehicle in the system.
@@ -22,7 +24,8 @@ export const addVehicleService = async (data, userId) => {
     manufacturer: data.manufacturer,
     model_name: data.model_name,
     manufacturing_year: data.manufacturing_year,
-    status: data.status || VehicleStatus.AVAILABLE,
+    availability_status: data.availability_status || data.status || VehicleStatus.AVAILABLE,
+    status: EntityType.ACTIVE,
     vehicle_type: data.vehicle_type || VehicleType.FOUR_WHEELER,
     vehicle_subtype: data.vehicle_subtype || null,
     seating_capacity: data.seating_capacity || null,
@@ -43,16 +46,13 @@ export const addVehicleService = async (data, userId) => {
  * @returns {Promise<Array>} List of all vehicle records.
  */
 export const getAllVehiclesService = async () => {
-  return await vehicle.findAll({ order: [['createdAt', 'DESC']] });
+  return await vehicle.findAll({ 
+    where: { status: { [Op.ne]: EntityType.DELETED } },
+    order: [['createdAt', 'DESC']] 
+  });
 };
 
-/**
- * Retrieves only vehicles with status 'available'.
- * @returns {Promise<Array>} List of available vehicles.
- */
-export const getActiveVehiclesService = async () => {
-  return await vehicle.findAll({ where: { status: 'available' } });
-};
+
 
 /**
  * Fetches a single vehicle record by ID.
@@ -86,7 +86,7 @@ export const updateVehicleService = async (id, data) => {
     manufacturer: data.manufacturer ?? found.manufacturer,
     model_name: data.model_name ?? found.model_name,
     manufacturing_year: data.manufacturing_year ?? found.manufacturing_year,
-    status: data.status ?? found.status,
+    availability_status: data.availability_status ?? data.status ?? found.availability_status,
     vehicle_type: data.vehicle_type ?? found.vehicle_type,
     vehicle_subtype: data.vehicle_subtype ?? found.vehicle_subtype,
     seating_capacity: data.seating_capacity ?? found.seating_capacity,
@@ -102,17 +102,36 @@ export const updateVehicleService = async (id, data) => {
   return found;
 };
 
+
+
 /**
- * Deletes a vehicle record.
+ * Updates the lifecycle status of a vehicle.
  * @param {string} id - The vehicle UUID.
- * @returns {Promise<boolean>} True if deleted successfully.
+ * @param {string} status - The new lifecycle status (e.g. ACTIVE, BLOCKED).
+ * @returns {Promise<Object>} The updated vehicle record.
  * @throws {Error} If the vehicle is not found.
  */
-export const deleteVehicleService = async (id) => {
+export const updateVehicleStatusService = async (id, status) => {
   const found = await vehicle.findByPk(id);
   if (!found) {
     throw new Error('Vehicle not found');
   }
-  await found.destroy();
-  return true;
+  await found.update({ status });
+  return found;
+};
+
+/**
+ * Updates the business availability status of a vehicle.
+ * @param {string} id - The vehicle UUID.
+ * @param {string} availability_status - The new availability status (e.g. available, booked).
+ * @returns {Promise<Object>} The updated vehicle record.
+ * @throws {Error} If the vehicle is not found.
+ */
+export const updateVehicleAvailabilityService = async (id, availability_status) => {
+  const found = await vehicle.findByPk(id);
+  if (!found) {
+    throw new Error('Vehicle not found');
+  }
+  await found.update({ availability_status });
+  return found;
 };

@@ -2,6 +2,7 @@ import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/sequelize-config.js';
 
 import { VehicleStatus, VehicleType, VehicleSubtype } from '../common/enum/vehicle-enum.js';
+import { EntityType } from '../common/enum/activity-enum.js';
 
 /**
  * Sequelize Model for Vehicles.
@@ -36,10 +37,15 @@ const vehicle = sequelize.define(
       allowNull: false,
       comment: 'e.g. 2024',
     },
-    status: {
+    availability_status: {
       type: DataTypes.ENUM(Object.values(VehicleStatus)),
       allowNull: false,
       defaultValue: VehicleStatus.AVAILABLE,
+    },
+    status: {
+      type: DataTypes.ENUM(Object.values(EntityType)),
+      allowNull: false,
+      defaultValue: EntityType.ACTIVE,
     },
     vehicle_type: {
       type: DataTypes.ENUM(Object.values(VehicleType)),
