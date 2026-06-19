@@ -45,10 +45,7 @@ export const addTripsService = async (data) => {
     status: status,
   });
 
-  await drivers.update(
-    { route_id: data.route_id, truck_id: data.truck_id },
-    { where: { id: data.driver_id } }
-  );
+
 
   return tripData;
 };
@@ -102,7 +99,7 @@ export const deleteTripService = async (id) => {
   const driver = await drivers.findByPk(trip.driver_id);
   if (!driver) throw new Error('Driver not found');
 
-  await driver.update({ route_id: null, truck_id: null });
+
   await trip.destroy();
   return true;
 };
@@ -145,10 +142,7 @@ export const updateTripService = async (id, data) => {
     { where: { id } }
   );
 
-  await drivers.update(
-    { route_id: data.route, truck_id: data.truck_id },
-    { where: { id: data.driver_id } }
-  );
+
 
   return true;
 };

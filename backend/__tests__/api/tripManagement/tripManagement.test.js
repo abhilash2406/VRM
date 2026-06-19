@@ -160,7 +160,6 @@ describe('Trip Management', () => {
         await controller.addTrips(req, res, next);
 
         expect(trips.default.create).toHaveBeenCalled();
-        expect(drivers.default.update).toHaveBeenCalled();
         expect(res.send).toHaveBeenCalledWith({
           success: true,
           message: 'Trip created successfully',
@@ -328,7 +327,6 @@ describe('Trip Management', () => {
 
         await controller.deleteTrip(req, res);
 
-        expect(mockUpdate).toHaveBeenCalledWith({ route_id: null, truck_id: null });
         expect(mockDestroy).toHaveBeenCalled();
         expect(res.send).toHaveBeenCalledWith({
           success: true,
@@ -441,7 +439,6 @@ describe('Trip Management', () => {
         await controller.updateTrip(req, res, next);
 
         expect(trips.default.update).toHaveBeenCalled();
-        expect(drivers.default.update).toHaveBeenCalled();
         expect(res.send).toHaveBeenCalledWith({
           success: true,
           message: 'Trip updated successfully',

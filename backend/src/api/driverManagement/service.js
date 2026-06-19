@@ -47,6 +47,7 @@ export const addDriversService = async (data, files) => {
     email: data.email,
     password_hash: randomPassword,
     designation_id: newDesignation.id,
+    blood_group: data.blood_group || null,
   });
 
   const licenseTypeString = JSON.stringify(data.license_type);
@@ -60,6 +61,13 @@ export const addDriversService = async (data, files) => {
     bata: data.bata,
     user_id: user.id,
     status: 'approved',
+    license_expiry_date: data.license_expiry_date || null,
+    experience_years: data.experience_years || null,
+    aadhar_no: data.aadhar_no || null,
+    emergency_contact_name: data.emergency_contact_name || null,
+    emergency_contact_number: data.emergency_contact_number || null,
+    availability_status: data.availability_status || 'AVAILABLE',
+    rating: data.rating || null,
   });
 
   const mailOptions = {
@@ -89,6 +97,7 @@ export const updateDriverService = async (id, data, files) => {
   await user_ext.update({
     first_name: data.name,
     phone_number: data.phone_number,
+    blood_group: data.blood_group !== undefined ? data.blood_group : user_ext.blood_group,
   });
 
   const licenseTypeString = JSON.stringify(data.license_type);
@@ -100,6 +109,13 @@ export const updateDriverService = async (id, data, files) => {
     shift: data.shift,
     daily_wage: data.daily_wage,
     bata: data.bata,
+    license_expiry_date: data.license_expiry_date !== undefined ? data.license_expiry_date : driver_ext.license_expiry_date,
+    experience_years: data.experience_years !== undefined ? data.experience_years : driver_ext.experience_years,
+    aadhar_no: data.aadhar_no !== undefined ? data.aadhar_no : driver_ext.aadhar_no,
+    emergency_contact_name: data.emergency_contact_name !== undefined ? data.emergency_contact_name : driver_ext.emergency_contact_name,
+    emergency_contact_number: data.emergency_contact_number !== undefined ? data.emergency_contact_number : driver_ext.emergency_contact_number,
+    availability_status: data.availability_status !== undefined ? data.availability_status : driver_ext.availability_status,
+    rating: data.rating !== undefined ? data.rating : driver_ext.rating,
   });
   return true;
 };

@@ -270,6 +270,7 @@ describe('Driver Management', () => {
         expect(mockUpdateUser).toHaveBeenCalledWith({
           first_name: 'New Name',
           phone_number: '4321',
+          blood_group: undefined,
         });
         expect(mockUpdateDriver).toHaveBeenCalled();
         expect(res.send).toHaveBeenCalledWith({
