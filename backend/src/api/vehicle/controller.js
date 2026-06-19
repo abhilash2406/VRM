@@ -23,14 +23,24 @@ export const addVehicle = async (req, res) => {
 };
 
 /**
- * Retrieves all vehicle records.
+ * Retrieves all vehicle records with pagination, search, sorting, and filtering.
  * @param {import('express').Request} req
  * @param {import('express').Response} res
  */
 export const getAllVehicles = async (req, res) => {
   try {
-    const data = await getAllVehiclesService();
-    res.send({ success: true, message: 'Vehicles retrieved successfully', data });
+    const result = await getAllVehiclesService(req.query);
+    res.send({ 
+      success: true, 
+      message: 'Vehicles retrieved successfully', 
+      data: result.rows,
+      meta: {
+        total: result.count,
+        page: result.page,
+        limit: result.limit,
+        totalPages: Math.ceil(result.count / result.limit)
+      }
+    });
   } catch (e) {
     res.send({ success: false, message: e.message });
   }

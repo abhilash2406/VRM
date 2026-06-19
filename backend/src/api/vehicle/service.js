@@ -42,14 +42,55 @@ export const addVehicleService = async (data, userId) => {
 };
 
 /**
- * Retrieves all registered vehicles.
- * @returns {Promise<Array>} List of all vehicle records.
+ * Retrieves all registered vehicles with advanced querying.
+ * @param {Object} query - Query parameters (page, limit, search, filters, sort)
+ * @returns {Promise<Object>} Object containing rows, count, page, and limit.
  */
-export const getAllVehiclesService = async () => {
-  return await vehicle.findAll({ 
-    where: { status: { [Op.ne]: EntityType.DELETED } },
-    order: [['createdAt', 'DESC']] 
+export const getAllVehiclesService = async (query = {}) => {
+  const page = parseInt(query.page, 10) || 1;
+  const limit = parseInt(query.limit, 10) || 10;
+  const offset = (page - 1) * limit;
+
+  const where = {};
+
+  // Exact Match Filters
+  if (query.vehicle_type) {
+    where.vehicle_type = query.vehicle_type;
+  }
+  if (query.availability_status) {
+    where.availability_status = query.availability_status;
+  }
+  if (query.status) {
+    where.status = query.status;
+  } else {
+    // By default, exclude soft-deleted records unless explicitly queried
+    where.status = { [Op.ne]: EntityType.DELETED };
+  }
+
+  // Search (LIKE operator)
+  if (query.search) {
+    // using Op.iLike for case-insensitive search (assuming Postgres)
+    // if using MySQL/SQLite, change to Op.like if needed, but Sequelize abstracts some of this.
+    const searchParam = `%${query.search}%`;
+    where[Op.or] = [
+      { registration_number: { [Op.iLike]: searchParam } },
+      { manufacturer: { [Op.iLike]: searchParam } },
+      { model_name: { [Op.iLike]: searchParam } },
+    ];
+  }
+
+  // Sorting
+  const sortBy = query.sortBy || 'createdAt';
+  const sortOrder = query.sortOrder?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+
+  const { count, rows } = await vehicle.findAndCountAll({
+    where,
+    limit,
+    offset,
+    order: [[sortBy, sortOrder]],
   });
+
+  return { count, rows, page, limit };
 };
 
 

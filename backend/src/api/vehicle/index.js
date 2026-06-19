@@ -107,12 +107,58 @@ router.post(
  *     tags:
  *       - Vehicle Management
  *     summary: Get all vehicles
- *     description: Retrieves all registered vehicles.
+ *     description: Retrieves all registered vehicles with optional pagination, search, sorting, and filtering.
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search by registration number, manufacturer, or model
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           default: createdAt
+ *         description: Field to sort by
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [ASC, DESC]
+ *           default: DESC
+ *         description: Sort order
+ *       - in: query
+ *         name: vehicle_type
+ *         schema:
+ *           type: string
+ *         description: Filter by vehicle type
+ *       - in: query
+ *         name: availability_status
+ *         schema:
+ *           type: string
+ *         description: Filter by availability status
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *         description: Filter by lifecycle status
  *     responses:
  *       '200':
- *         description: List of all vehicles
+ *         description: List of vehicles with pagination metadata
  *       '401':
  *         description: Unauthorized
  */
