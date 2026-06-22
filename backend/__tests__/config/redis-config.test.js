@@ -61,6 +61,15 @@ describe('Redis Config', () => {
         expect.stringContaining('Unable to connect to Redis')
       );
     });
+
+    it('should handle redis connection errors with non-Error object', async () => {
+      mockConnect.mockRejectedValueOnce('String connection error');
+
+      await expect(redisConfig.connectRedis()).rejects.toEqual('String connection error');
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.stringContaining('Unable to connect to Redis: String connection error')
+      );
+    });
   });
 
   describe('closeRedis', () => {
@@ -96,6 +105,15 @@ describe('Redis Config', () => {
 
       expect(logger.error).toHaveBeenCalledWith(
         expect.stringContaining('Redis client error: Test redis error')
+      );
+    });
+
+    it('should set an error listener that handles non-Error objects', async () => {
+      const errorCallback = mockOn.mock.calls.find((call) => call[0] === 'error')[1];
+      errorCallback('String error on listener');
+
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.stringContaining('Redis client error: String error on listener')
       );
     });
   });

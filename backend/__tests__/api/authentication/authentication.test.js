@@ -402,5 +402,122 @@ describe('Authentication Module', () => {
     });
   });
 
+  describe('Controller - googleLogin', () => {
+    it('should login via google successfully', async () => {
+      service.googleLoginService.mockResolvedValue({
+        accessToken: 'google-token',
+        refreshToken: 'google-refresh',
+        user: 'Google User',
+      });
 
+      const req = { body: { token: 'google-token-id' } };
+      const res = { send: jest.fn() };
+
+      await controller.googleLogin(req, res);
+
+      expect(res.send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          message: 'Login successfully',
+          accessToken: 'google-token',
+        })
+      );
+    });
+
+    it('should handle User Not Found in google login', async () => {
+      service.googleLoginService.mockRejectedValue(new Error('User Not Found'));
+
+      const req = { body: { token: 'google-token-id' } };
+      const res = { send: jest.fn() };
+
+      await controller.googleLogin(req, res);
+
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: 'User Not Found',
+      });
+    });
+
+    it('should handle non registered email in google login', async () => {
+      service.googleLoginService.mockRejectedValue(new Error('Some other error'));
+
+      const req = { body: { token: 'google-token-id' } };
+      const res = { send: jest.fn() };
+
+      await controller.googleLogin(req, res);
+
+      expect(res.send).toHaveBeenCalledWith({
+        success: false,
+        message: 'non registered email',
+      });
+    });
+  });
+
+  describe('Controller - password workflows', () => {
+    it('should handle forgotPassword successfully', async () => {
+      service.forgotPasswordService.mockResolvedValue({ message: 'OTP sent' });
+
+      const req = { body: { email: 'test@example.com' } };
+      const res = { send: jest.fn() };
+
+      await controller.forgotPassword(req, res);
+
+      expect(res.send).toHaveBeenCalledWith({ success: true, message: 'OTP sent' });
+    });
+
+    it('should handle forgotPassword error', async () => {
+      service.forgotPasswordService.mockRejectedValue(new Error('User not found'));
+
+      const req = { body: { email: 'test@example.com' } };
+      const res = { send: jest.fn() };
+
+      await controller.forgotPassword(req, res);
+
+      expect(res.send).toHaveBeenCalledWith({ success: false, message: 'User not found' });
+    });
+
+    it('should handle verifyResetOtp successfully', async () => {
+      service.verifyResetOtpService.mockResolvedValue({ message: 'OTP verified' });
+
+      const req = { body: { email: 'test@example.com', otp: '123456' } };
+      const res = { send: jest.fn() };
+
+      await controller.verifyResetOtp(req, res);
+
+      expect(res.send).toHaveBeenCalledWith({ success: true, message: 'OTP verified' });
+    });
+
+    it('should handle verifyResetOtp error', async () => {
+      service.verifyResetOtpService.mockRejectedValue(new Error('Invalid OTP'));
+
+      const req = { body: { email: 'test@example.com', otp: '123456' } };
+      const res = { send: jest.fn() };
+
+      await controller.verifyResetOtp(req, res);
+
+      expect(res.send).toHaveBeenCalledWith({ success: false, message: 'Invalid OTP' });
+    });
+
+    it('should handle resetPassword successfully', async () => {
+      service.resetPasswordService.mockResolvedValue({ message: 'Password reset' });
+
+      const req = { body: { email: 'test@example.com', password: 'newpass' } };
+      const res = { send: jest.fn() };
+
+      await controller.resetPassword(req, res);
+
+      expect(res.send).toHaveBeenCalledWith({ success: true, message: 'Password reset' });
+    });
+
+    it('should handle resetPassword error', async () => {
+      service.resetPasswordService.mockRejectedValue(new Error('Reset failed'));
+
+      const req = { body: { email: 'test@example.com', password: 'newpass' } };
+      const res = { send: jest.fn() };
+
+      await controller.resetPassword(req, res);
+
+      expect(res.send).toHaveBeenCalledWith({ success: false, message: 'Reset failed' });
+    });
+  });
 });

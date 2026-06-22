@@ -91,4 +91,26 @@ describe('sendEmail Utility', () => {
       })
     ).rejects.toThrow(BadRequest);
   });
+
+  it('should render EJS template with fallback baseurl when APP_URL is not set', async () => {
+    delete process.env.APP_URL;
+    transporter.default.sendMail.mockResolvedValue(true);
+    ejs.default.renderFile.mockResolvedValue('<h1>Mock HTML</h1>');
+
+    const mailOptions = { to: 'user@example.com', subject: 'Test' };
+    await sendEmails({ mailOptions, fileName: 'test-template.ejs' });
+
+    expect(ejs.default.renderFile).toHaveBeenCalledWith(
+      expect.stringContaining('test-template.ejs'),
+      expect.objectContaining({ baseurl: 'http://localhost:3000' })
+    );
+  });
+
+  it('should throw BadRequest exception with String(err) when sending fails with non-Error object', async () => {
+    transporter.default.sendMail.mockRejectedValue('String Error');
+
+    const mailOptions = { to: 'user@example.com', subject: 'Test' };
+
+    await expect(sendEmails({ mailOptions })).rejects.toThrow('Failed to send email: String Error');
+  });
 });
