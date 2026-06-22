@@ -1,3 +1,4 @@
 #!/bin/sh
 cd backend
 npx lint-staged
+npm run test
