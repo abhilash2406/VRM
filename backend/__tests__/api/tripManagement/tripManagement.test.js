@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-jest.unstable_mockModule('../../../src/models/truck.js', () => ({
+jest.unstable_mockModule('../../../src/models/vehicle.js', () => ({
   default: {
     findByPk: jest.fn(),
   },
@@ -31,7 +31,7 @@ jest.unstable_mockModule('../../../src/models/trip.js', () => ({
 
 const { tripValidate } = await import('../../../src/api/tripManagement/validator.js');
 const controller = await import('../../../src/api/tripManagement/controller.js');
-const trucks = await import('../../../src/models/truck.js');
+const trucks = await import('../../../src/models/vehicle.js');
 const routes = await import('../../../src/models/route.js');
 const drivers = await import('../../../src/models/driver.js');
 const trips = await import('../../../src/models/trip.js');
@@ -46,9 +46,9 @@ describe('Trip Management', () => {
       const req = {
         body: {
           date: '2023-10-15',
-          driverId: 'd3b07384-d113-4956-a534-7c4b37061d15',
-          truckId: 'e8b07384-e113-4956-e534-7c4b37061d16',
-          routeId: 'f8b07384-f113-4956-f534-7c4b37061d17',
+          driver_id: 'd3b07384-d113-4956-a534-7c4b37061d15',
+          truck_id: 'e8b07384-e113-4956-e534-7c4b37061d16',
+          route_id: 'f8b07384-f113-4956-f534-7c4b37061d17',
         },
       };
       const res = { send: jest.fn() };
@@ -62,9 +62,9 @@ describe('Trip Management', () => {
       const req = {
         body: {
           date: '2023-10-15',
-          driverId: 'invalid-uuid',
-          truckId: 'e8b07384-e113-4956-e534-7c4b37061d16',
-          routeId: 'f8b07384-f113-4956-f534-7c4b37061d17',
+          driver_id: 'invalid-uuid',
+          truck_id: 'e8b07384-e113-4956-e534-7c4b37061d16',
+          route_id: 'f8b07384-f113-4956-f534-7c4b37061d17',
         },
       };
       const res = { send: jest.fn() };
@@ -87,7 +87,7 @@ describe('Trip Management', () => {
 
         expect(res.send).toHaveBeenCalledWith({
           success: false,
-          message: 'This truck does not exist',
+          message: 'This vehicle does not exist',
         });
       });
 
@@ -160,7 +160,6 @@ describe('Trip Management', () => {
         await controller.addTrips(req, res, next);
 
         expect(trips.default.create).toHaveBeenCalled();
-        expect(drivers.default.update).toHaveBeenCalled();
         expect(res.send).toHaveBeenCalledWith({
           success: true,
           message: 'Trip created successfully',
@@ -328,7 +327,6 @@ describe('Trip Management', () => {
 
         await controller.deleteTrip(req, res);
 
-        expect(mockUpdate).toHaveBeenCalledWith({ routeId: null, truckId: null });
         expect(mockDestroy).toHaveBeenCalled();
         expect(res.send).toHaveBeenCalledWith({
           success: true,
@@ -362,7 +360,7 @@ describe('Trip Management', () => {
 
         expect(res.send).toHaveBeenCalledWith({
           success: false,
-          message: 'This truck does not exist',
+          message: 'This vehicle does not exist',
         });
       });
 
@@ -441,7 +439,6 @@ describe('Trip Management', () => {
         await controller.updateTrip(req, res, next);
 
         expect(trips.default.update).toHaveBeenCalled();
-        expect(drivers.default.update).toHaveBeenCalled();
         expect(res.send).toHaveBeenCalledWith({
           success: true,
           message: 'Trip updated successfully',

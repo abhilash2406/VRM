@@ -28,7 +28,7 @@ describe('Webhook Module', () => {
       const req = {
         body: {
           data: {
-            envelopeId: 'env-123',
+            envelope_id: 'env-123',
             envelopeSummary: {
               recipients: ['test@example.com'],
             },
@@ -44,7 +44,7 @@ describe('Webhook Module', () => {
 
       expect(booking.default.update).toHaveBeenCalledWith(
         { signed: 'Signed' },
-        { where: { envelopeId: 'env-123' } }
+        { where: { envelope_id: 'env-123' } }
       );
       expect(res.json).toHaveBeenCalledWith({ success: true });
     });
@@ -56,7 +56,7 @@ describe('Webhook Module', () => {
       const req = {
         body: {
           data: {
-            envelopeId: 'env-123',
+            envelope_id: 'env-123',
             envelopeSummary: {
               recipients: ['test@example.com'],
             },

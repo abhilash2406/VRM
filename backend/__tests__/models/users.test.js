@@ -191,10 +191,10 @@ describe('Users Model', () => {
       usersModel.associate(models);
 
       expect(usersModel.hasMany).toHaveBeenCalledWith(models.loginHistory, {
-        foreignKey: 'userId',
+        foreignKey: 'user_id',
       });
       expect(usersModel.belongsTo).toHaveBeenCalledWith(models.designation, {
-        foreignKey: 'designationId',
+        foreignKey: 'designation_id',
       });
     });
 
@@ -207,7 +207,7 @@ describe('Users Model', () => {
       usersModel.associate(models);
 
       expect(usersModel.hasMany).toHaveBeenCalledWith(models.loginHistory, {
-        foreignKey: 'userId',
+        foreignKey: 'user_id',
       });
       expect(usersModel.belongsTo).not.toHaveBeenCalled();
     });

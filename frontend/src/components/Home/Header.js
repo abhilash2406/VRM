@@ -21,12 +21,13 @@ const NavLink = styled(Link)`
 `;
 
 const Logo = styled(Link)`
+  font-family: 'Orbitron', sans-serif;
   text-decoration: none;
   color: white;
   font-size: larger;
   font-weight: 800;
   &:hover {
-    color: black;
+    color: #00D4FF;
   }
 `;
 
@@ -37,11 +38,8 @@ const Header = () => {
         <Navbar expand="lg">
           <Container>
             <Navbar.Brand>
-              <img
-                src={require('../../images/icons8-truck-50.png')}
-                style={{ marginBottom: '20px' }}
-              />
-              <Logo to="/">GOGOX</Logo>
+              <img src="/logo.png" alt="DriveOnRyd Logo" style={{ width: '36px', height: '36px', marginBottom: '4px' }} />
+              <Logo to="/">DriveOnRyd</Logo>
             </Navbar.Brand>
 
             <Navbar.Toggle

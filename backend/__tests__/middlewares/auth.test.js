@@ -132,4 +132,26 @@ describe('Auth Middleware', () => {
     expect(req.user.id).toBe('1');
     expect(req.user.validity).toBe('hashedpass1test@example.com');
   });
+
+  it('should reject if decoded is null', async () => {
+    req.header.mockReturnValue('Bearer validformattokenthatreturnnull');
+    jest.spyOn(jwt, 'verify').mockReturnValueOnce(null);
+
+    await authMiddleware(req, res, next);
+
+    expect(res.send).toHaveBeenCalledWith({ success: false, message: 'Invalid token' });
+    jwt.verify.mockRestore();
+  });
+
+  it('should reject if decoded has past exp without throwing error', async () => {
+    req.header.mockReturnValue('Bearer validformattokenthatreturnsexp');
+    jest
+      .spyOn(jwt, 'verify')
+      .mockReturnValueOnce({ id: '1', exp: Math.floor(Date.now() / 1000) - 100 });
+
+    await authMiddleware(req, res, next);
+
+    expect(res.send).toHaveBeenCalledWith({ success: false, message: 'Token expired' });
+    jwt.verify.mockRestore();
+  });
 });

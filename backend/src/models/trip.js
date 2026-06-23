@@ -48,7 +48,7 @@ const trip = sequelize.define(
 
 trip.associate = (models) => {
   trip.belongsTo(models.driver, { foreignKey: 'driver_id', allowNull: false });
-  trip.belongsTo(models.truck, { foreignKey: 'truck_id', allowNull: false });
+  trip.belongsTo(models.vehicle, { foreignKey: 'truck_id', allowNull: false });
   trip.belongsTo(models.route, { foreignKey: 'route_id', allowNull: false });
 };
 

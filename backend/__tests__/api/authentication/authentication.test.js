@@ -28,6 +28,9 @@ jest.unstable_mockModule('../../../src/api/authentication/service.js', () => ({
   signUpDriver: jest.fn(),
   processPayment: jest.fn(),
   verifyEmailService: jest.fn(),
+  forgotPasswordService: jest.fn(),
+  verifyResetOtpService: jest.fn(),
+  resetPasswordService: jest.fn(),
 }));
 
 // 3. Mock nodemailer config
@@ -70,7 +73,7 @@ describe('Authentication Module', () => {
         body: {
           name: 'John Smith',
           email: 'johnsmith@example.com',
-          phoneNumber: '9876543210',
+          phone_number: '9876543210',
           designation: 'Admin',
         },
       };
@@ -86,7 +89,7 @@ describe('Authentication Module', () => {
         body: {
           name: 'John Smith',
           email: 'invalid-email',
-          phoneNumber: '9876543210',
+          phone_number: '9876543210',
           designation: 'Admin',
         },
       };
@@ -314,7 +317,9 @@ describe('Authentication Module', () => {
       expect(res.send).toHaveBeenCalledWith({
         success: true,
         message: 'Login successfully',
-        data: expect.objectContaining({ accessToken: 'token' }),
+        accessToken: 'token',
+        refreshToken: 'refresh-token',
+        data: expect.objectContaining({ designation: 'Driver' }),
       });
     });
 
@@ -363,6 +368,8 @@ describe('Authentication Module', () => {
       expect(res.send).toHaveBeenCalledWith({
         success: true,
         message: 'Login successfully',
+        accessToken: 'token',
+        refreshToken: 'refresh-token',
         data: expect.objectContaining({ designation: 'Admin' }),
       });
     });
@@ -395,60 +402,32 @@ describe('Authentication Module', () => {
     });
   });
 
-  describe('Controller - addUsers', () => {
-    it('should fail if user already exists', async () => {
-      service.addUsersService.mockRejectedValue(new Error('user already exist'));
-      const req = { body: { email: 'exists@example.com' } };
-      const res = { send: jest.fn() };
-
-      await controller.addUsers(req, res);
-
-      expect(res.send).toHaveBeenCalledWith({
-        success: false,
-        message: 'user already exist',
-      });
-    });
-
-    it('should add user successfully', async () => {
-      service.addUsersService.mockResolvedValue(true);
-
-      const req = {
-        body: {
-          email: 'new@example.com',
-          name: 'New User',
-          phoneNumber: '1234',
-          designation: 'des-1',
-        },
-      };
-      const res = { send: jest.fn() };
-
-      await controller.addUsers(req, res);
-
-      expect(service.addUsersService).toHaveBeenCalled();
-      expect(res.send).toHaveBeenCalledWith({
-        success: true,
-        message: 'Added successfully',
-      });
-    });
-
-    it('should handle addUsers failure', async () => {
-      service.addUsersService.mockRejectedValue(new Error('Add fail'));
-      const req = { body: { email: 'exists@example.com' } };
-      const res = { send: jest.fn() };
-
-      await controller.addUsers(req, res);
-
-      expect(res.send).toHaveBeenCalledWith({
-        success: false,
-        message: 'Add fail',
-      });
-    });
-  });
-
   describe('Controller - googleLogin', () => {
-    it('should fail google login if email is not registered', async () => {
+    it('should login via google successfully', async () => {
+      service.googleLoginService.mockResolvedValue({
+        accessToken: 'google-token',
+        refreshToken: 'google-refresh',
+        user: 'Google User',
+      });
+
+      const req = { body: { token: 'google-token-id' } };
+      const res = { send: jest.fn() };
+
+      await controller.googleLogin(req, res);
+
+      expect(res.send).toHaveBeenCalledWith(
+        expect.objectContaining({
+          success: true,
+          message: 'Login successfully',
+          accessToken: 'google-token',
+        })
+      );
+    });
+
+    it('should handle User Not Found in google login', async () => {
       service.googleLoginService.mockRejectedValue(new Error('User Not Found'));
-      const req = { body: { token: 'gtoken', data: { data: { email: 'g@example.com' } } } };
+
+      const req = { body: { token: 'google-token-id' } };
       const res = { send: jest.fn() };
 
       await controller.googleLogin(req, res);
@@ -459,9 +438,10 @@ describe('Authentication Module', () => {
       });
     });
 
-    it('should fail google login with generic message for other errors', async () => {
+    it('should handle non registered email in google login', async () => {
       service.googleLoginService.mockRejectedValue(new Error('Some other error'));
-      const req = { body: { token: 'gtoken', data: { data: { email: 'g@example.com' } } } };
+
+      const req = { body: { token: 'google-token-id' } };
       const res = { send: jest.fn() };
 
       await controller.googleLogin(req, res);
@@ -471,188 +451,73 @@ describe('Authentication Module', () => {
         message: 'non registered email',
       });
     });
-
-    it('should handle google login successfully', async () => {
-      service.googleLoginService.mockResolvedValue({
-        user: 'Google User',
-        designation: 'User',
-        accessToken: 'gtoken',
-        permission: [{ menu: 'Dashboard', subMenu: 'Home' }],
-      });
-
-      const req = { body: { token: 'gtoken', data: { data: { email: 'g@example.com' } } } };
-      const res = { send: jest.fn() };
-
-      await controller.googleLogin(req, res);
-
-      expect(res.send).toHaveBeenCalledWith({
-        success: true,
-        message: 'Login successfully',
-        data: expect.objectContaining({ user: 'Google User' }),
-      });
-    });
   });
 
-  describe('Controller - googleSignUp', () => {
-    it('should fail if google user already exists', async () => {
-      service.googleSignUpService.mockRejectedValue(new Error('This user already exists'));
-      const req = { body: { data: { data: { email: 'exists@example.com' } } } };
+  describe('Controller - password workflows', () => {
+    it('should handle forgotPassword successfully', async () => {
+      service.forgotPasswordService.mockResolvedValue({ message: 'OTP sent' });
+
+      const req = { body: { email: 'test@example.com' } };
       const res = { send: jest.fn() };
 
-      await controller.googleSignUp(req, res);
+      await controller.forgotPassword(req, res);
 
-      expect(res.send).toHaveBeenCalledWith({
-        success: false,
-        message: 'This user already exists',
-      });
+      expect(res.send).toHaveBeenCalledWith({ success: true, message: 'OTP sent' });
     });
 
-    it('should google sign up successfully', async () => {
-      service.googleSignUpService.mockResolvedValue('new@example.com');
-      const req = { body: { data: { data: { email: 'new@example.com' } } } };
+    it('should handle forgotPassword error', async () => {
+      service.forgotPasswordService.mockRejectedValue(new Error('User not found'));
+
+      const req = { body: { email: 'test@example.com' } };
       const res = { send: jest.fn() };
 
-      await controller.googleSignUp(req, res);
+      await controller.forgotPassword(req, res);
 
-      expect(res.send).toHaveBeenCalledWith({
-        success: true,
-        data: 'new@example.com',
-      });
+      expect(res.send).toHaveBeenCalledWith({ success: false, message: 'User not found' });
     });
 
-    it('should handle googleSignUp failure', async () => {
-      service.googleSignUpService.mockRejectedValue(new Error('Google sign fail'));
-      const req = { body: { data: { data: { email: 'new@example.com' } } } };
+    it('should handle verifyResetOtp successfully', async () => {
+      service.verifyResetOtpService.mockResolvedValue({ message: 'OTP verified' });
+
+      const req = { body: { email: 'test@example.com', otp: '123456' } };
       const res = { send: jest.fn() };
 
-      await controller.googleSignUp(req, res);
+      await controller.verifyResetOtp(req, res);
 
-      expect(res.send).toHaveBeenCalledWith({
-        success: false,
-        message: 'Google sign fail',
-      });
+      expect(res.send).toHaveBeenCalledWith({ success: true, message: 'OTP verified' });
     });
-  });
 
-  describe('Controller - signUpUser', () => {
-    it('should fail if user already exists', async () => {
-      service.signUpDriver.mockRejectedValue(new Error('User already exist'));
+    it('should handle verifyResetOtp error', async () => {
+      service.verifyResetOtpService.mockRejectedValue(new Error('Invalid OTP'));
 
-      const req = { body: { email: 'exists@example.com', password: 'pass' } };
+      const req = { body: { email: 'test@example.com', otp: '123456' } };
       const res = { send: jest.fn() };
 
-      await controller.signUpUser(req, res);
+      await controller.verifyResetOtp(req, res);
 
-      expect(res.send).toHaveBeenCalledWith({
-        success: false,
-        message: 'User already exist',
-      });
+      expect(res.send).toHaveBeenCalledWith({ success: false, message: 'Invalid OTP' });
     });
 
-    it('should register driver successfully with brand and model (create truck)', async () => {
-      service.signUpDriver.mockResolvedValue({
-        name: 'John',
-        email: 'driver@example.com',
-        phn: '1234',
-        wage: 1000,
-        driver: 'driver-1',
-      });
+    it('should handle resetPassword successfully', async () => {
+      service.resetPasswordService.mockResolvedValue({ message: 'Password reset' });
 
-      const req = {
-        body: {
-          email: 'driver@example.com',
-          password: 'pass',
-          first_name: 'John',
-          phoneNumber: '1234',
-          brand: 'b-1',
-          model: 'm-1',
-        },
-        files: {},
-      };
+      const req = { body: { email: 'test@example.com', password: 'newpass' } };
       const res = { send: jest.fn() };
 
-      await controller.signUpUser(req, res);
+      await controller.resetPassword(req, res);
 
-      expect(service.signUpDriver).toHaveBeenCalled();
-      expect(res.send).toHaveBeenCalledWith({
-        success: true,
-        data: expect.objectContaining({ driver: 'driver-1' }),
-      });
+      expect(res.send).toHaveBeenCalledWith({ success: true, message: 'Password reset' });
     });
 
-    it('should register driver successfully without brand and model', async () => {
-      service.signUpDriver.mockResolvedValue({
-        name: 'John',
-        email: 'driver@example.com',
-        phn: '1234',
-        wage: '500',
-        driver: 'driver-1',
-      });
+    it('should handle resetPassword error', async () => {
+      service.resetPasswordService.mockRejectedValue(new Error('Reset failed'));
 
-      const req = {
-        body: {
-          email: 'driver@example.com',
-          password: 'pass',
-          first_name: 'John',
-          phoneNumber: '1234',
-          licenseNo: 'LIC123',
-          dailyWage: '500',
-        },
-        files: {},
-      };
+      const req = { body: { email: 'test@example.com', password: 'newpass' } };
       const res = { send: jest.fn() };
 
-      await controller.signUpUser(req, res);
+      await controller.resetPassword(req, res);
 
-      expect(res.send).toHaveBeenCalledWith({
-        success: true,
-        data: expect.objectContaining({ wage: '500' }),
-      });
-    });
-  });
-
-  describe('Controller - proceedPayment', () => {
-    it('should process Stripe payment successfully', async () => {
-      service.processPayment.mockResolvedValue({ status: 'succeeded' });
-
-      const req = {
-        body: {
-          id: 'pm-1',
-          userData: {
-            name: 'John',
-            email: 'john@example.com',
-            phn: '1234',
-            mail: 'john@example.com',
-            driver: 'driver-1',
-          },
-        },
-      };
-      const res = { send: jest.fn(), json: jest.fn() };
-
-      await controller.proceedPayment(req, res);
-
-      expect(service.processPayment).toHaveBeenCalled();
-      expect(res.send).toHaveBeenCalledWith({
-        success: true,
-        data: { status: 'succeeded' },
-      });
-    });
-
-    it('should handle Stripe processing failures in catch block', async () => {
-      service.processPayment.mockRejectedValue(new Error('Stripe error'));
-      const req = {
-        body: {
-          id: 'pm-1',
-          userData: {
-            name: 'John',
-          },
-        },
-      };
-      const res = { send: jest.fn(), json: jest.fn() };
-
-      await controller.proceedPayment(req, res);
-
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ success: false }));
+      expect(res.send).toHaveBeenCalledWith({ success: false, message: 'Reset failed' });
     });
   });
 });

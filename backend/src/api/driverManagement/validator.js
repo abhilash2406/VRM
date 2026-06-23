@@ -18,6 +18,14 @@ export const driverValidate = async (req, res, next) => {
     shift: Joi.string().required(),
     daily_wage: Joi.string().required(),
     bata: Joi.string().required(),
+    blood_group: Joi.string().optional().allow(''),
+    license_expiry_date: Joi.date().iso().optional().allow(''),
+    experience_years: Joi.number().integer().min(0).optional().allow(''),
+    aadhar_no: Joi.string().optional().allow(''),
+    emergency_contact_name: Joi.string().optional().allow(''),
+    emergency_contact_number: Joi.string().optional().allow(''),
+    availability_status: Joi.string().valid('AVAILABLE', 'ON_TRIP', 'ON_LEAVE', 'SICK').optional().allow(''),
+    rating: Joi.number().min(0).max(5).optional().allow(''),
   });
   try {
     req.body = await schema.validateAsync(req.body);

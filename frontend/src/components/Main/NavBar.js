@@ -29,13 +29,14 @@ const NavBar = () => {
         <a
           href="/dashboard"
           className="d-block p-3 link-white text-decoration-none pb-3"
+          style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: '700', fontSize: '1.2rem' }}
           title=""
           data-bs-toggle="tooltip"
           data-bs-placement="right"
           data-bs-original-title="Icon-only"
         >
           {' '}
-          GOGOX
+          DriveOnRyd
           <i className="bi-truck fs-1"></i>
         </a>
         <div className="dropdown">

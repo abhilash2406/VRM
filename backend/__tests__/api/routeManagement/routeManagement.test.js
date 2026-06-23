@@ -162,6 +162,20 @@ describe('Route Management', () => {
           message: 'Delete error',
         });
       });
+
+      it('should handle route not found in deleteRoute', async () => {
+        routes.default.findByPk.mockResolvedValue(null);
+
+        const req = { params: { id: 'notfound' } };
+        const res = { send: jest.fn() };
+
+        await controller.deleteRoute(req, res);
+
+        expect(res.send).toHaveBeenCalledWith({
+          success: false,
+          message: 'Route not found',
+        });
+      });
     });
 
     describe('getRoute', () => {

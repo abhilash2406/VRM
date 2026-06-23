@@ -68,6 +68,10 @@ const users = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    blood_group: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     timestamps: true,

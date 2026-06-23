@@ -34,13 +34,14 @@ const swaggerOptions = {
     path.resolve(__dirname, '../api/contactManagement/index.js'),
     path.resolve(__dirname, '../api/authentication/index.js'),
     path.resolve(__dirname, '../api/driverManagement/index.js'),
-    path.resolve(__dirname, '../api/truckManagement/index.js'),
+    path.resolve(__dirname, '../api/vehicle/index.js'),
     path.resolve(__dirname, '../api/tripManagement/index.js'),
     path.resolve(__dirname, '../api/routeManagement/index.js'),
     path.resolve(__dirname, '../api/transactionManagement/index.js'),
     path.resolve(__dirname, '../api/profileManagement/index.js'),
     path.resolve(__dirname, '../api/designationManagement/index.js'),
     path.resolve(__dirname, '../api/permissionManagement/index.js'),
+    path.resolve(__dirname, '../api/FileUpload/index.js'),
   ],
 };
 

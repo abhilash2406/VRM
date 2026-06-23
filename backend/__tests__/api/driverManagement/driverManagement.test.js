@@ -65,11 +65,11 @@ describe('Driver Management', () => {
         body: {
           name: 'Jane Doe',
           email: 'jane@example.com',
-          licenseNo: 'DL12345',
-          phoneNumber: '1234567890',
-          licenseType: 'Heavy',
+          license_no: 'DL12345',
+          phone_number: '1234567890',
+          license_type: 'Heavy',
           shift: 'Day',
-          dailyWage: '500',
+          daily_wage: '500',
           bata: '50',
         },
       };
@@ -80,15 +80,15 @@ describe('Driver Management', () => {
       expect(next).toHaveBeenCalled();
     });
 
-    it('should fail validation if licenseNo is missing', async () => {
+    it('should fail validation if license_no is missing', async () => {
       const req = {
         body: {
           name: 'Jane Doe',
           email: 'jane@example.com',
-          phoneNumber: '1234567890',
-          licenseType: 'Heavy',
+          phone_number: '1234567890',
+          license_type: 'Heavy',
           shift: 'Day',
-          dailyWage: '500',
+          daily_wage: '500',
           bata: '50',
         },
       };
@@ -103,7 +103,7 @@ describe('Driver Management', () => {
   describe('Controller Functions', () => {
     describe('getDriverDatas', () => {
       it('should fetch driver data successfully', async () => {
-        const mockDrivers = [{ id: '1', licenseNo: 'DL123' }];
+        const mockDrivers = [{ id: '1', license_no: 'DL123' }];
         drivers.default.findAll.mockResolvedValue(mockDrivers);
 
         const req = {};
@@ -156,7 +156,7 @@ describe('Driver Management', () => {
         users.default.findOne.mockResolvedValue(null);
         drivers.default.findAll.mockResolvedValue([{ id: 'driver-1' }]);
 
-        const req = { body: { email: 'test@example.com', licenseNo: 'DL123' } };
+        const req = { body: { email: 'test@example.com', license_no: 'DL123' } };
         const res = { send: jest.fn() };
         const next = jest.fn();
 
@@ -178,16 +178,16 @@ describe('Driver Management', () => {
         const req = {
           body: {
             email: 'test@example.com',
-            licenseNo: 'DL123',
+            license_no: 'DL123',
             name: 'John',
-            phoneNumber: '1234',
-            licenseType: ['Heavy'],
+            phone_number: '1234',
+            license_type: ['Heavy'],
             shift: 'day',
-            dailyWage: '500',
+            daily_wage: '500',
             bata: '50',
           },
           files: {
-            licensePhoto: [{ path: 'public/lic.png' }],
+            license_photo: [{ path: 'public/lic.png' }],
             userPhoto: [{ path: 'public/usr.png' }],
           },
         };
@@ -251,15 +251,15 @@ describe('Driver Management', () => {
           params: { id: 'drv-1' },
           body: {
             name: 'New Name',
-            phoneNumber: '4321',
-            licenseNo: 'DL789',
-            licenseType: ['Heavy'],
+            phone_number: '4321',
+            license_no: 'DL789',
+            license_type: ['Heavy'],
             shift: 'night',
-            dailyWage: '600',
+            daily_wage: '600',
             bata: '60',
           },
           files: {
-            licensePhoto: [{ path: 'public/lic.png' }],
+            license_photo: [{ path: 'public/lic.png' }],
             userPhoto: [{ path: 'public/usr.png' }],
           },
         };
@@ -270,6 +270,7 @@ describe('Driver Management', () => {
         expect(mockUpdateUser).toHaveBeenCalledWith({
           first_name: 'New Name',
           phone_number: '4321',
+          blood_group: undefined,
         });
         expect(mockUpdateDriver).toHaveBeenCalled();
         expect(res.send).toHaveBeenCalledWith({
@@ -295,7 +296,7 @@ describe('Driver Management', () => {
 
     describe('viewDriver', () => {
       it('should view driver successfully', async () => {
-        const mockDriver = { id: 'drv-1', licenseNo: 'DL123' };
+        const mockDriver = { id: 'drv-1', license_no: 'DL123' };
         drivers.default.findOne.mockResolvedValue(mockDriver);
 
         const req = { params: { id: 'drv-1' } };
@@ -417,7 +418,7 @@ describe('Driver Management', () => {
         const req = {
           params: { id: 'drv-1' },
           body: {
-            dailyWage: '500',
+            daily_wage: '500',
             bata: '50',
             shift: 'day',
           },
@@ -430,7 +431,7 @@ describe('Driver Management', () => {
         expect(drivers.default.update).toHaveBeenCalledWith(
           {
             status: 'approved',
-            dailyWage: '500',
+            daily_wage: '500',
             bata: '50',
             shift: 'day',
           },

@@ -74,8 +74,8 @@ describe('Permission Management', () => {
       });
       permissionSetting.default.findAll.mockResolvedValue([
         {
-          designationId: 'role-1',
-          permission: { menu: 'Dashboard', subMenu: 'Home' },
+          designation_id: 'role-1',
+          permission: { menu: 'Dashboard', sub_menu: 'Home' },
         },
       ]);
       designations.default.findByPk.mockResolvedValue({ id: 'role-1', designation: 'Admin' });
@@ -96,12 +96,12 @@ describe('Permission Management', () => {
       await controller.grantPermissions(req, res, next);
 
       expect(permissionSetting.default.destroy).toHaveBeenCalledWith({
-        where: { designationId: 'role-1' },
+        where: { designation_id: 'role-1' },
       });
       expect(permissionSetting.default.create).toHaveBeenCalled();
       expect(designations.default.findByPk).toHaveBeenCalledWith('role-1');
       expect(mockSocket.emit).toHaveBeenCalledWith('GetPermissions', {
-        data: [{ menu: 'Dashboard', subMenu: 'Home' }],
+        data: [{ menu: 'Dashboard', sub_menu: 'Home' }],
         role: 'Admin',
       });
       expect(res.send).toHaveBeenCalledWith({
@@ -134,7 +134,7 @@ describe('Permission Management', () => {
   describe('getUserData', () => {
     it('should fetch allowed designation settings successfully', async () => {
       permissionSetting.default.findAll.mockResolvedValue([
-        { permissionId: 'perm-1', designationId: 'role-1' },
+        { permission_id: 'perm-1', designation_id: 'role-1' },
       ]);
 
       const req = { params: { id: 'role-1' } };
@@ -144,12 +144,12 @@ describe('Permission Management', () => {
       await controller.getUserData(req, res, next);
 
       expect(permissionSetting.default.findAll).toHaveBeenCalledWith({
-        where: { designationId: 'role-1' },
+        where: { designation_id: 'role-1' },
       });
       expect(res.send).toHaveBeenCalledWith({
         success: true,
         message: 'successfully fetched data',
-        data: [{ permissionId: 'perm-1', designationId: 'role-1' }],
+        data: [{ permission_id: 'perm-1', designation_id: 'role-1' }],
       });
     });
 

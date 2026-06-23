@@ -43,13 +43,33 @@ const driver = sequelize.define(
       allowNull: false,
       defaultValue: EntityType.ACTIVE,
     },
-    truck_id: {
-      type: DataTypes.UUID,
+    license_expiry_date: {
+      type: DataTypes.DATEONLY,
       allowNull: true,
     },
-    route_id: {
-      type: DataTypes.UUID,
-
+    experience_years: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    aadhar_no: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    emergency_contact_name: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    emergency_contact_number: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    availability_status: {
+      type: DataTypes.ENUM('AVAILABLE', 'ON_TRIP', 'ON_LEAVE', 'SICK'),
+      allowNull: true,
+      defaultValue: 'AVAILABLE',
+    },
+    rating: {
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
     user_id: {
@@ -64,10 +84,6 @@ const driver = sequelize.define(
 
 driver.associate = (models) => {
   driver.belongsTo(models.users, { foreignKey: 'user_id' });
-  driver.belongsTo(models.truck, { foreignKey: 'truck_id' });
-  driver.belongsTo(models.route, {
-    foreignKey: 'route_id',
-  });
 };
 
 export default driver;

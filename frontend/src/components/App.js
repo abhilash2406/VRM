@@ -30,17 +30,15 @@ import Success from './Authentication/Success';
 import { PrivateRoute } from './PrivateRouting';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAuthStore } from '../store/useAuthStore';
+import { useMsgStore } from '../store/useMsgStore';
+import { useLoginPermissions } from '../hooks/queries/usePermissionQueries';
 import './index.css';
 import ChangePassword from './Main/ChangePassword';
 import io from 'socket.io-client';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { resetSuccessMessage, resetErrorMessage } from '../action';
-import {
-  setCurrentPermissions,
-  permissionOfLogin,
-} from './PermissionManagement/action';
+
 
 const toastConfig = {
   position: 'top-right',
@@ -56,30 +54,36 @@ const toastConfig = {
 const socket = io.connect('http://localhost:5000');
 
 const App = () => {
-  const dispatch = useDispatch();
-  const { role } = useSelector((e) => e.auth);
-  const { successMsg, errorMsg } = useSelector((e) => e.msg);
+  const role = useAuthStore((state) => state.role);
+  const setLogin = useAuthStore((state) => state.setLogin);
+  const successMsg = useMsgStore((state) => state.successMsg);
+  const errorMsg = useMsgStore((state) => state.errorMsg);
+  const resetSuccessMessage = useMsgStore((state) => state.resetSuccessMessage);
+  const resetErrorMessage = useMsgStore((state) => state.resetErrorMessage);
+  
+  const loginPermissionsMutation = useLoginPermissions();
+
   useEffect(() => {
     socket.on('GetPermissions', (data) => {
       logger.info('socketData', data);
-
-      dispatch(setCurrentPermissions(role, data));
+      setLogin(role, data.data); // assuming data.data contains permissions as per old action
     });
-  }, [socket]);
+    return () => socket.off('GetPermissions');
+  }, [socket, role, setLogin]);
 
   useEffect(() => {
-    dispatch(permissionOfLogin());
+    loginPermissionsMutation.mutate();
   }, []);
 
   useEffect(() => {
     if (successMsg) {
       toast.success(successMsg, toastConfig);
-      dispatch(resetSuccessMessage());
+      resetSuccessMessage();
     } else if (errorMsg) {
       toast.error(errorMsg, toastConfig);
-      dispatch(resetErrorMessage());
+      resetErrorMessage();
     }
-  }, [successMsg, errorMsg]);
+  }, [successMsg, errorMsg, resetSuccessMessage, resetErrorMessage]);
 
   return (
     <div>

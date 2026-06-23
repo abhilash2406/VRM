@@ -4,7 +4,7 @@ import loginHistory from '../../src/models/loginHistory.js';
 import permissionSetting from '../../src/models/permissionSetting.js';
 import transaction from '../../src/models/transaction.js';
 import trip from '../../src/models/trip.js';
-import truck from '../../src/models/truck.js';
+import vehicle from '../../src/models/vehicle.js';
 import users from '../../src/models/users.js';
 
 describe('Models Associations', () => {
@@ -13,7 +13,7 @@ describe('Models Associations', () => {
     const mockHasMany = jest.fn();
     const mockModels = {
       users: { belongsTo: mockBelongsTo, hasMany: mockHasMany },
-      truck: { belongsTo: mockBelongsTo },
+      vehicle: { belongsTo: mockBelongsTo },
       route: { belongsTo: mockBelongsTo },
       designation: { belongsTo: mockBelongsTo },
       permission: { belongsTo: mockBelongsTo },
@@ -27,7 +27,7 @@ describe('Models Associations', () => {
     permissionSetting.belongsTo = mockBelongsTo;
     transaction.belongsTo = mockBelongsTo;
     trip.belongsTo = mockBelongsTo;
-    truck.belongsTo = mockBelongsTo;
+    vehicle.belongsTo = mockBelongsTo;
     users.belongsTo = mockBelongsTo;
     users.hasMany = mockHasMany;
 
@@ -37,7 +37,7 @@ describe('Models Associations', () => {
     permissionSetting.associate(mockModels);
     transaction.associate(mockModels);
     trip.associate(mockModels);
-    truck.associate(mockModels);
+    vehicle.associate(mockModels);
     users.associate(mockModels);
 
     expect(mockBelongsTo).toHaveBeenCalled();
