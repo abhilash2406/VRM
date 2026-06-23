@@ -186,6 +186,9 @@ const signuPSchema = Yup.object().shape({
     .min(8, 'Password must be at least 8 characters')
     .matches(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])/, 'Must contain uppercase, lowercase, number, and special character')
     .required('Password is required'),
+  confirm_password: Yup.string()
+    .oneOf([Yup.ref('password'), null], 'Passwords must match')
+    .required('Confirm Password is required'),
   phone_number: Yup.string()
     .required('Phone number is required'),
 });
@@ -203,11 +206,12 @@ const Registration = () => {
         <SubTitle>Create an account to get started.</SubTitle>
 
         <Formik
-          initialValues={{ first_name: '', last_name: '', email: '', password: '', phone_number: '' }}
+          initialValues={{ first_name: '', last_name: '', email: '', password: '', confirm_password: '', phone_number: '' }}
           validationSchema={signuPSchema}
           onSubmit={(values, { resetForm }) => {
-            logger.info('values', values);
-            dispatch(setSignuP(values, () => {
+            const { confirm_password, ...apiPayload } = values;
+            logger.info('apiPayload', apiPayload);
+            dispatch(setSignuP(apiPayload, () => {
               resetForm();
               navigate('/fill-details');
             }));
@@ -281,19 +285,35 @@ const Registration = () => {
                 {errors.phone_number && touched.phone_number && <ErrorText>{errors.phone_number}</ErrorText>}
               </FormGroup>
 
-              <FormGroup>
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Create a password"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={values.password}
-                />
-                {errors.password && touched.password && <ErrorText>{errors.password}</ErrorText>}
-              </FormGroup>
+              <FlexRow>
+                <FormGroup>
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Create a password"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.password}
+                  />
+                  {errors.password && touched.password && <ErrorText>{errors.password}</ErrorText>}
+                </FormGroup>
+
+                <FormGroup>
+                  <Label htmlFor="confirm_password">Confirm Password</Label>
+                  <Input
+                    type="password"
+                    id="confirm_password"
+                    name="confirm_password"
+                    placeholder="Confirm your password"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.confirm_password}
+                  />
+                  {errors.confirm_password && touched.confirm_password && <ErrorText>{errors.confirm_password}</ErrorText>}
+                </FormGroup>
+              </FlexRow>
 
               <SubmitButton type="submit" disabled={isSubmitting}>
                 {isSubmitting ? 'Registering...' : 'Register'}
