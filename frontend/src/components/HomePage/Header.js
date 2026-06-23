@@ -172,6 +172,44 @@ const MobileToggle = styled.button`
   @media (max-width: 768px) {
     display: flex;
     align-items: center;
+    z-index: 1001; /* Above the mobile menu */
+  }
+`;
+
+const MobileMenu = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.98);
+  backdrop-filter: blur(20px);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  transform: ${({ isOpen }) => (isOpen ? 'translateY(0)' : 'translateY(-100%)')};
+  opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: ${({ isOpen }) => (isOpen ? 'all' : 'none')};
+
+  @media (min-width: 769px) {
+    display: none;
+  }
+`;
+
+const MobileNavItem = styled(Link)`
+  color: #ffffff;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  letter-spacing: 1px;
+
+  &:hover {
+    color: #00D4FF;
   }
 `;
 
@@ -181,6 +219,7 @@ const Spacer = styled.div`
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -210,11 +249,21 @@ const Header = () => {
             </LoginBtn>
           </NavLinks>
 
-          <MobileToggle>
-            <i className="fas fa-bars"></i>
+          <MobileToggle onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            <i className={isMobileMenuOpen ? "fas fa-times" : "fas fa-bars"}></i>
           </MobileToggle>
         </Inner>
       </NavWrapper>
+
+      <MobileMenu isOpen={isMobileMenuOpen}>
+        <MobileNavItem to="/" onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavItem>
+        <MobileNavItem to="/image-gallery" onClick={() => setIsMobileMenuOpen(false)}>Gallery</MobileNavItem>
+        <MobileNavItem to="/contact-us" onClick={() => setIsMobileMenuOpen(false)}>Contact Us</MobileNavItem>
+        <LoginBtn to="/login" onClick={() => setIsMobileMenuOpen(false)} style={{ marginTop: '16px', fontSize: '1.2rem', padding: '14px 32px' }}>
+          <i className="fas fa-user"></i>
+          Login / Register
+        </LoginBtn>
+      </MobileMenu>
       <Spacer />
     </>
   );
