@@ -128,7 +128,7 @@ const NavItem = styled(Link)`
   }
 `;
 
-const LoginBtn = styled.a`
+const LoginBtn = styled(Link)`
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -204,7 +204,7 @@ const Header = () => {
             <NavItem to="/">Home</NavItem>
             <NavItem to="/image-gallery">Gallery</NavItem>
             <NavItem to="/contact-us">Contact Us</NavItem>
-            <LoginBtn href="http://localhost:3001/login">
+            <LoginBtn to="/login">
               <i className="fas fa-user"></i>
               Login / Register
             </LoginBtn>
