@@ -17,10 +17,10 @@ const NavWrapper = styled.nav`
   background: ${({ scrolled }) =>
     scrolled
       ? 'linear-gradient(135deg, rgba(15,23,42,0.98) 0%, rgba(30,41,59,0.98) 100%)'
-      : 'linear-gradient(135deg, rgba(15,23,42,0.75) 0%, rgba(30,41,59,0.75) 100%)'};
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid ${({ scrolled }) => (scrolled ? 'rgba(0,212,255,0.3)' : 'rgba(255,255,255,0.08)')};
+      : 'transparent'};
+  backdrop-filter: ${({ scrolled }) => (scrolled ? 'blur(20px)' : 'none')};
+  -webkit-backdrop-filter: ${({ scrolled }) => (scrolled ? 'blur(20px)' : 'none')};
+  border-bottom: 1px solid ${({ scrolled }) => (scrolled ? 'rgba(0,212,255,0.3)' : 'transparent')};
   box-shadow: ${({ scrolled }) => (scrolled ? '0 8px 32px rgba(0,0,0,0.4)' : 'none')};
   transition: all 0.4s ease;
   padding: 0 40px;
@@ -176,7 +176,7 @@ const MobileToggle = styled.button`
 `;
 
 const Spacer = styled.div`
-  height: 72px;
+  display: none;
 `;
 
 const Header = () => {

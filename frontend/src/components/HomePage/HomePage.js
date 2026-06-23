@@ -24,7 +24,7 @@ const CarouselWrapper = styled.div`
   /* AI-generated images are square — show the top half (most scenic) */
   .slide-img {
     width: 100%;
-    height: 90vh;
+    height: 100vh;
     min-height: 520px;
     object-fit: cover;
     object-position: center top;
@@ -51,18 +51,19 @@ const CarouselWrapper = styled.div`
   /* prev / next circles */
   .carousel-control-prev-icon,
   .carousel-control-next-icon {
-    width: 50px;
-    height: 50px;
-    background-color: rgba(59, 130, 246, 0.4);
+    width: 36px;
+    height: 36px;
+    background-color: rgba(59, 130, 246, 0.2);
     border-radius: 50%;
-    background-size: 45%;
-    backdrop-filter: blur(6px);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    transition: background-color 0.3s;
+    background-size: 40%;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.3s;
   }
   .carousel-control-prev:hover .carousel-control-prev-icon,
   .carousel-control-next:hover .carousel-control-next-icon {
-    background-color: rgba(59, 130, 246, 0.75);
+    background-color: rgba(59, 130, 246, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
   }
 
   /* dot indicators */
