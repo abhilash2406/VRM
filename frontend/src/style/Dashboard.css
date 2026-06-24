@@ -47,7 +47,9 @@
 .brand-title span {
   background: linear-gradient(90deg, #00D4FF, #0066FF);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .sidebar-nav {
