@@ -45,7 +45,7 @@ export const useAllTrucks = () => {
   return useQuery({
     queryKey: truckKeys.all,
     queryFn: async () => {
-      const { data } = await getData('/trucks');
+      const { data } = await getData('/vehicles');
       if (!data.success) throw new Error(data.message);
       return data.data;
     },

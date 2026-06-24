@@ -1,39 +1,30 @@
-import logger from '../../utils/logger';
-// add user by admin
-
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { addUser, fetchDesignations } from './action';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import NavBar from '../Main/NavBar';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import DataTable, { createTheme } from 'react-data-table-component';
+import NotFound from '../NotFound';
 
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
 const AddUser = () => {
   const navigate = useNavigate();
-
-  const { id } = useParams();
-  const fileInputRef = useRef(null);
-
-  // const [isReadOnly, setIsReadOnly] = useState(false);
-
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   dispatch(fetchDesignations());
-  // },[]);
 
   useEffect(() => {
     dispatch(fetchDesignations());
-  }, []);
+    // Note: Once the backend endpoint is ready, dispatch fetchUsers() here
+  }, [dispatch]);
 
   const { designations } = useSelector((state) => state.user);
-  logger.info('designations', designations);
-
-  // const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
+  
+  // Dummy data array since we are focusing on frontend layout.
+  // Once backend is ready, replace this with the actual users list from Redux state.
+  const usersList = []; 
 
   const {
     handleSubmit,
@@ -45,17 +36,16 @@ const AddUser = () => {
     resetForm,
   } = useFormik({
     validationSchema: Yup.object().shape({
-      name: Yup.string().min(3).max(20).required('name is Required'),
+      name: Yup.string().min(3).max(20).required('Name is required'),
       phoneNumber: Yup.string()
         .matches(phoneRegExp, 'Phone number is not valid')
-        .required('phone no is Required'),
+        .required('Phone is required'),
       email: Yup.string()
-        .email('type mail in valid format')
-        .required('email is Required'),
-      designation: Yup.string().required('designation is Required'),
+        .email('Invalid email format')
+        .required('Email is required'),
+      designation: Yup.string().required('Designation is required'),
     }),
     enableReinitialize: true,
-    // initial values
     initialValues: {
       name: '',
       phoneNumber: '',
@@ -63,32 +53,25 @@ const AddUser = () => {
       designation: '',
     },
     onSubmit: (values, { resetForm }) => {
-      resetForm({ values: '' });
-      const formData = new FormData();
-      formData.append('name', values.name);
-      formData.append('phoneNumber', values.phoneNumber);
-      formData.append('email', values.email);
-      formData.append('designation', values.designation);
-
-      if (id) {
-        // formData.append(
-        //   'image',
-        //   fileInputRef.current.files[0] || adminData.image
-        // );
-        // dispatch(updateAdminData(id, formData));
-        // navigate('/admin');
-      } else {
-        // formData.append('image', fileInputRef.current.files[0]);
-        // logger.info('values', values);
-        dispatch(addUser(values, () => navigate('/admin')));
-      }
+      dispatch(addUser(values, () => {
+        resetForm({ values: '' });
+        // Close modal after submission
+        const modal = document.getElementById('addUserModal');
+        // @ts-ignore
+        if (window.bootstrap) {
+          const modalInstance = window.bootstrap.Modal.getInstance(modal);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+        }
+        navigate('/admin');
+      }));
     },
   });
 
   const options = designations?.filter(
     (item) => item.designation !== 'Admin' && item.designation !== 'Driver'
   );
-  logger.info('options', options);
 
   const dOptions = options
     ?.map((item, index) => (
@@ -98,103 +81,149 @@ const AddUser = () => {
     ))
     .filter((item) => item.designation !== 'Admin');
 
-  return (
-    <div className="container-fluid">
-      <div className="row">
-        <NavBar />
-        <div className="col-sm p-3 min-vh-100">
-          <section>
-            <div className="container">
-              <div className="row justify-content-center">
-                <div className="col-12 col-md-8 col-lg-8 col-xl-6">
-                  <div className="row">
-                    <div className="col text-center title">
-                      <h1>Add user</h1>
-                    </div>
-                  </div>
-                  <form onSubmit={handleSubmit}>
-                    <div className="row align-items-center">
-                      <div className="col mt-4">
-                        <input
-                          type="text"
-                          name="name"
-                          id="name"
-                          className="form-control"
-                          placeholder="Full Name"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          value={values.name}
-                        />
-                        {errors.name && touched.name ? (
-                          <div>{errors.name}</div>
-                        ) : null}
-                      </div>
-                    </div>
-                    <div className="row align-items-center mt-4">
-                      <div className="col">
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          className="form-control"
-                          placeholder="Email"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          value={values.email}
-                        />
-                        {errors.email && touched.email ? (
-                          <div>{errors.email}</div>
-                        ) : null}
-                      </div>
-                    </div>
-                    <div className="row align-items-center mt-4">
-                      <div className="col">
-                        <input
-                          type="text"
-                          id="phoneNumber"
-                          name="phoneNumber"
-                          className="form-control"
-                          placeholder="phone number"
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          value={values.phoneNumber}
-                        />
-                        {errors.phoneNumber && touched.phoneNumber ? (
-                          <div>{errors.phoneNumber}</div>
-                        ) : null}
-                      </div>
-                    </div>
-                    <div className="row align-items-center mt-4">
-                      <div className="col">
-                        <select
-                          name="designation"
-                          value={values.designation}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          style={{ display: 'block' }}
-                        >
-                          <option value="">Select an designation</option>
-                          {dOptions}
-                        </select>
-                        {errors.designation && touched.designation ? (
-                          <div>{errors.designation}</div>
-                        ) : null}
-                      </div>
-                    </div>
+  createTheme(
+    'solarized',
+    {
+      text: { primary: '#f8fafc', secondary: '#94a3b8' },
+      background: { default: 'transparent' },
+      context: { background: '#cb4b16', text: '#FFFFFF' },
+      divider: { default: 'rgba(255, 255, 255, 0.1)' },
+      action: { button: 'rgba(255,255,255,.54)', hover: 'rgba(255,255,255,.08)', disabled: 'rgba(255,255,255,.12)' },
+    },
+    'dark'
+  );
 
-                    <div className="row justify-content-start mt-4">
-                      <div className="col">
-                        <button type="submit" className="btn btn-primary mt-4">
-                          Submit
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
+  const columns = [
+    { name: 'Name', selector: (row) => row.name || 'N/A' },
+    { name: 'Email', selector: (row) => row.email || 'N/A' },
+    { name: 'Phone', selector: (row) => row.phoneNumber || 'N/A' },
+    { name: 'Designation', selector: (row) => row.designation?.designation || 'N/A' },
+  ];
+
+  const customNoData = (
+    <NotFound 
+      isComponent={true} 
+      title="No Users Found" 
+      description="There are currently no users available to display." 
+      icon="bi-people" 
+    />
+  );
+
+  return (
+    <div className="dashboard-layout">
+      <NavBar />
+      <div className="dashboard-main">
+        <div className="dashboard-header mb-4">
+          <div>
+            <h1 className="dashboard-title">Users Management</h1>
+            <p className="dashboard-subtitle">Manage all registered users in the system.</p>
+          </div>
+          <button 
+            className="btn btn-info px-4 py-2" 
+            style={{ background: 'linear-gradient(90deg, #00D4FF, #0066FF)', border: 'none', color: '#fff', fontWeight: 'bold' }}
+            data-bs-toggle="modal" 
+            data-bs-target="#addUserModal"
+          >
+            <i className="bi-plus-lg me-2"></i> Add User
+          </button>
+        </div>
+
+        <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
+          <DataTable
+            columns={columns}
+            data={usersList}
+            pagination
+            theme="solarized"
+            noDataComponent={customNoData}
+          />
+        </div>
+
+        {/* Add User Modal */}
+        <div className="modal fade" id="addUserModal" tabIndex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content" style={{ background: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px' }}>
+              <div className="modal-header border-bottom-0 pb-0">
+                <h5 className="modal-title text-light fw-bold" id="addUserModalLabel">Add New User</h5>
+                <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div className="modal-body">
+                <form onSubmit={handleSubmit}>
+                  <div className="mb-3">
+                    <label className="form-label text-light small text-uppercase fw-bold">Full Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      className="form-control bg-dark text-light border-secondary"
+                      placeholder="Enter full name"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.name}
+                    />
+                    {errors.name && touched.name ? (
+                      <div className="text-danger small mt-1">{errors.name}</div>
+                    ) : null}
+                  </div>
+                  
+                  <div className="mb-3">
+                    <label className="form-label text-light small text-uppercase fw-bold">Email Address</label>
+                    <input
+                      type="email"
+                      name="email"
+                      className="form-control bg-dark text-light border-secondary"
+                      placeholder="Enter email address"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.email}
+                    />
+                    {errors.email && touched.email ? (
+                      <div className="text-danger small mt-1">{errors.email}</div>
+                    ) : null}
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label text-light small text-uppercase fw-bold">Phone Number</label>
+                    <input
+                      type="text"
+                      name="phoneNumber"
+                      className="form-control bg-dark text-light border-secondary"
+                      placeholder="Enter phone number"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.phoneNumber}
+                    />
+                    {errors.phoneNumber && touched.phoneNumber ? (
+                      <div className="text-danger small mt-1">{errors.phoneNumber}</div>
+                    ) : null}
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="form-label text-light small text-uppercase fw-bold">Designation</label>
+                    <select
+                      name="designation"
+                      className="form-select bg-dark text-light border-secondary"
+                      value={values.designation}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    >
+                      <option value="">Select a designation</option>
+                      {dOptions}
+                    </select>
+                    {errors.designation && touched.designation ? (
+                      <div className="text-danger small mt-1">{errors.designation}</div>
+                    ) : null}
+                  </div>
+
+                  <div className="d-grid gap-2">
+                    <button type="submit" className="btn btn-info py-3" style={{ background: 'linear-gradient(90deg, #00D4FF, #0066FF)', border: 'none', color: '#fff', fontWeight: 'bold', borderRadius: '12px' }}>
+                      Create User
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
-          </section>
+          </div>
         </div>
+
       </div>
     </div>
   );

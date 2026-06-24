@@ -1,6 +1,7 @@
 import logger from '../utils/logger';
 import React, { useEffect } from 'react';
 import HomePage from './HomePage/HomePage';
+import NotFound from './NotFound';
 import ContactUs from './HomePage/ContactUs';
 import GalleryUser from './HomePage/Gallery';
 import Login from './Authentication/Login';
@@ -33,7 +34,7 @@ import Cookies from 'js-cookie';
 import { useAuthStore } from '../store/useAuthStore';
 import { useMsgStore } from '../store/useMsgStore';
 import { useLoginPermissions } from '../hooks/queries/usePermissionQueries';
-import './index.css';
+import '../style/index.css';
 import ChangePassword from './Main/ChangePassword';
 import io from 'socket.io-client';
 import { ToastContainer, toast } from 'react-toastify';
@@ -51,7 +52,7 @@ const toastConfig = {
   theme: 'dark',
 };
 
-const socket = io.connect('http://localhost:5000');
+const socket = io.connect(process.env.REACT_APP_BACKEND_URL);
 
 const App = () => {
   const role = useAuthStore((state) => state.role);
@@ -274,6 +275,7 @@ const App = () => {
           />
           ;
           <Route path="/gallery" element={<Gallery />} />;
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </div>

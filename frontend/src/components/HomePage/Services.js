@@ -163,7 +163,7 @@ const Services = () => {
   ];
 
   return (
-    <SectionWrapper>
+    <SectionWrapper id="services">
       <div className="container">
         <div className="row text-center">
           <div className="col-12">

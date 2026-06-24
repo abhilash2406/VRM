@@ -1,5 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import Modal from 'react-modal';
+import AboutUsModal from './AboutUs';
+
+
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    width: '90%',
+    maxWidth: '800px',
+    height: '60vh',
+    padding: '0',
+    border: 'none',
+    borderRadius: '12px',
+    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    zIndex: 1001
+  },
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    zIndex: 1000
+  }
+};
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: background 0.3s ease;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.9);
+  }
+`;
 
 const FooterWrapper = styled.footer`
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -80,6 +132,35 @@ const ListItem = styled.li`
 const NavLin = styled.a`
   color: #94a3b8;
   text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover {
+    color: #60a5fa;
+    transform: translateX(6px);
+  }
+  
+  &::before {
+    content: '›';
+    margin-right: 8px;
+    color: #3b82f6;
+    font-size: 1.2rem;
+    line-height: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateX(-10px);
+  }
+
+  &:hover::before {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
+
+const NavText = styled.span`
+  color: #94a3b8;
   font-size: 0.95rem;
   transition: all 0.3s ease;
   display: inline-flex;
@@ -198,6 +279,9 @@ const ScrollUp = styled.a`
 `;
 
 const Footer = () => {
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [aboutModalIsOpen, setAboutModalIsOpen] = useState(false);
+
   const scrollToTop = (e) => {
     e.preventDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -234,27 +318,27 @@ const Footer = () => {
           <Column>
             <Title>Transportation</Title>
             <List>
-              <ListItem><NavLin href="/transport/north-india">North India</NavLin></ListItem>
-              <ListItem><NavLin href="/transport/south-india">South India</NavLin></ListItem>
-              <ListItem><NavLin href="/transport/assam">Assam</NavLin></ListItem>
-              <ListItem><NavLin href="/transport/haryana">Haryana</NavLin></ListItem>
-              <ListItem><NavLin href="/transport/punjab">Punjab</NavLin></ListItem>
-              <ListItem><NavLin href="/transport/mumbai">Mumbai</NavLin></ListItem>
-              <ListItem><NavLin href="/transport/west-bengal">West Bengal</NavLin></ListItem>
-              <ListItem><NavLin href="/transport/all-india">All India</NavLin></ListItem>
+              <ListItem><NavText>North India</NavText></ListItem>
+              <ListItem><NavText>South India</NavText></ListItem>
+              <ListItem><NavText>Assam</NavText></ListItem>
+              <ListItem><NavText>Haryana</NavText></ListItem>
+              <ListItem><NavText>Punjab</NavText></ListItem>
+              <ListItem><NavText>Mumbai</NavText></ListItem>
+              <ListItem><NavText>West Bengal</NavText></ListItem>
+              <ListItem><NavText>All India</NavText></ListItem>
             </List>
           </Column>
 
           <Column>
             <Title>Quick Links</Title>
             <List>
-              <ListItem><NavLin href="/">Home</NavLin></ListItem>
-              <ListItem><NavLin href="/about">About Us</NavLin></ListItem>
-              <ListItem><NavLin href="/services">Services</NavLin></ListItem>
-              <ListItem><NavLin href="/clients">Clients</NavLin></ListItem>
-              <ListItem><NavLin href="/gallery">Gallery</NavLin></ListItem>
-              <ListItem><NavLin href="/contact">Contact Us</NavLin></ListItem>
-              <ListItem><NavLin href="/branch-locator">Branch Locator</NavLin></ListItem>
+              <ListItem><NavLin as={Link} to="/">Home</NavLin></ListItem>
+              <ListItem><NavLin as="span" style={{cursor: 'pointer'}} onClick={() => setAboutModalIsOpen(true)}>About Us</NavLin></ListItem>
+              <ListItem><NavLin href="/#services">Services</NavLin></ListItem>
+              <ListItem><NavLin href="/#clients">Clients</NavLin></ListItem>
+              <ListItem><NavLin as={Link} to="/image-gallery">Gallery</NavLin></ListItem>
+              <ListItem><NavLin as={Link} to="/contact-us">Contact Us</NavLin></ListItem>
+              <ListItem><NavLin as="span" style={{cursor: 'pointer'}} onClick={() => setModalIsOpen(true)}>Branch Locator</NavLin></ListItem>
             </List>
           </Column>
 
@@ -293,6 +377,27 @@ const Footer = () => {
           </ScrollUp>
         </BottomBar>
       </Container>
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        style={customStyles}
+        contentLabel="Branch Locator Map"
+        ariaHideApp={false}
+      >
+        <CloseButton onClick={() => setModalIsOpen(false)}>&times;</CloseButton>
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.5620658428867!2d77.227321!3d28.612912!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce2daa9eb4d0b%3A0x717971125923e5d!2sIndia%20Gate!5e0!3m2!1sen!2sin!4v1689234567890!5m2!1sen!2sin" 
+          width="100%" 
+          height="100%" 
+          style={{ border: 0 }} 
+          allowFullScreen="" 
+          loading="lazy" 
+          referrerPolicy="no-referrer-when-downgrade"
+          title="Branch Locator Map"
+        ></iframe>
+      </Modal>
+      <AboutUsModal isOpen={aboutModalIsOpen} onRequestClose={() => setAboutModalIsOpen(false)} />
     </FooterWrapper>
   );
 };

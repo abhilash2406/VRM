@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 export const instance = axios.create({
-  baseURL: 'http://localhost:5000',
+  baseURL: `${process.env.REACT_APP_BACKEND_URL}/api/v1`,
   headers: {
     Authorization: `Bearer ${Cookies.get('token')}`,
   },

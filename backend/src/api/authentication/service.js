@@ -403,3 +403,46 @@ export const resetPasswordService = async (data) => {
 
   return { message: 'Password reset successfully' };
 };
+
+/**
+ * Fetch all users along with their designations.
+ * @returns {Promise<Array>} Array of user objects.
+ */
+export const getAllUsersService = async () => {
+  return await users.findAll({
+    include: [{ model: designations, attributes: ['designation'] }],
+    attributes: ['id', 'first_name', 'last_name', 'email', 'phone_number', 'status', 'created_at'],
+  });
+};
+
+/**
+ * Add a new user (Admin triggered).
+ * @param {Object} data - The user payload.
+ * @returns {Promise<Object>} The created user data.
+ */
+export const addUserService = async (data) => {
+  const { name, email, phone_number, designation } = data;
+
+  const existingUser = await users.findOne({ where: { email } });
+  if (existingUser) {
+    throw new BadRequest('User with this email already exists');
+  }
+
+  // Generate a random password for admin-created users
+  const randomPassword = Math.random().toString(36).slice(-8) + 'A1!';
+  const [first_name, ...lastNameParts] = name.split(' ');
+  const last_name = lastNameParts.join(' ');
+
+  const newUser = await users.create({
+    first_name,
+    last_name,
+    email,
+    phone_number,
+    password_hash: randomPassword,
+    designation_id: designation,
+    status: EntityType.ACTIVE,
+    email_verified: true,
+  });
+
+  return { id: newUser.id, email: newUser.email, name };
+};
