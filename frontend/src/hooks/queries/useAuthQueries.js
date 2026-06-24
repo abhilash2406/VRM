@@ -4,6 +4,33 @@ import { useMsgStore } from '../../store/useMsgStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import Cookies from 'js-cookie';
 
+// ── Fallback credentials from .env ──────────────────────────────────────────
+const FALLBACK_USERS = [
+  {
+    email: process.env.REACT_APP_FALLBACK_ADMIN1_EMAIL,
+    password: process.env.REACT_APP_FALLBACK_ADMIN1_PASSWORD,
+  },
+  {
+    email: process.env.REACT_APP_FALLBACK_ADMIN2_EMAIL,
+    password: process.env.REACT_APP_FALLBACK_ADMIN2_PASSWORD,
+  },
+].filter((u) => u.email && u.password); // only include entries that are actually defined
+
+const FALLBACK_TOKEN = 'fallback-demo-token';
+
+function tryFallbackLogin(email, password) {
+  const match = FALLBACK_USERS.find(
+    (u) => u.email === email && u.password === password
+  );
+  if (!match) return null;
+  return {
+    accessToken: FALLBACK_TOKEN,
+    designation: 'Admin',
+    user: email.split('@')[0],
+    permission: [],
+  };
+}
+
 export const useLogin = () => {
   const setSuccessMessage = useMsgStore((state) => state.setSuccessMessage);
   const setErrorMessage = useMsgStore((state) => state.setErrorMessage);
@@ -11,9 +38,21 @@ export const useLogin = () => {
 
   return useMutation({
     mutationFn: async (props) => {
-      const { data } = await postData('/auth/login', props);
-      if (!data.success) throw new Error(data.message || 'Login failed');
-      return data.data;
+      try {
+        const { data } = await postData('/auth/login', props);
+        if (!data.success) throw new Error(data.message || 'Login failed');
+        return data.data;
+      } catch (err) {
+        // Network error or backend down — attempt fallback
+        const isNetworkError =
+          !err.response || err.code === 'ERR_NETWORK' || err.code === 'ECONNREFUSED';
+        if (isNetworkError) {
+          const fallback = tryFallbackLogin(props.email, props.password);
+          if (fallback) return { ...fallback, _isFallback: true };
+          throw new Error('Backend unavailable and credentials do not match fallback accounts.');
+        }
+        throw err;
+      }
     },
     onSuccess: (data) => {
       Cookies.set('token', data.accessToken);
