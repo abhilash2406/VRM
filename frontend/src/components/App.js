@@ -33,7 +33,7 @@ import Cookies from 'js-cookie';
 import { useAuthStore } from '../store/useAuthStore';
 import { useMsgStore } from '../store/useMsgStore';
 import { useLoginPermissions } from '../hooks/queries/usePermissionQueries';
-import './index.css';
+import '../style/index.css';
 import ChangePassword from './Main/ChangePassword';
 import io from 'socket.io-client';
 import { ToastContainer, toast } from 'react-toastify';

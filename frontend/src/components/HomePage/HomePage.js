@@ -192,7 +192,7 @@ const HomePage = () => {
     <div>
       <Header />
 
-      <CarouselWrapper>
+      <CarouselWrapper id="about">
         <Carousel interval={5000} fade>
           {slides.map((slide, i) => (
             <Carousel.Item key={i}>
