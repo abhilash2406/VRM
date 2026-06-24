@@ -286,7 +286,7 @@ const Login = () => {
               <Divider>OR</Divider>
 
               <GoogleWrapper>
-                <GoogleOAuthProvider clientId="260034014064-t9k3lhrlke6ocfvt1d69r6nddktpqk34.apps.googleusercontent.com">
+                <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
                   <GoogleLogin
                     onSuccess={(credentialResponse) => {
                       verifyGoogleAccessToken(credentialResponse.credential);
