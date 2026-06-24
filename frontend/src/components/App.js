@@ -39,6 +39,7 @@ import ChangePassword from './Main/ChangePassword';
 import io from 'socket.io-client';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 
 const toastConfig = {
@@ -89,6 +90,7 @@ const App = () => {
   return (
     <div>
       <ToastContainer />
+      <SpeedInsights />
 
       <BrowserRouter>
         <Routes>
