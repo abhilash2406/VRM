@@ -41,7 +41,7 @@ export const useGoogleLogin = () => {
 
   return useMutation({
     mutationFn: async (props) => {
-      const { data } = await postData('/auth/GLogin', props);
+      const { data } = await postData('/auth/google-login', props);
       if (!data.success) throw new Error(data.message || 'Login failed');
       return data.data;
     },
