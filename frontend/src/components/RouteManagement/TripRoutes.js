@@ -1,116 +1,102 @@
-import logger from '../../utils/logger';
-//trip list
-
 import React, { useEffect } from 'react';
 import NavBar from '../Main/NavBar';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { getRoutes, dltRoute } from './action';
 import DataTable, { createTheme } from 'react-data-table-component';
-import { includes } from 'lodash';
+import NotFound from '../NotFound';
 
 const TripRoutes = () => {
   const dispatch = useDispatch();
+  
   useEffect(() => {
     dispatch(getRoutes());
-  }, []);
+  }, [dispatch]);
+
+  const { routeData } = useSelector((e) => e.routes);
+  const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+  const userRole = currentUser.designation;
+  const { grantedPermissions } = useSelector((state) => state.auth);
+
+  let array = grantedPermissions?.filter((item) => item.menu === 'Route');
+  let permissionAllowed = array?.map((e) => e.subMenu);
+
   createTheme(
     'solarized',
     {
-      text: {
-        primary: 'yellow',
-        secondary: 'white',
-      },
-      background: {
-        default: '#002b36',
-      },
-      context: {
-        background: '#cb4b16',
-        text: '#FFFFFF',
-      },
-      divider: {
-        default: '#073642',
-      },
-      action: {
-        button: 'rgba(0,0,0,.54)',
-        hover: 'rgba(0,0,0,.08)',
-        disabled: 'rgba(0,0,0,.12)',
-      },
+      text: { primary: '#f8fafc', secondary: '#94a3b8' },
+      background: { default: 'transparent' },
+      context: { background: '#cb4b16', text: '#FFFFFF' },
+      divider: { default: 'rgba(255, 255, 255, 0.1)' },
+      action: { button: 'rgba(255,255,255,.54)', hover: 'rgba(255,255,255,.08)', disabled: 'rgba(255,255,255,.12)' },
     },
     'dark'
   );
 
-  const { routeData } = useSelector((e) => e.routes);
-  logger.info(routeData);
-  const { grantedPermissions } = useSelector((state) => state.auth);
-
-  let array = grantedPermissions?.filter((item) => item.menu === 'Route');
-  const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
-
-
-  let permissionAllowed = array?.map((e) => e.subMenu);
   const columns = [
-    {
-      name: 'From',
-      selector: (row) => row.from,
-    },
-
-    {
-      name: 'To',
-      selector: (row) => row.to,
-    },
-    {
-      name: 'State',
-      selector: (row) => row.state,
-    },
-    {
-      name: 'Country',
-      selector: (row) => row.country,
-    },
-
+    { name: 'From', selector: (row) => row.from || 'N/A' },
+    { name: 'To', selector: (row) => row.to || 'N/A' },
+    { name: 'State', selector: (row) => row.state || 'N/A' },
+    { name: 'Country', selector: (row) => row.country || 'N/A' },
     {
       name: 'Action',
-      omit: userRole === 'Admin' || permissionAllowed?.includes('Delete') ? false : true,
+      minWidth: '200px',
+      omit: !(userRole === 'Admin' || userRole === 'SUPERADMIN' || permissionAllowed?.includes('Edit') || permissionAllowed?.includes('Delete')),
       selector: (row) => (
         <div>
-          { userRole === 'Admin' || permissionAllowed?.includes('Edit') ? (
-            <Link className="btn btn-info" to={`/edit-routes/${row.id}`}>
+          { (userRole === 'Admin' || userRole === 'SUPERADMIN' || permissionAllowed?.includes('Edit')) && (
+            <Link className="btn btn-info btn-sm me-2" to={`/edit-routes/${row.id}`}>
               Edit
             </Link>
-          ) : null}
-          { userRole === 'Admin' || permissionAllowed?.includes('Delete') ? (
+          )}
+          { (userRole === 'Admin' || userRole === 'SUPERADMIN' || permissionAllowed?.includes('Delete')) && (
             <button
-              className="btn btn-danger"
-              onClick={() => {
-                dispatch(dltRoute(row.id));
-              }}
+              className="btn btn-danger btn-sm"
+              onClick={() => dispatch(dltRoute(row.id))}
             >
               Delete
             </button>
-          ) : null}
+          )}
         </div>
       ),
     },
   ];
 
+  const customNoData = (
+    <NotFound 
+      isComponent={true} 
+      title="No Routes Found" 
+      description="There are currently no routes available to display." 
+      icon="bi-signpost-split" 
+    />
+  );
+
   return (
-    <div className="container-fluid">
-      <div className="row">
-        <NavBar />
-        <div className="col-sm p-3 min-vh-100">
-          { userRole === 'Admin' || permissionAllowed?.includes('Add') ? (
-            <Link to="/add-routes">
-              <button className="btn btn-info add-btn">Add Routes</button>
-            </Link>
-          ) : null}
-          <div className="mt-5">
-            <DataTable
-              columns={columns}
-              pagination
-              theme="solarized"
-              data={routeData ? routeData : []}
-            />
+    <div className="dashboard-layout">
+      <NavBar />
+      <div className="dashboard-main">
+        <div className="dashboard-header mb-4">
+          <div>
+            <h1 className="dashboard-title">Routes Management</h1>
+            <p className="dashboard-subtitle">Manage start and end points for all trips.</p>
           </div>
+          { (userRole === 'Admin' || userRole === 'SUPERADMIN' || permissionAllowed?.includes('Add')) && (
+            <Link to="/add-routes">
+              <button className="btn btn-info px-4 py-2" style={{ background: 'linear-gradient(90deg, #00D4FF, #0066FF)', border: 'none', color: '#fff', fontWeight: 'bold' }}>
+                <i className="bi-plus-lg me-2"></i> Add Route
+              </button>
+            </Link>
+          )}
+        </div>
+
+        <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
+          <DataTable
+            columns={columns}
+            data={routeData || []}
+            pagination
+            theme="solarized"
+            noDataComponent={customNoData}
+          />
         </div>
       </div>
     </div>

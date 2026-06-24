@@ -1,167 +1,180 @@
-// inner navbar
-
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-
+import React, { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLogout } from '../../action';
+import '../../style/Dashboard.css';
 
 const NavBar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
   const logout = (e) => {
     e.preventDefault();
     dispatch(setLogout(() => navigate('/login')));
   };
 
-  const userRole = JSON.parse(localStorage.getItem('currentUser')).designation;
+  const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+  const userRole = currentUser.designation;
 
   const { grantedPermissions } = useSelector((state) => state.auth);
-
   let array = grantedPermissions?.filter((item) => item.menu === 'Admin');
-
   let permissionAllowed = array?.map((e) => e.subMenu);
 
+  const isActive = (path) => location.pathname === path;
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
-    <div className="col-sm-auto bg-dark sticky-top">
-      <div className="d-flex flex-sm-column flex-row flex-nowrap bg-dark align-items-center sticky-top">
-        <a
-          href="/dashboard"
-          className="d-block p-3 link-white text-decoration-none pb-3"
-          style={{ fontFamily: "'Orbitron', sans-serif", fontWeight: '700', fontSize: '1.2rem' }}
-          title=""
-          data-bs-toggle="tooltip"
-          data-bs-placement="right"
-          data-bs-original-title="Icon-only"
-        >
-          {' '}
-          DriveOnRyd
-          <i className="bi-truck fs-1"></i>
-        </a>
-        <div className="dropdown">
-          <a
-            href="#"
-            className="d-flex align-items-center justify-content-center p-3 link-white text-decoration-none dropdown-toggle"
-            id="dropdownUser3"
-            data-bs-toggle="dropdown"
+    <>
+      <button 
+        className="mobile-nav-toggle d-lg-none" 
+        onClick={toggleSidebar}
+        style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          zIndex: 1002,
+          background: 'linear-gradient(90deg, #00D4FF, #0066FF)',
+          border: 'none',
+          color: 'white',
+          width: '45px',
+          height: '45px',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: '0 4px 10px rgba(0,0,0,0.3)'
+        }}
+      >
+        <i className={`bi ${isSidebarOpen ? 'bi-x-lg' : 'bi-list'}`} style={{ fontSize: '1.5rem' }}></i>
+      </button>
+
+      {isSidebarOpen && (
+        <div 
+          className="sidebar-overlay d-lg-none"
+          onClick={toggleSidebar}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.5)',
+            zIndex: 999,
+            backdropFilter: 'blur(4px)'
+          }}
+        ></div>
+      )}
+
+      <aside className={`dashboard-sidebar ${isSidebarOpen ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <Link to="/dashboard" className="brand-title">
+            DriveOn<span>Ryd</span>
+          </Link>
+      </div>
+
+      <div className="sidebar-nav">
+        <div className="nav-item">
+          <Link to="/dashboard" className={`nav-link-custom ${isActive('/dashboard') ? 'active' : ''}`}>
+            <i className="bi-house-door"></i> Dashboard
+          </Link>
+        </div>
+        
+        <div className="nav-item">
+          <Link to="/trucks" className={`nav-link-custom ${isActive('/trucks') ? 'active' : ''}`}>
+            <i className="bi-truck"></i> Vehicles
+          </Link>
+        </div>
+
+        <div className="nav-item">
+          <Link to="/trips" className={`nav-link-custom ${isActive('/trips') ? 'active' : ''}`}>
+            <i className="bi-map"></i> Journeys
+          </Link>
+        </div>
+
+        {(userRole === 'Admin' || userRole === 'SUPERADMIN') && (
+          <div className="nav-item">
+            <Link to="/add-user" className={`nav-link-custom ${isActive('/add-user') ? 'active' : ''}`}>
+              <i className="bi-person"></i> Users
+            </Link>
+          </div>
+        )}
+
+        {(userRole === 'Admin' || userRole === 'SUPERADMIN') && (
+          <div className="nav-item">
+            <Link to="/transactions" className={`nav-link-custom ${isActive('/transactions') ? 'active' : ''}`}>
+              <i className="bi-credit-card"></i> Transactions
+            </Link>
+          </div>
+        )}
+
+        {(userRole === 'Admin' || userRole === 'SUPERADMIN') && (
+          <div className="nav-item">
+            <Link to="/drivers" className={`nav-link-custom ${isActive('/drivers') ? 'active' : ''}`}>
+              <i className="bi-people"></i> Drivers
+            </Link>
+          </div>
+        )}
+
+        {(userRole !== 'Admin' && userRole !== 'SUPERADMIN') && (
+          <div className="nav-item">
+            <Link to="/routes" className={`nav-link-custom ${isActive('/routes') ? 'active' : ''}`}>
+              <i className="bi-signpost-split"></i> Routes
+            </Link>
+          </div>
+        )}
+
+        {(userRole !== 'Admin' && userRole !== 'SUPERADMIN') && userRole === 'Manager' && (
+          <>
+            <div className="nav-item">
+              <Link to="/gallery" className={`nav-link-custom ${isActive('/gallery') ? 'active' : ''}`}>
+                <i className="bi-images"></i> Gallery
+              </Link>
+            </div>
+            <div className="nav-item">
+              <Link to="/feedbacks" className={`nav-link-custom ${isActive('/feedbacks') ? 'active' : ''}`}>
+                <i className="bi-chat-left-text"></i> Feedbacks
+              </Link>
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="sidebar-footer">
+        <div className="dropup w-100">
+          <div 
+            className="user-profile w-100 d-flex align-items-center" 
+            id="dropdownMenuButton" 
+            data-bs-toggle="dropdown" 
             aria-expanded="false"
+            style={{ cursor: 'pointer', padding: '10px', borderRadius: '12px', transition: 'background 0.3s ease' }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
           >
-            <i className="bi-person-circle h2"></i>
-          </a>
-          <ul
-            className="dropdown-menu text-small shadow"
-            aria-labelledby="dropdownUser3"
-          >
-            <li>
-              <button className="btn btn-white mx-2" onClick={logout}>
-                Logout
-              </button>
-            </li>
-            <li>
-              <Link className="dropdown-item" to={'/change-password'}>
-                change password
-              </Link>
-            </li>
-            <li>
-              <Link className="dropdown-item" to={'/profile'}>
-                Profile
-              </Link>
-            </li>
+            <div className="user-avatar" style={{ minWidth: '40px' }}>
+              {userRole ? userRole.charAt(0) : 'U'}
+            </div>
+            <div className="user-info ms-3 flex-grow-1 text-truncate">
+              <span className="user-name d-block text-truncate" style={{ fontSize: '0.9rem', fontWeight: 600, color: '#fff' }}>Welcome Back</span>
+              <span className="user-role d-block text-truncate" style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{userRole || 'User'}</span>
+            </div>
+            <i className="bi-gear text-muted" style={{ fontSize: '1.1rem' }}></i>
+          </div>
+          
+          <ul className="dropdown-menu dropdown-menu-dark w-100 shadow mb-2" aria-labelledby="dropdownMenuButton">
+            <li><Link className="dropdown-item" to="/profile"><i className="bi-person me-2"></i> Profile</Link></li>
+            <li><Link className="dropdown-item" to="/change-password"><i className="bi-key me-2"></i> Change Password</Link></li>
+            <li><hr className="dropdown-divider" /></li>
+            <li><button className="dropdown-item text-danger" onClick={logout}><i className="bi-box-arrow-right me-2"></i> Logout</button></li>
           </ul>
         </div>
-        <ul className="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto ">
-          <li className="nav-item my-1">
-            <Link
-              to={'/dashboard'}
-              className="nav-link text-white fw-bold fs-4"
-            >
-              <i className="bi-house fs-3"></i> Dashboard
-            </Link>
-          </li>
-          {userRole === 'Admin' ? (
-            <li className="nav-item my-1 ">
-              <Link
-                to={'/add-user'}
-                className="nav-link text-white fw-bold fs-4"
-              >
-                <i className="bi-person fs-3"></i> Add users
-              </Link>
-            </li>
-          ) : null}
-
-          <li className="nav-item my-1 ">
-            <Link to={'/trucks'} className="nav-link text-white fw-bold fs-4">
-              <i className="bi-truck fs-3"></i> Trucks
-            </Link>
-          </li>
-          <li className="nav-item my-1">
-            <Link to={'/routes'} className="nav-link text-white fw-bold fs-4">
-              <i className="bi-speedometer2 fs-3"></i> Routes
-            </Link>
-          </li>
-          {userRole === 'Admin' ? (
-            <li className="nav-item my-1">
-              <Link
-                to={'/drivers'}
-                className="nav-link text-white fw-bold fs-4"
-              >
-                <i className="bi-people fs-3"></i> Driver
-              </Link>
-            </li>
-          ) : null}
-
-          <li className="nav-item my-1">
-            <Link to={'/trips'} className="nav-link text-white fw-bold fs-4">
-              <i className="bi-speedometer2 fs-3"></i> Trips
-            </Link>
-          </li>
-          {userRole === 'Admin' ? (
-            <li className="nav-item my-1">
-              <Link
-                to={'/transactions'}
-                className="nav-link text-white fw-bold fs-4"
-              >
-                <i className=" bi bi-cash fs-3"></i> Transactions
-              </Link>
-            </li>
-          ) : null}
-
-          {userRole === 'Admin' ? (
-            <li className="nav-item my-1">
-              <Link
-                to={'/permissions'}
-                className="nav-link text-white fw-bold fs-4"
-              >
-                <i className=" bi bi-lock fs-3"></i> Permissions
-              </Link>
-            </li>
-          ) : null}
-
-          {userRole === 'Admin' || userRole === 'Manager' ? (
-            <li className="nav-item my-1">
-              <Link
-                to={'/gallery'}
-                className="nav-link text-white fw-bold fs-4"
-              >
-                <i className=" bi bi-image fs-3"></i> Gallery
-              </Link>
-            </li>
-          ) : null}
-
-          {userRole === 'Admin' || userRole === 'Manager' ? (
-            <li className="nav-item my-1">
-              <Link
-                to={'/feedbacks'}
-                className="nav-link text-white fw-bold fs-4"
-              >
-                <i className=" bi bi-book fs-3"></i> Feedbacks
-              </Link>
-            </li>
-          ) : null}
-        </ul>
       </div>
-    </div>
+    </aside>
+    </>
   );
 };
 

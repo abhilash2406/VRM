@@ -60,7 +60,7 @@ export const getCorrespondingData = (dat) => async (dispatch) => {
 
 // get all truck data
 export const getAllTruckData = () => async (dispatch) => {
-  const { data } = await getData('/trucks');
+  const { data } = await getData('/vehicles');
   if (data.success) {
     dispatch({
       type: 'GET_ALL_TRUCKS',

@@ -109,7 +109,7 @@ const Gallery = () => {
                 <div className="col-lg-3 col-md-4 col-6">
                   <img
                     className="img-fluid img-thumbnail"
-                    src={`http://localhost:5000/${image.image}`}
+                    src={`${process.env.REACT_APP_BACKEND_URL}/${image.image}`}
                     alt=""
                     onClick={handleImageClick}
                   />

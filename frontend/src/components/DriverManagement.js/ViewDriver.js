@@ -71,7 +71,7 @@ const ViewDriver = () => {
             <img
               class="rounded-circle mt-5"
               width="150px"
-              src={`http://localhost:5000/${viewDriver?.userPhoto}`}
+              src={`${process.env.REACT_APP_BACKEND_URL}/${viewDriver?.userPhoto}`}
             />
             <span class="font-weight-bold">{viewDriver?.user?.name}</span>
 

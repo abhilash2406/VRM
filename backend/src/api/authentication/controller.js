@@ -174,3 +174,33 @@ export const resetPassword = async (req, res, next) => {
     res.send({ success: false, message: e.message });
   }
 };
+
+/**
+ * Handles fetching all users.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ */
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const { getAllUsersService } = await import('./service.js');
+    const data = await getAllUsersService();
+    return res.send({ success: true, message: 'Users fetched successfully', data });
+  } catch (e) {
+    res.send({ success: false, message: e.message });
+  }
+};
+
+/**
+ * Handles adding a new user.
+ * @param {import('express').Request} req - The Express request object.
+ * @param {import('express').Response} res - The Express response object.
+ */
+export const addUser = async (req, res, next) => {
+  try {
+    const { addUserService } = await import('./service.js');
+    const data = await addUserService(req.body);
+    return res.send({ success: true, message: 'User created successfully', data });
+  } catch (e) {
+    res.send({ success: false, message: e.message });
+  }
+};

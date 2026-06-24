@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllTruckData, dltTruck } from './action';
 import DataTable, { createTheme } from 'react-data-table-component';
+import NotFound from '../NotFound';
 
 const ListTruck = () => {
   const dispatch = useDispatch();
@@ -62,7 +63,7 @@ const ListTruck = () => {
       selector: (row) => (
         <img
           style={{ width: '50%' }}
-          src={`http://localhost:5000/${row.truckPhoto}`}
+          src={`${process.env.REACT_APP_BACKEND_URL}/${row.truckPhoto}`}
           alt=""
         ></img>
       ),
@@ -98,24 +99,40 @@ const ListTruck = () => {
     },
   ];
 
-  return (
-    <div className="container-fluid">
-      <div className="row">
-        <NavBar />
-        <div className="col-sm p-3 min-vh-100">
-          <div className="mb-3">
-            { userRole === 'Admin'|| permissionAllowed?.includes('Add') ? (
-              <Link to="/add-trucks">
-                <button className="btn btn-info add-btn">Add Truck</button>
-              </Link>
-            ) : null}
-          </div>
+  const customNoData = (
+    <NotFound 
+      isComponent={true} 
+      title="No Trucks Found" 
+      description="There are currently no trucks available to display." 
+      icon="bi-inbox" 
+    />
+  );
 
+  return (
+    <div className="dashboard-layout">
+      <NavBar />
+      <div className="dashboard-main">
+        <div className="dashboard-header mb-4">
+          <div>
+            <h1 className="dashboard-title">Trucks Management</h1>
+            <p className="dashboard-subtitle">Manage all registered trucks in the system.</p>
+          </div>
+          { (userRole === 'Admin' || permissionAllowed?.includes('Add')) && (
+            <Link to="/add-trucks">
+              <button className="btn btn-info px-4 py-2" style={{ background: 'linear-gradient(90deg, #00D4FF, #0066FF)', border: 'none', color: '#fff', fontWeight: 'bold' }}>
+                <i className="bi-plus-lg me-2"></i> Add Truck
+              </button>
+            </Link>
+          )}
+        </div>
+
+        <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
           <DataTable
             columns={columns}
             data={truckData}
             pagination
             theme="solarized"
+            noDataComponent={customNoData}
           />
         </div>
       </div>

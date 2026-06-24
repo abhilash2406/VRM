@@ -7,6 +7,8 @@ import {
   forgotPassword,
   verifyResetOtp,
   resetPassword,
+  getAllUsers,
+  addUser,
 } from './controller.js';
 import {
   loginValidate,
@@ -15,6 +17,7 @@ import {
   forgotPasswordValidate,
   verifyResetOtpValidate,
   resetPasswordValidate,
+  addUserValidate,
 } from './validator.js';
 const router = express.Router();
 
@@ -266,5 +269,33 @@ router.post('/verify-reset-otp', verifyResetOtpValidate, verifyResetOtp);
  *         description: Invalid or expired OTP, or validation error
  */
 router.post('/reset-password', resetPasswordValidate, resetPassword);
+
+/**
+ * @swagger
+ * /api/v1/auth/users:
+ *   get:
+ *     tags:
+ *       - Authentication
+ *     summary: Get all users
+ *     description: Retrieve a list of all registered users
+ *     responses:
+ *       '200':
+ *         description: Users fetched successfully
+ */
+router.get('/users', getAllUsers);
+
+/**
+ * @swagger
+ * /api/v1/auth/add-user:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Add a new user
+ *     description: Create a new user (admin function)
+ *     responses:
+ *       '200':
+ *         description: User created successfully
+ */
+router.post('/add-user', addUserValidate, addUser);
 
 export default router;
