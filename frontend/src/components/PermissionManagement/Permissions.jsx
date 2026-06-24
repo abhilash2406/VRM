@@ -1,38 +1,27 @@
 import logger from '../../utils/logger';
 import React,{useEffect,useState} from 'react'
-import NavBar from '../Main/NavBar';
+import NavBar from '../Shared/NavBar';
 import { Link } from 'react-router-dom';
-import { useDispatch,useSelector } from 'react-redux';
-import { fetchDesignations } from '../AddUsers/action';
-import { getPermission,getUserPermission,givePermission } from './action';
+import { useDesignations } from '../../hooks/queries/useAuthQueries';
+import { useAllPermissions, useRolePermissions, useGivePermission } from '../../hooks/queries/usePermissionQueries';
 
 
 
 const Permissions = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchDesignations());
-    dispatch(getPermission());
-  }, []);
-
-  const { permissions, permissionData } = useSelector(
-    (state) => state.permissions
-  );
+  const { data: designations } = useDesignations();
+  const { data: permissions } = useAllPermissions();
+  const [role, setRole] = useState('');
+  const { data: roleData } = useRolePermissions(role);
+  const { mutateAsync: givePermission } = useGivePermission();
 
   const uniqueMenus = new Set(permissions?.map((item) => item.menu));
   const menus = Array.from(uniqueMenus);
-  const { designations } = useSelector((state) => state.user);
-  logger.info('first', designations)
-  const {roleData} = useSelector((e)=>e.permissions)
-  const [role, setRole] = useState('');
 
   useEffect(() => {
     setGranted(roleData);
   }, [roleData]);
   const handleUserCheckbox = (e) => {
     setRole(e);
-    dispatch(getUserPermission(e));
   };
   const [grantPer, setGranted] = useState([]);
 
@@ -79,7 +68,7 @@ const Permissions = () => {
             i.designationId === item.designationId
         )
     );
-    dispatch(givePermission(role, uniqueArray));
+    givePermission({ id: role, updateData: uniqueArray });
   };
   const designationItem = designations?.map((item, index) => {
     return (

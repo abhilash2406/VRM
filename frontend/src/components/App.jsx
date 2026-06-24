@@ -1,0 +1,294 @@
+import logger from '../utils/logger';
+import React, { useEffect } from 'react';
+import HomePage from './HomePage/HomePage';
+import NotFound from './NotFound';
+import ContactUs from './HomePage/ContactUs';
+import GalleryUser from './HomePage/Gallery';
+import Login from './Authentication/Login';
+import Registration from './Authentication/Registration';
+import Dashboard from './Dashboard/Dashboard';
+import ListTruck from './TruckManagement/ListTruck';
+import AddTruck from './TruckManagement/AddTruck';
+import Profile from './ProfileManagement/Profile';
+import Feedbacks from './ProfileManagement/Feedbacks';
+import ViewFeedback from './ProfileManagement/ViewFeedback';
+import Gallery from './ProfileManagement/Gallery';
+import ActivityLogs from './SystemLogs/ActivityLogs';
+import TripRoutes from './RouteManagement/TripRoutes';
+import AddRoutes from './RouteManagement/AddRoutes';
+import DriverList from './DriverManagement.js/DriverList';
+import Trips from './TripManagement/Trips';
+import AddTrips from './TripManagement/AddTrips';
+import Transactions from './Transactions/Transactions';
+import Permissions from './PermissionManagement/Permissions';
+import AddUser from './AddUsers/AddUser';
+import FillDetails from './Authentication/FillDetails';
+import DrivingDetails from './Authentication/DrivingDetails';
+import AddDrivers from './DriverManagement.js/AddDrivers';
+import CardDetails from './Authentication/CardDetails';
+import ViewDriver from './DriverManagement.js/ViewDriver';
+import StripePayment from './Authentication/StripePayment';
+import Success from './Authentication/Success';
+import { PrivateRoute } from './PrivateRouting';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { useAuthStore } from '../store/useAuthStore';
+import { useMsgStore } from '../store/useMsgStore';
+import { useLoginPermissions } from '../hooks/queries/usePermissionQueries';
+import '../style/index.css';
+import ChangePassword from './ProfileManagement/ChangePassword';
+import io from 'socket.io-client';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+const toastConfig = {
+  position: 'top-right',
+  autoClose: 1000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  theme: 'dark',
+};
+
+const socket = io.connect(process.env.REACT_APP_BACKEND_URL);
+
+const App = () => {
+  const role = useAuthStore((state) => state.role);
+  const setLogin = useAuthStore((state) => state.setLogin);
+  const successMsg = useMsgStore((state) => state.successMsg);
+  const errorMsg = useMsgStore((state) => state.errorMsg);
+  const resetSuccessMessage = useMsgStore((state) => state.resetSuccessMessage);
+  const resetErrorMessage = useMsgStore((state) => state.resetErrorMessage);
+  
+  const loginPermissionsMutation = useLoginPermissions();
+
+  useEffect(() => {
+    socket.on('GetPermissions', (data) => {
+      logger.info('socketData', data);
+      setLogin(role, data.data); // assuming data.data contains permissions as per old action
+    });
+    return () => socket.off('GetPermissions');
+  }, [socket, role, setLogin]);
+
+  useEffect(() => {
+    loginPermissionsMutation.mutate();
+  }, []);
+
+  useEffect(() => {
+    if (successMsg) {
+      toast.success(successMsg, toastConfig);
+      resetSuccessMessage();
+    } else if (errorMsg) {
+      toast.error(errorMsg, toastConfig);
+      resetErrorMessage();
+    }
+  }, [successMsg, errorMsg, resetSuccessMessage, resetErrorMessage]);
+
+  return (
+    <div>
+      <ToastContainer />
+
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />;
+          <Route path="/contact-us" element={<ContactUs />} />;
+          <Route path="/image-gallery" element={<GalleryUser />} />;
+          <Route path="/login" element={<Login />} />;
+          <Route path="/signup" element={<Registration />} />;
+          <Route path="/fill-details" element={<FillDetails />} />;
+          <Route path="/driver-details" element={<DrivingDetails />} />;
+          <Route path="/payment" element={<StripePayment />} />;
+          <Route path="/success" element={<Success />} />;
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/add-user"
+            element={
+              <PrivateRoute>
+                <AddUser />
+              </PrivateRoute>
+            }
+          />
+          ;
+          <Route
+            path="/trucks"
+            element={
+              <PrivateRoute>
+                <ListTruck />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/add-trucks"
+            element={
+              <PrivateRoute>
+                <AddTruck />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/edit-trucks/:id"
+            element={
+              <PrivateRoute>
+                <AddTruck />
+              </PrivateRoute>
+            }
+          />
+          ;
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+          ;
+          <Route
+            path="/feedbacks"
+            element={
+              <PrivateRoute>
+                <Feedbacks />
+              </PrivateRoute>
+            }
+          />
+          ;
+          <Route
+            path="/view-feedback/:id"
+            element={
+              <PrivateRoute>
+                <ViewFeedback />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/routes"
+            element={
+              <PrivateRoute>
+                <TripRoutes />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/edit-routes/:id"
+            element={
+              <PrivateRoute>
+                <AddRoutes />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/add-routes"
+            element={
+              <PrivateRoute>
+                <AddRoutes />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/drivers"
+            element={
+              <PrivateRoute>
+                <DriverList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/add-drivers"
+            element={
+              <PrivateRoute>
+                <AddDrivers />
+              </PrivateRoute>
+            }
+          />
+           <Route
+            path="/edit-driver/:id"
+            element={
+              <PrivateRoute>
+                <AddDrivers />
+              </PrivateRoute>
+            }
+          />
+             <Route
+            path="/view-data/:id"
+            element={
+              <PrivateRoute>
+                <ViewDriver />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/trips"
+            element={
+              <PrivateRoute>
+                <Trips />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/add-trips"
+            element={
+              <PrivateRoute>
+                <AddTrips />
+              </PrivateRoute>
+            }
+          />
+           <Route
+            path="/edit-trips/:id"
+            element={
+              <PrivateRoute>
+                <AddTrips />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/transactions"
+            element={
+              <PrivateRoute>
+                <Transactions />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/permissions"
+            element={
+              <PrivateRoute>
+                <Permissions />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/activity-logs"
+            element={
+              <PrivateRoute>
+                <ActivityLogs />
+              </PrivateRoute>
+            }
+          />
+             <Route
+            path="/change-password"
+            element={
+              <PrivateRoute>
+                <ChangePassword />
+              </PrivateRoute>
+            }
+          />
+          ;
+          <Route path="/gallery" element={<Gallery />} />;
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
+};
+
+export default App;
