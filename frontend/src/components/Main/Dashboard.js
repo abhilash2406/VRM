@@ -269,15 +269,6 @@ const Dashboard = () => {
           </>
         )}
         
-        {userRole !== 'Admin' && (
-          <div className="glass-panel">
-            <h3 className="panel-title">Trip Analytics <i className="bi-graph-up"></i></h3>
-            <div className="chart-container" style={{ position: 'relative', height: '400px', width: '100%' }}>
-              <Graph trips={trips} />
-            </div>
-          </div>
-        )}
-
       </div>
     </div>
   );
