@@ -23,7 +23,7 @@ import { UserType } from '../common/enum/user-type-enum.js';
       await users.create({
         ...adminData,
         password_hash: process.env.ADMIN_PASS || 'AbhiLash@20', // Hook handles hashing
-        designationId: designationDetails.id,
+        designation_id: designationDetails.id,
       });
       logger.info('Admin created successfully');
     } else {
