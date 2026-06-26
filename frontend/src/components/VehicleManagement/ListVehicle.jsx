@@ -1,5 +1,6 @@
 import logger from '../../utils/logger';
-import React, { useEffect } from 'react';
+import React, { useRef } from 'react';
+import ReactDOM from 'react-dom';
 import NavBar from '../Shared/NavBar';
 import { Link } from 'react-router-dom';
 import { useAllTrucks, useDeleteTruck } from '../../hooks/queries/useTruckQueries';
@@ -8,10 +9,20 @@ import DataTable, { createTheme } from 'react-data-table-component';
 import NotFound from '../NotFound';
 import { exportToCSV } from '../../utils/exportUtils';
 import TablePanelHeader from '../Shared/TablePanelHeader';
+import AddVehicleModal from './AddVehicleModal';
 
 const ListTruck = () => {
   const { data: truckData } = useAllTrucks();
   const { mutate: deleteTruck } = useDeleteTruck();
+  const modalRef = useRef(null);
+
+  const openAddModal = () => {
+    const el = document.getElementById('addVehicleModal');
+    if (el && window.bootstrap) {
+      const modal = window.bootstrap.Modal.getOrCreateInstance(el);
+      modal.show();
+    }
+  };
 
   createTheme(
     'solarized',
@@ -63,7 +74,7 @@ const ListTruck = () => {
         <div>
           {' '}
           {userRole === 'Admin' || userRole === 'SUPERADMIN' || permissionAllowed?.includes('Edit') ? (
-            <Link className="btn btn-info" to={`/edit-trucks/${row.id}`}>
+            <Link className="btn btn-info" to={`/update-vehicle/${row.id}`}>
               Edit
             </Link>
           ) : null}
@@ -109,7 +120,7 @@ const ListTruck = () => {
             onExport={() => exportToCSV(truckData, 'Vehicles')}
             showAddButton={userRole === 'Admin' || userRole === 'SUPERADMIN' || permissionAllowed?.includes('Add')}
             addButtonText="Add"
-            addButtonLink="/add-trucks"
+            onAddClick={openAddModal}
           />
           <DataTable
             columns={columns}
@@ -120,6 +131,7 @@ const ListTruck = () => {
           />
         </div>
       </div>
+      {ReactDOM.createPortal(<AddVehicleModal />, document.body)}
     </div>
   );
 };
