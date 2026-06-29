@@ -6,10 +6,7 @@ import { logger } from './winston-config.js';
  * Initializes and configures the Redis client.
  */
 export const redisClient = createClient({
-  socket: {
-    host: process.env.REDIS_HOST || '127.0.0.1',
-    port: process.env.REDIS_PORT || 6379,
-  },
+  url: process.env.REDIS_URL,
 });
 
 redisClient.on('error', (error) => {
@@ -24,9 +21,7 @@ redisClient.on('error', (error) => {
 export const connectRedis = async () => {
   try {
     await redisClient.connect();
-    logger.info(
-      `Redis connected successfully (${process.env.REDIS_HOST || '127.0.0.1'}:${process.env.REDIS_PORT || 6379})`
-    );
+    logger.info('Redis connected successfully');
   } catch (error) {
     logger.error(
       `Unable to connect to Redis: ${error instanceof Error ? error.message : String(error)}`
