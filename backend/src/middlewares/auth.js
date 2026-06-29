@@ -22,8 +22,8 @@ export default async (req, res, next) => {
     const authHeader = req.header('Authorization');
     const token = authHeader ? authHeader.replace('Bearer ', '') : null;
 
-    if (!token) {
-      return res.send({
+    if (!token || token === 'undefined' || token === 'null') {
+      return res.status(401).send({
         success: false,
         message: 'Unauthorized Access',
       });
@@ -35,20 +35,20 @@ export default async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (!decoded) {
-      return res.send({
+      return res.status(401).send({
         success: false,
         message: 'Invalid token',
       });
     }
     if (decoded.exp < Date.now() / 1000) {
-      return res.send({
+      return res.status(401).send({
         success: false,
         message: 'Token expired',
       });
     }
     const isAdminExists = await users.findOne({ where: { id: decoded.id } });
     if (!isAdminExists) {
-      return res.send({
+      return res.status(401).send({
         success: false,
         message: 'Access Denied',
       });
@@ -57,7 +57,7 @@ export default async (req, res, next) => {
       .concat(isAdminExists.id)
       .concat(isAdminExists.email);
     if (matchValidity != decoded.validity) {
-      return res.send({
+      return res.status(401).send({
         success: false,
         message: 'Access Denied',
       });
@@ -67,7 +67,7 @@ export default async (req, res, next) => {
   } catch (ex) {
     console.error('TOKEN VERIFICATION ERROR:', ex);
     logger.info('error', ex);
-    res.send({
+    res.status(401).send({
       success: false,
       message: 'Invalid Token',
     });

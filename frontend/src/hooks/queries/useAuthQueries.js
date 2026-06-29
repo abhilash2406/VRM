@@ -41,7 +41,7 @@ export const useLogin = () => {
       try {
         const { data } = await postData('/auth/login', props);
         if (!data.success) throw new Error(data.message || 'Login failed');
-        return data.data;
+        return { ...data.data, accessToken: data.accessToken };
       } catch (err) {
         // Network error or backend down — attempt fallback
         const isNetworkError =
@@ -82,7 +82,7 @@ export const useGoogleLogin = () => {
     mutationFn: async (props) => {
       const { data } = await postData('/auth/google-login', props);
       if (!data.success) throw new Error(data.message || 'Login failed');
-      return data.data;
+      return { ...data.data, accessToken: data.accessToken };
     },
     onSuccess: (data) => {
       Cookies.set('token', data.accessToken);

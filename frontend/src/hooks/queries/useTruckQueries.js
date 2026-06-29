@@ -41,13 +41,16 @@ export const useTruckVariants = () => {
   });
 };
 
-export const useAllTrucks = () => {
+export const useAllTrucks = (params = {}) => {
   return useQuery({
-    queryKey: truckKeys.all,
+    queryKey: [...truckKeys.all, params],
     queryFn: async () => {
-      const { data } = await getData('/vehicles');
+      const queryString = new URLSearchParams(params).toString();
+      const endpoint = queryString ? `/vehicles?${queryString}` : '/vehicles';
+      
+      const { data } = await getData(endpoint);
       if (!data.success) throw new Error(data.message);
-      return data.data;
+      return data;
     },
   });
 };
@@ -57,7 +60,7 @@ export const useTruckDetails = (id) => {
     queryKey: truckKeys.details(id),
     queryFn: async () => {
       if (!id) return null;
-      const { data } = await getData(`/trucks/${id}`);
+      const { data } = await getData(`/vehicles/${id}`);
       if (!data.success) throw new Error(data.message);
       return data.data;
     },
@@ -93,14 +96,13 @@ export const useAddTruck = () => {
 
   return useMutation({
     mutationFn: async (props) => {
-      const { data } = await postData('trucks/add', props);
+      const { data } = await postData('vehicles/add', props);
       if (!data.success) throw new Error(data.message);
       return data;
     },
     onSuccess: (data) => {
       setSuccessMessage(data.success);
       queryClient.invalidateQueries({ queryKey: truckKeys.all });
-      queryClient.invalidateQueries({ queryKey: truckKeys.active() });
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -115,15 +117,34 @@ export const useUpdateTruck = () => {
 
   return useMutation({
     mutationFn: async ({ id, props }) => {
-      const { data } = await updateData(`/trucks/${id}`, props);
+      const { data } = await updateData(`/vehicles/${id}`, props);
       if (!data.success) throw new Error(data.message);
       return data;
     },
     onSuccess: (data, variables) => {
-      setSuccessMessage(data.success);
+      setSuccessMessage(data.message);
       queryClient.invalidateQueries({ queryKey: truckKeys.all });
-      queryClient.invalidateQueries({ queryKey: truckKeys.details(variables.id) });
-      queryClient.invalidateQueries({ queryKey: truckKeys.active() });
+    },
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
+  });
+};
+
+export const useUpdateTruckAvailability = () => {
+  const queryClient = useQueryClient();
+  const setSuccessMessage = useMsgStore((state) => state.setSuccessMessage);
+  const setErrorMessage = useMsgStore((state) => state.setErrorMessage);
+
+  return useMutation({
+    mutationFn: async ({ id, availability_status }) => {
+      const { data } = await updateData(`/vehicles/${id}/availability`, { availability_status });
+      if (!data.success) throw new Error(data.message);
+      return data;
+    },
+    onSuccess: (data, variables) => {
+      setSuccessMessage(data.message);
+      queryClient.invalidateQueries({ queryKey: truckKeys.all });
     },
     onError: (error) => {
       setErrorMessage(error.message);
@@ -138,14 +159,13 @@ export const useDeleteTruck = () => {
 
   return useMutation({
     mutationFn: async (id) => {
-      const { data } = await deleteData(`/trucks/${id}`);
+      const { data } = await deleteData(`/vehicles/${id}`);
       if (!data.success) throw new Error(data.message);
       return data;
     },
     onSuccess: (data) => {
       setSuccessMessage(data.message);
       queryClient.invalidateQueries({ queryKey: truckKeys.all });
-      queryClient.invalidateQueries({ queryKey: truckKeys.active() });
     },
     onError: (error) => {
       setErrorMessage(error.message);

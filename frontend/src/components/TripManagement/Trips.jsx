@@ -3,7 +3,7 @@ import NavBar from '../Shared/NavBar';
 import { Link } from 'react-router-dom';
 import { useAllTrips, useDeleteTrip } from '../../hooks/queries/useTripQueries';
 import { useAuthStore } from '../../store/useAuthStore';
-import DataTable, { createTheme } from 'react-data-table-component';
+import AppDataTable from '../Shared/AppDataTable';
 import NotFound from '../NotFound';
 import { exportToCSV } from '../../utils/exportUtils';
 import TablePanelHeader from '../Shared/TablePanelHeader';
@@ -17,18 +17,6 @@ const Trips = () => {
 
   let array = grantedPermissions?.filter((item) => item.menu === 'Trip');
   let permissionAllowed = array?.map((e) => e.subMenu);
-
-  createTheme(
-    'solarized',
-    {
-      text: { primary: '#f8fafc', secondary: '#94a3b8' },
-      background: { default: 'transparent' },
-      context: { background: '#cb4b16', text: '#FFFFFF' },
-      divider: { default: 'rgba(255, 255, 255, 0.1)' },
-      action: { button: 'rgba(255,255,255,.54)', hover: 'rgba(255,255,255,.08)', disabled: 'rgba(255,255,255,.12)' },
-    },
-    'dark'
-  );
 
   const columns = [
     { name: 'Driver', selector: (row) => row.driver?.user?.name || 'N/A' },
@@ -87,11 +75,10 @@ const Trips = () => {
             addButtonText="Add Journey"
             addButtonLink="/add-trips"
           />
-          <DataTable
+          <AppDataTable
             columns={columns}
             data={trips || []}
-            pagination
-            theme="solarized"
+
             noDataComponent={customNoData}
           />
         </div>
