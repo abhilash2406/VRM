@@ -29,24 +29,30 @@ export const addVehicle = async (req, res) => {
  */
 export const getAllVehicles = async (req, res) => {
   try {
+    const isExport = req.query.isExport === 'true';
     const result = await getAllVehiclesService(req.query);
-    res.send({ 
-      success: true, 
-      message: 'Vehicles retrieved successfully', 
+
+    if (isExport && result.csv) {
+      res.header('Content-Type', 'text/csv');
+      res.attachment('vehicles_export.csv');
+      return res.send(result.csv);
+    }
+
+    res.send({
+      success: true,
+      message: 'Vehicles retrieved successfully',
       data: result.rows,
       meta: {
         total: result.count,
         page: result.page,
         limit: result.limit,
-        totalPages: Math.ceil(result.count / result.limit)
-      }
+        totalPages: Math.ceil(result.count / result.limit),
+      },
     });
   } catch (e) {
     res.send({ success: false, message: e.message });
   }
 };
-
-
 
 /**
  * Retrieves a single vehicle by ID.
@@ -97,11 +103,12 @@ export const updateVehicleStatus = async (req, res) => {
  */
 export const updateVehicleAvailability = async (req, res) => {
   try {
-    const data = await updateVehicleAvailabilityService(req.params.id, req.body.availability_status);
+    const data = await updateVehicleAvailabilityService(
+      req.params.id,
+      req.body.availability_status
+    );
     res.send({ success: true, message: 'Vehicle availability updated successfully', data });
   } catch (e) {
     res.send({ success: false, message: e.message });
   }
 };
-
-

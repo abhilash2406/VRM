@@ -28,6 +28,7 @@ describe('Auth Middleware', () => {
     };
     res = {
       send: jest.fn(),
+      status: jest.fn().mockReturnThis(),
     };
     next = jest.fn();
   });
@@ -54,6 +55,23 @@ describe('Auth Middleware', () => {
   it('should reject if no Authorization header is present', async () => {
     req.header.mockReturnValue(null);
     await authMiddleware(req, res, next);
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.send).toHaveBeenCalledWith({ success: false, message: 'Unauthorized Access' });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('should reject if token is the string "undefined"', async () => {
+    req.header.mockReturnValue('Bearer undefined');
+    await authMiddleware(req, res, next);
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.send).toHaveBeenCalledWith({ success: false, message: 'Unauthorized Access' });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('should reject if token is the string "null"', async () => {
+    req.header.mockReturnValue('Bearer null');
+    await authMiddleware(req, res, next);
+    expect(res.status).toHaveBeenCalledWith(401);
     expect(res.send).toHaveBeenCalledWith({ success: false, message: 'Unauthorized Access' });
     expect(next).not.toHaveBeenCalled();
   });

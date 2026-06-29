@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import NavBar from '../Shared/NavBar';
-import DataTable, { createTheme } from 'react-data-table-component';
+import AppDataTable from '../Shared/AppDataTable';
 import NotFound from '../NotFound';
 import { exportToCSV } from '../../utils/exportUtils';
 import TablePanelHeader from '../Shared/TablePanelHeader';
@@ -15,18 +15,6 @@ const mockLogs = [
 
 const ActivityLogs = () => {
   const [logs] = useState(mockLogs);
-
-  createTheme(
-    'solarized',
-    {
-      text: { primary: '#f8fafc', secondary: '#94a3b8' },
-      background: { default: 'transparent' },
-      context: { background: '#cb4b16', text: '#FFFFFF' },
-      divider: { default: 'rgba(255, 255, 255, 0.1)' },
-      action: { button: 'rgba(255,255,255,.54)', hover: 'rgba(255,255,255,.08)', disabled: 'rgba(255,255,255,.12)' },
-    },
-    'dark'
-  );
 
   const columns = [
     { name: 'Timestamp', selector: (row) => new Date(row.timestamp).toLocaleString(), sortable: true, width: '200px' },
@@ -60,11 +48,10 @@ const ActivityLogs = () => {
             searchPlaceholder="Search logs..."
             onExport={() => exportToCSV(logs, 'ActivityLogs')}
           />
-          <DataTable
+          <AppDataTable
             columns={columns}
             data={logs}
-            pagination
-            theme="solarized"
+
             noDataComponent={customNoData}
             defaultSortFieldId={1}
             defaultSortAsc={false}

@@ -31,7 +31,7 @@ describe('Vehicle Management API', () => {
             vehicle_type: 'four-wheeler',
           },
         };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
         const next = jest.fn();
 
         await VehicleValidate(req, res, next);
@@ -48,7 +48,7 @@ describe('Vehicle Management API', () => {
             vehicle_type: 'four-wheeler',
           },
         };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
         const next = jest.fn();
 
         await VehicleValidate(req, res, next);
@@ -60,7 +60,7 @@ describe('Vehicle Management API', () => {
     describe('VehicleStatusValidate', () => {
       it('should validate correct status', async () => {
         const req = { body: { status: 'ACTIVE' } };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
         const next = jest.fn();
 
         await VehicleStatusValidate(req, res, next);
@@ -69,7 +69,7 @@ describe('Vehicle Management API', () => {
 
       it('should fail with invalid status', async () => {
         const req = { body: { status: 'INVALID_STATUS' } };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
         const next = jest.fn();
 
         await VehicleStatusValidate(req, res, next);
@@ -80,7 +80,7 @@ describe('Vehicle Management API', () => {
     describe('VehicleAvailabilityValidate', () => {
       it('should validate correct availability status', async () => {
         const req = { body: { availability_status: 'booked' } };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
         const next = jest.fn();
 
         await VehicleAvailabilityValidate(req, res, next);
@@ -89,7 +89,7 @@ describe('Vehicle Management API', () => {
 
       it('should fail with invalid availability status', async () => {
         const req = { body: { availability_status: 'free' } };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
         const next = jest.fn();
 
         await VehicleAvailabilityValidate(req, res, next);
@@ -108,7 +108,7 @@ describe('Vehicle Management API', () => {
           body: { registration_number: 'KA-01-HH-1234' },
           user: { id: 'user-1' },
         };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
 
         await controller.addVehicle(req, res);
 
@@ -124,7 +124,7 @@ describe('Vehicle Management API', () => {
         service.addVehicleService.mockRejectedValue(new Error('Add failed'));
 
         const req = { body: {}, user: { id: 'user-1' } };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
 
         await controller.addVehicle(req, res);
 
@@ -141,7 +141,7 @@ describe('Vehicle Management API', () => {
         service.getAllVehiclesService.mockResolvedValue(mockResult);
 
         const req = { query: { page: 1, limit: 10 } };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
 
         await controller.getAllVehicles(req, res);
 
@@ -159,11 +159,31 @@ describe('Vehicle Management API', () => {
         });
       });
 
+      it('should return csv when isExport is true', async () => {
+        const mockResult = { csv: 'col1,col2\nval1,val2' };
+        service.getAllVehiclesService.mockResolvedValue(mockResult);
+
+        const req = { query: { isExport: 'true' } };
+        const res = {
+          send: jest.fn(),
+          status: jest.fn().mockReturnThis(),
+          header: jest.fn(),
+          attachment: jest.fn(),
+        };
+
+        await controller.getAllVehicles(req, res);
+
+        expect(service.getAllVehiclesService).toHaveBeenCalledWith(req.query);
+        expect(res.header).toHaveBeenCalledWith('Content-Type', 'text/csv');
+        expect(res.attachment).toHaveBeenCalledWith('vehicles_export.csv');
+        expect(res.send).toHaveBeenCalledWith(mockResult.csv);
+      });
+
       it('should handle retrieval failure', async () => {
         service.getAllVehiclesService.mockRejectedValue(new Error('Fetch failed'));
 
         const req = { query: {} };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
 
         await controller.getAllVehicles(req, res);
 
@@ -180,7 +200,7 @@ describe('Vehicle Management API', () => {
         service.getVehicleByIdService.mockResolvedValue(mockData);
 
         const req = { params: { id: 'veh-1' } };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
 
         await controller.getVehicleById(req, res);
 
@@ -196,7 +216,7 @@ describe('Vehicle Management API', () => {
         service.getVehicleByIdService.mockRejectedValue(new Error('Not found'));
 
         const req = { params: { id: 'veh-1' } };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
 
         await controller.getVehicleById(req, res);
 
@@ -213,7 +233,7 @@ describe('Vehicle Management API', () => {
         service.updateVehicleService.mockResolvedValue(mockData);
 
         const req = { params: { id: 'veh-1' }, body: { manufacturer: 'Honda' } };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
 
         await controller.updateVehicle(req, res);
 
@@ -229,7 +249,7 @@ describe('Vehicle Management API', () => {
         service.updateVehicleService.mockRejectedValue(new Error('Update failed'));
 
         const req = { params: { id: 'veh-1' }, body: {} };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
 
         await controller.updateVehicle(req, res);
 
@@ -246,7 +266,7 @@ describe('Vehicle Management API', () => {
         service.updateVehicleStatusService.mockResolvedValue(mockData);
 
         const req = { params: { id: 'veh-1' }, body: { status: 'INACTIVE' } };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
 
         await controller.updateVehicleStatus(req, res);
 
@@ -262,7 +282,7 @@ describe('Vehicle Management API', () => {
         service.updateVehicleStatusService.mockRejectedValue(new Error('Status update failed'));
 
         const req = { params: { id: 'veh-1' }, body: { status: 'INACTIVE' } };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
 
         await controller.updateVehicleStatus(req, res);
 
@@ -279,7 +299,7 @@ describe('Vehicle Management API', () => {
         service.updateVehicleAvailabilityService.mockResolvedValue(mockData);
 
         const req = { params: { id: 'veh-1' }, body: { availability_status: 'booked' } };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
 
         await controller.updateVehicleAvailability(req, res);
 
@@ -292,10 +312,12 @@ describe('Vehicle Management API', () => {
       });
 
       it('should handle availability update failure', async () => {
-        service.updateVehicleAvailabilityService.mockRejectedValue(new Error('Availability update failed'));
+        service.updateVehicleAvailabilityService.mockRejectedValue(
+          new Error('Availability update failed')
+        );
 
         const req = { params: { id: 'veh-1' }, body: { availability_status: 'booked' } };
-        const res = { send: jest.fn() };
+        const res = { send: jest.fn(), status: jest.fn().mockReturnThis() };
 
         await controller.updateVehicleAvailability(req, res);
 

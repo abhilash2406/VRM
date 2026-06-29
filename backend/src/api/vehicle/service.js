@@ -2,6 +2,8 @@ import vehicle from '../../models/vehicle.js';
 import { VehicleStatus, VehicleType } from '../../common/enum/vehicle-enum.js';
 import { EntityType } from '../../common/enum/activity-enum.js';
 import { Op } from 'sequelize';
+import { generateB2PublicUrl } from '../../utils/backblaze.js';
+import { generateCSV } from '../../utils/csvExport.js';
 
 /**
  * Registers a new vehicle in the system.
@@ -47,8 +49,9 @@ export const addVehicleService = async (data, userId) => {
  * @returns {Promise<Object>} Object containing rows, count, page, and limit.
  */
 export const getAllVehiclesService = async (query = {}) => {
-  const page = parseInt(query.page, 10) || 1;
-  const limit = parseInt(query.limit, 10) || 10;
+  const isExport = query.isExport === 'true';
+  const page = isExport ? 1 : parseInt(query.page, 10) || 1;
+  const limit = isExport ? 1000000 : parseInt(query.limit, 10) || 10;
   const offset = (page - 1) * limit;
 
   const where = {};
@@ -90,10 +93,24 @@ export const getAllVehiclesService = async (query = {}) => {
     order: [[sortBy, sortOrder]],
   });
 
+  if (isExport) {
+    const fields = [
+      'registration_number',
+      'manufacturer',
+      'model_name',
+      'manufacturing_year',
+      'vehicle_type',
+      'availability_status',
+    ];
+    const csv = generateCSV(
+      rows.map((row) => (row.toJSON ? row.toJSON() : row)),
+      fields
+    );
+    return { csv };
+  }
+
   return { count, rows, page, limit };
 };
-
-
 
 /**
  * Fetches a single vehicle record by ID.
@@ -106,7 +123,24 @@ export const getVehicleByIdService = async (id) => {
   if (!found) {
     throw new Error('Vehicle not found');
   }
-  return found;
+
+  const vehicleData = found.toJSON ? found.toJSON() : found;
+
+  const resolvePhotoUrl = (photoPath) => {
+    if (!photoPath) return null;
+    if (photoPath.startsWith('http')) return photoPath;
+    if (photoPath.startsWith('uploads/')) return generateB2PublicUrl(photoPath);
+    return `${process.env.APP_URL || 'http://localhost:5000'}/${photoPath}`;
+  };
+
+  if (vehicleData.vehicle_photo) {
+    vehicleData.vehicle_photo_url = resolvePhotoUrl(vehicleData.vehicle_photo);
+  }
+  if (vehicleData.rc_photo) {
+    vehicleData.rc_photo_url = resolvePhotoUrl(vehicleData.rc_photo);
+  }
+
+  return vehicleData;
 };
 
 /**
@@ -142,8 +176,6 @@ export const updateVehicleService = async (id, data) => {
   await found.update(updates);
   return found;
 };
-
-
 
 /**
  * Updates the lifecycle status of a vehicle.

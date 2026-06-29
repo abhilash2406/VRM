@@ -1,0 +1,129 @@
+.glass-dropdown-menu {
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  padding: 8px !important;
+  min-width: 160px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-dropdown-item {
+  border-radius: 8px !important;
+  padding: 10px 16px !important;
+  margin-bottom: 4px;
+  color: #f8fafc !important;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.glass-dropdown-item:last-child {
+  margin-bottom: 0;
+}
+
+.glass-dropdown-item:hover, .glass-dropdown-item:focus {
+  background: rgba(255, 255, 255, 0.1) !important;
+  transform: translateX(4px);
+}
+
+.glass-dropdown-item.active-item {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-btn-success { background: rgba(25, 135, 84, 0.15) !important; box-shadow: 0 0 10px rgba(25, 135, 84, 0.2); }
+.glass-btn-primary { background: rgba(13, 110, 253, 0.15) !important; box-shadow: 0 0 10px rgba(13, 110, 253, 0.2); }
+.glass-btn-warning { background: rgba(255, 193, 7, 0.15) !important; box-shadow: 0 0 10px rgba(255, 193, 7, 0.2); color: #ffc107 !important; }
+
+/* Light Mode Overrides */
+body.light-mode .glass-dropdown-menu {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(200, 200, 200, 0.4) !important;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+}
+
+body.light-mode .glass-dropdown-item {
+  color: #1e293b !important;
+}
+
+body.light-mode .glass-dropdown-item:hover, 
+body.light-mode .glass-dropdown-item:focus {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .glass-dropdown-item.active-item {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Table Filter Bar Styles */
+.table-filters-container {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.filter-label {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.glass-select {
+  background: rgba(15, 23, 42, 0.5) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
+  border-radius: 8px !important;
+  padding: 8px 32px 8px 12px !important;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.75rem center !important;
+  background-size: 16px 12px !important;
+  min-width: 160px;
+  font-size: 0.9rem;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.glass-select:focus {
+  border-color: rgba(0, 212, 255, 0.5) !important;
+  box-shadow: 0 0 0 0.25rem rgba(0, 212, 255, 0.15) !important;
+  outline: none;
+}
+
+.glass-select option {
+  background: #1e293b;
+  color: #f8fafc;
+  padding: 10px;
+}
+
+/* Light Mode Overrides for Filters */
+body.light-mode .table-filters-container {
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+body.light-mode .filter-label {
+  color: #64748b;
+}
+
+body.light-mode .glass-select {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  color: #1e293b !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+}
+
+body.light-mode .glass-select option {
+  background: #ffffff;
+  color: #1e293b;
+}

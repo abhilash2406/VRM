@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import NavBar from '../Shared/NavBar';
 import { Link, useNavigate } from 'react-router-dom';
-import DataTable, { createTheme } from 'react-data-table-component';
+import AppDataTable from '../Shared/AppDataTable';
 import NotFound from '../NotFound';
 import { exportToCSV } from '../../utils/exportUtils';
 import TablePanelHeader from '../Shared/TablePanelHeader';
@@ -79,18 +79,6 @@ const AddUser = () => {
     ))
     .filter((item) => item.designation !== 'Admin');
 
-  createTheme(
-    'solarized',
-    {
-      text: { primary: '#f8fafc', secondary: '#94a3b8' },
-      background: { default: 'transparent' },
-      context: { background: '#cb4b16', text: '#FFFFFF' },
-      divider: { default: 'rgba(255, 255, 255, 0.1)' },
-      action: { button: 'rgba(255,255,255,.54)', hover: 'rgba(255,255,255,.08)', disabled: 'rgba(255,255,255,.12)' },
-    },
-    'dark'
-  );
-
   const columns = [
     { name: 'Name', selector: (row) => row.name || 'N/A' },
     { name: 'Email', selector: (row) => row.email || 'N/A' },
@@ -127,11 +115,10 @@ const AddUser = () => {
             onAddClick={() => {}}
             addModalTarget="#addUserModal"
           />
-          <DataTable
+          <AppDataTable
             columns={columns}
             data={usersList}
-            pagination
-            theme="solarized"
+
             noDataComponent={customNoData}
           />
         </div>

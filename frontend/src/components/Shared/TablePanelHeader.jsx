@@ -11,18 +11,21 @@ const TablePanelHeader = ({
   addButtonText = 'Add',
   addButtonLink,
   onAddClick,
-  addModalTarget // e.g. '#addUserModal'
+  addModalTarget, // e.g. '#addUserModal'
+  filters // optional ReactNode for dropdowns/filters
 }) => {
   return (
     <div className="panel-header">
-      <div className="d-flex align-items-center gap-2">
+      <div className="d-flex align-items-center gap-2" style={{ flexWrap: 'nowrap', overflowX: 'auto' }}>
         <input 
           type="text" 
           className="form-control panel-search" 
           placeholder={searchPlaceholder}
           value={searchTerm}
           onChange={onSearchChange}
+          style={{ minWidth: '150px', width: '200px' }}
         />
+        {filters && <div className="d-flex gap-2">{filters}</div>}
       </div>
       <div className="d-flex gap-2">
         {onExport && (

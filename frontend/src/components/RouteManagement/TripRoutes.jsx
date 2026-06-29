@@ -3,7 +3,7 @@ import NavBar from '../Shared/NavBar';
 import { Link } from 'react-router-dom';
 import { useAllRoutes, useDeleteRoute } from '../../hooks/queries/useRouteQueries';
 import { useAuthStore } from '../../store/useAuthStore';
-import DataTable, { createTheme } from 'react-data-table-component';
+import AppDataTable from '../Shared/AppDataTable';
 import NotFound from '../NotFound';
 
 const TripRoutes = () => {
@@ -15,18 +15,6 @@ const TripRoutes = () => {
 
   let array = grantedPermissions?.filter((item) => item.menu === 'Route');
   let permissionAllowed = array?.map((e) => e.subMenu);
-
-  createTheme(
-    'solarized',
-    {
-      text: { primary: '#f8fafc', secondary: '#94a3b8' },
-      background: { default: 'transparent' },
-      context: { background: '#cb4b16', text: '#FFFFFF' },
-      divider: { default: 'rgba(255, 255, 255, 0.1)' },
-      action: { button: 'rgba(255,255,255,.54)', hover: 'rgba(255,255,255,.08)', disabled: 'rgba(255,255,255,.12)' },
-    },
-    'dark'
-  );
 
   const columns = [
     { name: 'From', selector: (row) => row.from || 'N/A' },
@@ -85,11 +73,10 @@ const TripRoutes = () => {
         </div>
 
         <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
-          <DataTable
+          <AppDataTable
             columns={columns}
             data={routeData || []}
-            pagination
-            theme="solarized"
+
             noDataComponent={customNoData}
           />
         </div>
