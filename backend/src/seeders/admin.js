@@ -2,6 +2,7 @@ import { logger } from '../config/winston-config.js';
 import users from '../models/users.js';
 import designation from '../models/designation.js'; // corrected import path based on relative position
 import { UserType } from '../common/enum/user-type-enum.js';
+import { UserStatus } from '../common/enum/user-status-enum.js';
 
 (async () => {
   try {
@@ -24,6 +25,9 @@ import { UserType } from '../common/enum/user-type-enum.js';
         ...adminData,
         password_hash: process.env.ADMIN_PASS || 'AbhiLash@20', // Hook handles hashing
         designation_id: designationDetails.id,
+        status: UserStatus.ACTIVE,
+        email_verified: true,
+        phone_verified: true,
       });
       logger.info('Admin created successfully');
     } else {

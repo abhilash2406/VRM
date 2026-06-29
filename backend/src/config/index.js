@@ -46,6 +46,14 @@ export const configuration = () => {
       dialect: process.env.DB_DIALECT,
       port: Number(process.env.DB_PORT),
       logging: process.env.DB_LOGGING === 'true',
+      ...(process.env.DB_SSL === 'true' && {
+        dialectOptions: {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false,
+          },
+        },
+      }),
     },
     stripe: {
       publishable_key: process.env.STRIPE_PUBLISHABLE_KEY,
