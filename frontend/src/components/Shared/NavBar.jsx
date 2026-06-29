@@ -159,7 +159,7 @@ const NavBar = () => {
         </div>
         
         <div className="nav-item">
-          <Link to="/trucks" className={`nav-link-custom ${isActive('/trucks') ? 'active' : ''}`}>
+          <Link to="/vehicles" className={`nav-link-custom ${isActive('/vehicles') ? 'active' : ''}`}>
             <i className="bi-truck"></i> Vehicles
           </Link>
         </div>
