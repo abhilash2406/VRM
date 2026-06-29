@@ -16,10 +16,9 @@ const TablePanelHeader = ({
   return (
     <div className="panel-header">
       <div className="d-flex align-items-center gap-2">
-        <i className="bi-search text-muted position-absolute ms-3"></i>
         <input 
           type="text" 
-          className="form-control panel-search ps-5" 
+          className="form-control panel-search" 
           placeholder={searchPlaceholder}
           value={searchTerm}
           onChange={onSearchChange}
