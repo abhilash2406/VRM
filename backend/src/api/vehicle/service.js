@@ -2,7 +2,7 @@ import vehicle from '../../models/vehicle.js';
 import { VehicleStatus, VehicleType } from '../../common/enum/vehicle-enum.js';
 import { EntityType } from '../../common/enum/activity-enum.js';
 import { Op } from 'sequelize';
-import { generateB2PublicUrl } from '../../utils/backblaze.js';
+import { generateB2PresignedUrl } from '../../utils/backblaze.js';
 import { generateCSV } from '../../utils/csvExport.js';
 
 /**
@@ -126,18 +126,18 @@ export const getVehicleByIdService = async (id) => {
 
   const vehicleData = found.toJSON ? found.toJSON() : found;
 
-  const resolvePhotoUrl = (photoPath) => {
+  const resolvePhotoUrl = async (photoPath) => {
     if (!photoPath) return null;
     if (photoPath.startsWith('http')) return photoPath;
-    if (photoPath.startsWith('uploads/')) return generateB2PublicUrl(photoPath);
+    if (photoPath.startsWith('uploads/')) return await generateB2PresignedUrl(photoPath);
     return `${process.env.APP_URL || 'http://localhost:5000'}/${photoPath}`;
   };
 
   if (vehicleData.vehicle_photo) {
-    vehicleData.vehicle_photo_url = resolvePhotoUrl(vehicleData.vehicle_photo);
+    vehicleData.vehicle_photo_url = await resolvePhotoUrl(vehicleData.vehicle_photo);
   }
   if (vehicleData.rc_photo) {
-    vehicleData.rc_photo_url = resolvePhotoUrl(vehicleData.rc_photo);
+    vehicleData.rc_photo_url = await resolvePhotoUrl(vehicleData.rc_photo);
   }
 
   return vehicleData;
