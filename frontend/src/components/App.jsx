@@ -43,7 +43,10 @@ const App = () => {
   }, [socket, role, setLogin]);
 
   useEffect(() => {
-    loginPermissionsMutation.mutate();
+    const token = Cookies.get('token');
+    if (token) {
+      loginPermissionsMutation.mutate();
+    }
   }, []);
 
   useEffect(() => {
