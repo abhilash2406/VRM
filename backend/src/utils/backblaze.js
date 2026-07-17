@@ -1,4 +1,9 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  GetObjectCommand,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 /**
@@ -13,7 +18,7 @@ const b2Client = new S3Client({
     secretAccessKey: process.env.BACKBLAZE_APP_KEY,
   },
   // Ensure path style is used if virtual-hosted styling fails or is not preferred
-  forcePathStyle: false, 
+  forcePathStyle: false,
 });
 
 const bucketName = process.env.BACKBLAZE_BUCKET_NAME;
@@ -28,8 +33,8 @@ const bucketName = process.env.BACKBLAZE_BUCKET_NAME;
  */
 export const uploadToB2 = async (name, buffer, mimetype, customKey = null) => {
   if (!name) name = 'file';
-  const key = customKey || `uploads/${Date.now()}-${name.replace(/\\s+/g, '_')}`;
-  
+  const key = customKey || `uploads/${Date.now()}-${name.replace(/\s+/g, '_')}`;
+
   const command = new PutObjectCommand({
     Bucket: bucketName,
     Key: key,
@@ -51,7 +56,7 @@ export const deleteFromB2 = async (key) => {
     Bucket: bucketName,
     Key: key,
   });
-  
+
   await b2Client.send(command);
   return true;
 };
@@ -67,9 +72,24 @@ export const generateB2PublicUrl = (key) => {
   return `${process.env.BACKBLAZE_ENDPOINT}/${bucketName}/${key}`;
 };
 
+/**
+ * Generates a pre-signed URL for a file stored in a private Backblaze B2 bucket.
+ * @param {string} key - The key/path of the file
+ * @param {number} expiresIn - Expiration time in seconds (default 1 hour)
+ * @returns {Promise<string>} The pre-signed URL
+ */
+export const generateB2PresignedUrl = async (key, expiresIn = 3600) => {
+  const command = new GetObjectCommand({
+    Bucket: bucketName,
+    Key: key,
+  });
+  return await getSignedUrl(b2Client, command, { expiresIn });
+};
+
 export default {
   uploadToB2,
   deleteFromB2,
   generateB2PublicUrl,
-  b2Client
+  generateB2PresignedUrl,
+  b2Client,
 };

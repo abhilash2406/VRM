@@ -7,32 +7,32 @@ import HomePage from './HomePage/HomePage';
 import NotFound from './NotFound';
 import ContactUs from './HomePage/ContactUs';
 import GalleryUser from './HomePage/Gallery';
-import Login from './Authentication/Login';
-import Registration from './Authentication/Registration';
-import FillDetails from './Authentication/FillDetails';
-import DrivingDetails from './Authentication/DrivingDetails';
-import StripePayment from './Authentication/StripePayment';
-import Success from './Authentication/Success';
-import Gallery from './ProfileManagement/Gallery';
+import Login from '../pages/auth/Login';
+import Registration from '../pages/auth/Registration';
+import FillDetails from '../pages/auth/FillDetails';
+import DrivingDetails from '../pages/auth/DrivingDetails';
+import StripePayment from '../pages/common/StripePayment';
+import Success from '../pages/common/Success';
+import Gallery from '../pages/common/Home/Gallery';
 
 // Private pages
-import Dashboard from './Dashboard/Dashboard';
-import ListVehicle from './VehicleManagement/ListVehicle';
-import AddUser from './AddUsers/AddUser';
-import Profile from './ProfileManagement/Profile';
-import Feedbacks from './ProfileManagement/Feedbacks';
-import ViewFeedback from './ProfileManagement/ViewFeedback';
-import ChangePassword from './ProfileManagement/ChangePassword';
-import ActivityLogs from './SystemLogs/ActivityLogs';
-import TripRoutes from './RouteManagement/TripRoutes';
-import AddRoutes from './RouteManagement/AddRoutes';
-import DriverList from './DriverManagement.js/DriverList';
-import AddDrivers from './DriverManagement.js/AddDrivers';
-import ViewDriver from './DriverManagement.js/ViewDriver';
-import Trips from './TripManagement/Trips';
-import AddTrips from './TripManagement/AddTrips';
-import Transactions from './Transactions/Transactions';
-import Permissions from './PermissionManagement/Permissions';
+import AdminLayout from './layout/AdminLayout';
+import Dashboard from '../pages/admin/Dashboard/Dashboard';
+import ListVehicle from '../pages/admin/Vehicles/ListVehicle';
+import AddUser from '../pages/admin/Users/AddUser';
+import Profile from '../pages/common/Home/Profile';
+import Feedbacks from '../pages/common/Home/Feedbacks';
+import ViewFeedback from '../pages/common/Home/ViewFeedback';
+import ChangePassword from '../pages/common/Home/ChangePassword';
+import ActivityLogs from '../pages/admin/SystemLogs/ActivityLogs';
+import TripRoutes from '../pages/admin/Routes/TripRoutes';
+import AddRoutes from '../pages/admin/Routes/AddRoutes';
+import DriverList from '../pages/admin/Drivers/DriverList';
+import AddDrivers from '../pages/admin/Drivers/AddDrivers';
+import ViewDriver from '../pages/admin/Drivers/ViewDriver';
+import Trips from '../pages/admin/Trips/Trips';
+import Transactions from '../pages/admin/Transactions/Transactions';
+import Permissions from '../pages/admin/Permissions/Permissions';
 
 const AppRoutes = () => {
   return (
@@ -47,47 +47,48 @@ const AppRoutes = () => {
       <Route path="/driver-details" element={<DrivingDetails />} />
       <Route path="/payment" element={<StripePayment />} />
       <Route path="/success" element={<Success />} />
-      <Route path="/gallery" element={<Gallery />} />
 
-      {/* ── Dashboard ── */}
-      <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+      {/* ── Admin Area ── */}
+      <Route element={<PrivateRoute><AdminLayout /></PrivateRoute>}>
+        {/* ── Dashboard ── */}
+        <Route path="/dashboard" element={<Dashboard />} />
 
-      {/* ── Users ── */}
-      <Route path="/add-user" element={<PrivateRoute><AddUser /></PrivateRoute>} />
+        {/* ── Users ── */}
+        <Route path="/add-user" element={<AddUser />} />
 
-      {/* ── Vehicles ── */}
-      <Route path="/vehicles" element={<PrivateRoute><ListVehicle /></PrivateRoute>} />
+        {/* ── Vehicles ── */}
+        <Route path="/vehicles" element={<ListVehicle />} />
 
-      {/* ── Profile ── */}
-      <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-      <Route path="/feedbacks" element={<PrivateRoute><Feedbacks /></PrivateRoute>} />
-      <Route path="/view-feedback/:id" element={<PrivateRoute><ViewFeedback /></PrivateRoute>} />
-      <Route path="/change-password" element={<PrivateRoute><ChangePassword /></PrivateRoute>} />
+        {/* ── Profile ── */}
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/feedbacks" element={<Feedbacks />} />
+        <Route path="/view-feedback/:id" element={<ViewFeedback />} />
+        <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/gallery" element={<Gallery />} />
 
-      {/* ── Routes ── */}
-      <Route path="/routes" element={<PrivateRoute><TripRoutes /></PrivateRoute>} />
-      <Route path="/add-routes" element={<PrivateRoute><AddRoutes /></PrivateRoute>} />
-      <Route path="/edit-routes/:id" element={<PrivateRoute><AddRoutes /></PrivateRoute>} />
+        {/* ── Routes ── */}
+        <Route path="/routes" element={<TripRoutes />} />
+        <Route path="/add-routes" element={<AddRoutes />} />
+        <Route path="/edit-routes/:id" element={<AddRoutes />} />
 
-      {/* ── Drivers ── */}
-      <Route path="/drivers" element={<PrivateRoute><DriverList /></PrivateRoute>} />
-      <Route path="/add-drivers" element={<PrivateRoute><AddDrivers /></PrivateRoute>} />
-      <Route path="/edit-driver/:id" element={<PrivateRoute><AddDrivers /></PrivateRoute>} />
-      <Route path="/view-data/:id" element={<PrivateRoute><ViewDriver /></PrivateRoute>} />
+        {/* ── Drivers ── */}
+        <Route path="/drivers" element={<DriverList />} />
+        <Route path="/add-drivers" element={<AddDrivers />} />
+        <Route path="/edit-driver/:id" element={<AddDrivers />} />
+        <Route path="/view-data/:id" element={<ViewDriver />} />
 
-      {/* ── Trips ── */}
-      <Route path="/trips" element={<PrivateRoute><Trips /></PrivateRoute>} />
-      <Route path="/add-trips" element={<PrivateRoute><AddTrips /></PrivateRoute>} />
-      <Route path="/edit-trips/:id" element={<PrivateRoute><AddTrips /></PrivateRoute>} />
+        {/* ── Trips ── */}
+        <Route path="/trips" element={<Trips />} />
 
-      {/* ── Transactions ── */}
-      <Route path="/transactions" element={<PrivateRoute><Transactions /></PrivateRoute>} />
+        {/* ── Transactions ── */}
+        <Route path="/transactions" element={<Transactions />} />
 
-      {/* ── Permissions ── */}
-      <Route path="/permissions" element={<PrivateRoute><Permissions /></PrivateRoute>} />
+        {/* ── Permissions ── */}
+        <Route path="/permissions" element={<Permissions />} />
 
-      {/* ── System ── */}
-      <Route path="/activity-logs" element={<PrivateRoute><ActivityLogs /></PrivateRoute>} />
+        {/* ── System ── */}
+        <Route path="/activity-logs" element={<ActivityLogs />} />
+      </Route>
 
       {/* ── Fallback ── */}
       <Route path="*" element={<NotFound />} />

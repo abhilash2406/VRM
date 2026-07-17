@@ -303,3 +303,48 @@ cursor: pointer;
   cursor: pointer;
   border: solid 1px #BA68C8
 }
+
+/* React Toastify Custom Theme Overrides */
+:root {
+  --toastify-color-dark: #0f172a;
+  --toastify-color-info: #00D4FF;
+  --toastify-color-success: #10b981;
+  --toastify-color-warning: #f59e0b;
+  --toastify-color-error: #ef4444;
+  --toastify-text-color-dark: #f8fafc;
+  --toastify-font-family: 'Inter', 'Roboto', sans-serif;
+}
+
+.Toastify__toast-theme--dark {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  color: #f8fafc !important;
+}
+
+.Toastify__close-button--dark {
+  color: #94a3b8 !important;
+  opacity: 0.7;
+}
+
+.Toastify__close-button--dark:hover {
+  color: #fff !important;
+  opacity: 1;
+}
+
+body.light-mode .Toastify__toast-theme--dark {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 102, 255, 0.15) !important;
+  color: #0f172a !important;
+}
+
+body.light-mode .Toastify__close-button--dark {
+  color: #64748b !important;
+}
+
+body.light-mode .Toastify__close-button--dark:hover {
+  color: #0f172a !important;
+}
