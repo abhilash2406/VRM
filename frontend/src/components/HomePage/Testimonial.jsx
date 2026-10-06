@@ -1,148 +1,208 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
-const SectionWrapper = styled.section`
-  padding: 80px 0;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: #f8fafc;
+const float = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 `;
 
-const SectionTitle = styled.h3`
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: #ffffff;
+const SectionWrapper = styled.section`
+  padding: 100px 0;
+  background: #0f172a;
+  color: #f8fafc;
   position: relative;
-  display: inline-block;
+  overflow: hidden;
 
-  &::after {
+  &::before {
     content: '';
     position: absolute;
-    left: 50%;
-    bottom: -10px;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 4px;
-    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-    border-radius: 2px;
+    top: 10%;
+    left: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.06) 0%, transparent 60%);
+    pointer-events: none;
   }
+`;
+
+const SectionHeader = styled.div`
+  text-align: center;
+  margin-bottom: 60px;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  background: linear-gradient(90deg, #ffffff, #00D4FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  letter-spacing: -0.5px;
 `;
 
 const SectionDesc = styled.p`
   color: #94a3b8;
-  font-size: 1.1rem;
-  max-width: 700px;
-  margin: 0 auto 50px;
+  font-size: 1.15rem;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
 `;
 
 const Card = styled.div`
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
+  background: rgba(0, 212, 255, 0.02);
+  border-radius: 20px;
   padding: 40px 30px;
+  border: 1px solid rgba(0, 212, 255, 0.1);
+  backdrop-filter: blur(12px);
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  backdrop-filter: blur(10px);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00D4FF, transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
 
   &:hover {
     transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    border-color: rgba(59, 130, 246, 0.4);
+    background: rgba(0, 212, 255, 0.05);
+    border-color: rgba(0, 212, 255, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 212, 255, 0.1);
+
+    &::before {
+      opacity: 1;
+    }
   }
 `;
 
-const Avatar = styled.img`
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  border: 4px solid #3b82f6;
-  margin-bottom: 20px;
-  object-fit: cover;
-`;
-
-const Name = styled.h4`
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 5px;
-`;
-
-const Role = styled.p`
-  font-size: 0.9rem;
-  color: #3b82f6;
+const QuoteIcon = styled.div`
+  font-size: 2rem;
+  color: rgba(0, 212, 255, 0.4);
   margin-bottom: 20px;
 `;
 
 const Quote = styled.p`
   color: #cbd5e1;
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 1.05rem;
+  line-height: 1.7;
   font-style: italic;
+  flex-grow: 1;
+  margin-bottom: 30px;
+`;
 
-  i {
-    color: #8b5cf6;
-    margin-right: 10px;
-    font-size: 1.2rem;
+const AuthorBlock = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 24px;
+`;
+
+const Avatar = styled.div`
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(135deg, #00D4FF, #7c3aed);
+  
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #060a14;
   }
 `;
 
+const AuthorInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Name = styled.h4`
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 4px 0;
+`;
+
+const Role = styled.span`
+  font-size: 0.85rem;
+  color: #00D4FF;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+`;
+
 const Testimonial = () => {
+  const testimonials = [
+    {
+      name: 'Maria Smantha',
+      role: 'Supply Chain Manager',
+      quote: "DriveOnRyd transformed our entire vehicle rental experience. Their service is unparalleled, incredibly reliable, and fits perfectly into our modern workflow.",
+      avatar: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(1).webp'
+    },
+    {
+      name: 'Lisa Cudrow',
+      role: 'Operations Director',
+      quote: "We've been partnering with them for freight forwarding for over 3 years. The real-time tracking and 24/7 support give us immense peace of mind.",
+      avatar: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(2).webp'
+    },
+    {
+      name: 'John Smith',
+      role: 'CEO, RetailCorp',
+      quote: "Their last-mile delivery service has dramatically improved our customer satisfaction rates. Professional, timely, secure, and always pushing boundaries.",
+      avatar: 'https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(9).webp'
+    }
+  ];
+
   return (
     <SectionWrapper id="clients">
-      <div className="container">
-        <div className="row text-center">
-          <div className="col-12">
-            <SectionTitle>What Our Clients Say</SectionTitle>
-            <SectionDesc>
-              Don't just take our word for it. Read how our logistics solutions have helped businesses scale and succeed across the country.
-            </SectionDesc>
-          </div>
-        </div>
+      <SectionHeader>
+        <SectionTitle>What Our Clients Say</SectionTitle>
+        <SectionDesc>
+          Don't just take our word for it. Read how our premium solutions have empowered businesses to scale and succeed.
+        </SectionDesc>
+      </SectionHeader>
 
-        <div className="row mt-4">
-          <div className="col-lg-4 col-md-6 mb-4 d-flex align-items-stretch">
-            <Card>
-              <div className="text-center">
-                <Avatar src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(1).webp" alt="Client 1" />
-                <Name>Maria Smantha</Name>
-                <Role>Supply Chain Manager</Role>
-                <Quote>
-                  <i className="fas fa-quote-left"></i>
-                  DriveOnRyd transformed our entire vehicle rental experience. Their service is unparalleled and incredibly reliable.
-                </Quote>
-              </div>
-            </Card>
-          </div>
-          
-          <div className="col-lg-4 col-md-6 mb-4 d-flex align-items-stretch">
-            <Card>
-              <div className="text-center">
-                <Avatar src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(2).webp" alt="Client 2" />
-                <Name>Lisa Cudrow</Name>
-                <Role>Operations Director</Role>
-                <Quote>
-                  <i className="fas fa-quote-left"></i>
-                  We've been partnering with them for freight forwarding for over 3 years. The real-time tracking and 24/7 support give us immense peace of mind.
-                </Quote>
-              </div>
-            </Card>
-          </div>
-          
-          <div className="col-lg-4 col-md-6 mb-4 d-flex align-items-stretch">
-            <Card>
-              <div className="text-center">
-                <Avatar src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(9).webp" alt="Client 3" />
-                <Name>John Smith</Name>
-                <Role>CEO, RetailCorp</Role>
-                <Quote>
-                  <i className="fas fa-quote-left"></i>
-                  Their last-mile delivery service has dramatically improved our customer satisfaction rates. Professional, timely, and secure!
-                </Quote>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </div>
+      <Grid>
+        {testimonials.map((test, index) => (
+          <Card key={index}>
+            <QuoteIcon>
+              <i className="fas fa-quote-left"></i>
+            </QuoteIcon>
+            <Quote>"{test.quote}"</Quote>
+            <AuthorBlock>
+              <Avatar>
+                <img src={test.avatar} alt={test.name} />
+              </Avatar>
+              <AuthorInfo>
+                <Name>{test.name}</Name>
+                <Role>{test.role}</Role>
+              </AuthorInfo>
+            </AuthorBlock>
+          </Card>
+        ))}
+      </Grid>
     </SectionWrapper>
   );
 };

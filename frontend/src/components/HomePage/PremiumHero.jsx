@@ -38,7 +38,7 @@ const SplitHeading = ({ text }) => (
   <h1 style={{fontSize:'clamp(3rem,7vw,6rem)',fontWeight:900,color:'#fff',lineHeight:1.1,letterSpacing:'-1px',margin:0,textShadow:'0 4px 40px rgba(0,0,0,0.6)'}}>
     {text.split(' ').map((word,i)=>(
       <motion.span key={i} initial={{opacity:0,y:60}} animate={{opacity:1,y:0}} transition={{duration:0.8,delay:0.4+i*0.12,ease:[0.22,1,0.36,1]}} style={{display:'inline-block',marginRight:'0.25em'}}>
-        {word==='Limits'?<span style={{background:'linear-gradient(90deg,#00D4FF,#0066FF,#a78bfa)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>{word}</span>:word}
+        {word==='Limits'?<span style={{background:'linear-gradient(90deg,#00D4FF,#0066FF)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>{word}</span>:word}
       </motion.span>
     ))}
   </h1>
@@ -64,47 +64,73 @@ const Scene3D = ({ isHovered, mouseRef }) => {
 
     // ── Scene ──
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x050010, 0.008);
-    scene.background = new THREE.Color(0x020008);
+    scene.fog = new THREE.FogExp2(0x0f172a, 0.008);
+    scene.background = new THREE.Color(0x0f172a);
 
     // ── Camera ──
     const camera = new THREE.PerspectiveCamera(55, el.clientWidth / el.clientHeight, 0.1, 600);
     camera.position.set(-8, 4.5, 18);
     camera.lookAt(0, 1.5, 0);
 
-    // ── Stars ──
-    const starGeo = new THREE.BufferGeometry();
-    const starCount = 1200;
+    // ── High-Density Starry Sky (Increased star count, fog-immune) ──
+    const starCount = 3800;
     const starPos = new Float32Array(starCount * 3);
-    for (let i = 0; i < starCount * 3; i++) starPos[i] = (Math.random() - 0.5) * 600;
+    for (let i = 0; i < starCount; i++) {
+      starPos[i * 3]     = (Math.random() - 0.5) * 550;
+      starPos[i * 3 + 1] = 6 + Math.random() * 240;
+      starPos[i * 3 + 2] = -340 + Math.random() * 420;
+    }
+    const starGeo = new THREE.BufferGeometry();
     starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-    scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.35, sizeAttenuation: true, transparent: true, opacity: 0.9 })));
+    const starMat = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.75,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity: 0.9,
+      fog: false
+    });
+    const starField = new THREE.Points(starGeo, starMat);
+    scene.add(starField);
 
-    // ── Moon ──
-    const moon = new THREE.Mesh(new THREE.SphereGeometry(5, 20, 20), new THREE.MeshStandardMaterial({ color: 0xdde8ff, emissive: 0xaabbff, emissiveIntensity: 0.4, roughness: 0.9 }));
-    moon.position.set(-120, 90, -250);
-    scene.add(moon);
-    const moonGlow = new THREE.Mesh(new THREE.SphereGeometry(9, 16, 16), new THREE.MeshBasicMaterial({ color: 0x3355ff, transparent: true, opacity: 0.08, side: THREE.BackSide }));
-    moonGlow.position.copy(moon.position);
-    scene.add(moonGlow);
+    // Secondary layer of diamond twinkling cyan stars
+    const cyanStarCount = 600;
+    const cyanStarPos = new Float32Array(cyanStarCount * 3);
+    for (let i = 0; i < cyanStarCount; i++) {
+      cyanStarPos[i * 3]     = (Math.random() - 0.5) * 520;
+      cyanStarPos[i * 3 + 1] = 10 + Math.random() * 220;
+      cyanStarPos[i * 3 + 2] = -320 + Math.random() * 400;
+    }
+    const cyanStarGeo = new THREE.BufferGeometry();
+    cyanStarGeo.setAttribute('position', new THREE.BufferAttribute(cyanStarPos, 3));
+    const cyanStarMat = new THREE.PointsMaterial({
+      color: 0x38bdf8,
+      size: 1.4,
+      sizeAttenuation: true,
+      transparent: true,
+      opacity: 0.95,
+      fog: false
+    });
+    const cyanStarField = new THREE.Points(cyanStarGeo, cyanStarMat);
+    scene.add(cyanStarField);
 
-    // ── Lighting — Night ──
+    // ── Night Lighting ──
     scene.add(new THREE.AmbientLight(0x0a0a2a, 1.2));
-    const moonLight = new THREE.DirectionalLight(0x3355aa, 0.6);
-    moonLight.position.set(-80, 60, -100);
-    moonLight.castShadow = true;
-    moonLight.shadow.mapSize.set(2048, 2048);
-    moonLight.shadow.camera.left = -60; moonLight.shadow.camera.right = 60;
-    moonLight.shadow.camera.top = 40; moonLight.shadow.camera.bottom = -40;
-    scene.add(moonLight);
+    const nightLight = new THREE.DirectionalLight(0x224488, 0.7);
+    nightLight.position.set(-60, 50, -100);
+    nightLight.target.position.set(0, 0, -50);
+    nightLight.castShadow = true;
+    nightLight.shadow.mapSize.set(2048, 2048);
+    scene.add(nightLight);
+    scene.add(nightLight.target);
     // Cyan road fill light
     const fillCyan = new THREE.PointLight(0x00ffff, 2, 40);
     fillCyan.position.set(-5, 3, 5);
     scene.add(fillCyan);
-    // Purple accent
-    const fillPurple = new THREE.PointLight(0xaa00ff, 1.5, 50);
-    fillPurple.position.set(10, 5, -10);
-    scene.add(fillPurple);
+    // Blue accent
+    const fillBlue = new THREE.PointLight(0x0066ff, 1.5, 50);
+    fillBlue.position.set(10, 5, -10);
+    scene.add(fillBlue);
 
     // ── Road ──
     const roadLen = 400;
@@ -117,7 +143,7 @@ const Scene3D = ({ isHovered, mouseRef }) => {
 
     // LED road edge strips (NEOM signature neon lines)
     const neonLineMat  = new THREE.MeshBasicMaterial({ color: 0x00ffff });
-    const neonLineMat2 = new THREE.MeshBasicMaterial({ color: 0xaa44ff });
+    const neonLineMat2 = new THREE.MeshBasicMaterial({ color: 0x0066ff });
     const ledGeo = new THREE.PlaneGeometry(0.14, roadLen);
     const makeLED = (x, mat) => {
       const m = new THREE.Mesh(ledGeo, mat);
@@ -125,7 +151,7 @@ const Scene3D = ({ isHovered, mouseRef }) => {
       scene.add(m);
     };
     makeLED(-8.5, neonLineMat); makeLED(20.5, neonLineMat);  // outer cyan
-    makeLED(-0.8, neonLineMat2); makeLED(-0.5, neonLineMat2); // barrier divider purple
+    makeLED(-0.8, neonLineMat2); makeLED(-0.5, neonLineMat2); // barrier divider blue
 
     // Dashed center lane lines (cyan glow)
     const dashGeo = new THREE.PlaneGeometry(0.18, 3.2);
@@ -149,7 +175,7 @@ const Scene3D = ({ isHovered, mouseRef }) => {
 
     // ── Jersey Barriers — NEOM glowing ──
     const barrierMat  = new THREE.MeshStandardMaterial({ color: 0x111122, roughness: 0.4, metalness: 0.7 });
-    const barrierNeon = new THREE.MeshBasicMaterial({ color: 0xaa44ff });
+    const barrierNeon = new THREE.MeshBasicMaterial({ color: 0x0066ff });
     for (let i = 0; i < 50; i++) {
       const b = new THREE.Mesh(new THREE.BoxGeometry(0.45, 1.1, 3.4), barrierMat);
       b.position.set(-1, 0.55, -i * 8 + 25);
@@ -159,21 +185,9 @@ const Scene3D = ({ isHovered, mouseRef }) => {
       scene.add(stripe);
     }
 
-    // ── NEOM Buildings — The Line & futuristic towers ──
-    // "The Line" style long mirrored facade on the left
-    const lineMat = new THREE.MeshStandardMaterial({ color: 0x0a0a1a, roughness: 0.05, metalness: 1.0, envMapIntensity: 1 });
-    const lineFacade = new THREE.Mesh(new THREE.BoxGeometry(2, 60, 350), lineMat);
-    lineFacade.position.set(-35, 30, -120);
-    scene.add(lineFacade);
-    // Neon strips on The Line
-    for (let i = 0; i < 8; i++) {
-      const strip = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.18, 350), new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0x00ffff : 0xaa44ff }));
-      strip.position.set(-35, 5 + i * 7, -120);
-      scene.add(strip);
-    }
-
-    // Futuristic towers (right side city)
+    // ── Futuristic towers (Left & Right side city) ──
     const towerDefs = [
+      // Right side only (Left side is now sea)
       [22, 45, 5, -80,  0x0a1a2a], [28, 35, 6, -150, 0x060d1a],
       [18, 55, 4, -220, 0x080f20], [32, 28, 5, -60,  0x0a1525],
       [26, 65, 7, -300, 0x06101e], [20, 40, 4.5, -180, 0x0a1a2a],
@@ -192,14 +206,14 @@ const Scene3D = ({ isHovered, mouseRef }) => {
       beacon.position.set(tx, th + 0.4, tz); scene.add(beacon);
       // Vertical neon strips on facade
       [0, 1].forEach(s => {
-        const ns = new THREE.Mesh(new THREE.BoxGeometry(0.1, th, 0.1), new THREE.MeshBasicMaterial({ color: s === 0 ? 0x00ffff : 0xaa44ff }));
+        const ns = new THREE.Mesh(new THREE.BoxGeometry(0.1, th, 0.1), new THREE.MeshBasicMaterial({ color: s === 0 ? 0x00ffff : 0x0066ff }));
         ns.position.set(tx + (s === 0 ? tw / 2 : -tw / 2), th / 2, tz + tw / 2);
         scene.add(ns);
       });
       // Window grid (emissive dots)
       const winsPerRow = 3, rows = Math.floor(th / 4);
       const winGeo = new THREE.PlaneGeometry(0.6, 0.5);
-      const winMat = new THREE.MeshBasicMaterial({ color: Math.random() > 0.4 ? 0x00aaff : 0xaa66ff });
+      const winMat = new THREE.MeshBasicMaterial({ color: Math.random() > 0.4 ? 0x00aaff : 0x00d4ff });
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < winsPerRow; c++) {
           if (Math.random() > 0.55) {
@@ -211,16 +225,393 @@ const Scene3D = ({ isHovered, mouseRef }) => {
       }
     });
 
+    // ── Modern Small Buildings & Smart Villas (Right roadside foreground & midground) ──
+    const smallBuildingDefs = [
+      // [x, y-height, width, depth, z, color]
+      [24, 7,  6, 7,   18, 0x091424],
+      [27, 10, 5, 8,    4, 0x07111e],
+      [23, 6,  7, 6,  -12, 0x0a1628],
+      [26, 12, 6, 8,  -28, 0x060f1c],
+      [24, 8,  5, 7,  -44, 0x081322],
+      [28, 11, 7, 9,  -60, 0x07101d]
+    ];
+    
+    // Sidewalk pavement along the small buildings
+    const sidewalkMat = new THREE.MeshStandardMaterial({ color: 0x0a101f, roughness: 0.8, metalness: 0.2 });
+    const sidewalk = new THREE.Mesh(new THREE.PlaneGeometry(16, 130), sidewalkMat);
+    sidewalk.rotation.x = -Math.PI / 2;
+    sidewalk.position.set(28, 0.04, -20);
+    scene.add(sidewalk);
+
+    // Glowing sidewalk edge curb
+    const curbMat = new THREE.MeshBasicMaterial({ color: 0x0088ff });
+    const curb = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.1, 130), curbMat);
+    curb.position.set(20.8, 0.05, -20);
+    scene.add(curb);
+
+    smallBuildingDefs.forEach(([bx, bh, bw, bd, bz, bcol]) => {
+      const bGroup = new THREE.Group();
+      
+      // Main structure
+      const mainMat = new THREE.MeshStandardMaterial({ color: bcol, roughness: 0.3, metalness: 0.7 });
+      const mainMesh = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, bd), mainMat);
+      mainMesh.position.y = bh / 2;
+      mainMesh.castShadow = true;
+      bGroup.add(mainMesh);
+
+      // Overhanging cantilever upper floor / terrace
+      const deckMat = new THREE.MeshStandardMaterial({ color: 0x060d18, roughness: 0.2, metalness: 0.8 });
+      const deckMesh = new THREE.Mesh(new THREE.BoxGeometry(bw + 0.6, 0.3, bd + 0.6), deckMat);
+      deckMesh.position.y = bh;
+      bGroup.add(deckMesh);
+
+      // Rooftop glowing perimeter neon rail
+      const roofNeonMat = new THREE.MeshBasicMaterial({ color: 0x00d4ff });
+      const roofRail = new THREE.Mesh(new THREE.BoxGeometry(bw + 0.7, 0.12, bd + 0.7), roofNeonMat);
+      roofRail.position.y = bh + 0.2;
+      bGroup.add(roofRail);
+
+      // Architectural vertical accent strip
+      const vStrip = new THREE.Mesh(new THREE.BoxGeometry(0.12, bh, 0.12), roofNeonMat);
+      vStrip.position.set(-bw / 2 + 0.1, bh / 2, bd / 2 + 0.05);
+      bGroup.add(vStrip);
+
+      // Horizontal panoramic window ribbon (warm cyan/ice-blue interior glow)
+      const winFloor1 = new THREE.Mesh(
+        new THREE.PlaneGeometry(bw * 0.75, 1.2),
+        new THREE.MeshBasicMaterial({ color: 0x00e5ff })
+      );
+      winFloor1.position.set(0, bh * 0.35, bd / 2 + 0.06);
+      bGroup.add(winFloor1);
+
+      if (bh >= 8) {
+        const winFloor2 = new THREE.Mesh(
+          new THREE.PlaneGeometry(bw * 0.65, 1.1),
+          new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+        );
+        winFloor2.position.set(0, bh * 0.72, bd / 2 + 0.06);
+        bGroup.add(winFloor2);
+      }
+
+      // Entrance canopy / door light
+      const entranceDoor = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.6, 2.2),
+        new THREE.MeshBasicMaterial({ color: 0x0088ff })
+      );
+      entranceDoor.position.set(bw * 0.2, 1.1, bd / 2 + 0.06);
+      bGroup.add(entranceDoor);
+
+      // Soft ambient light on building
+      const bLight = new THREE.PointLight(0x00d4ff, 0.6, 14);
+      bLight.position.set(0, bh * 0.5, bd / 2 + 1);
+      bGroup.add(bLight);
+
+      bGroup.position.set(bx, 0, bz);
+      scene.add(bGroup);
+    });
+
+    // ── Coastal Seawall Barrier (Left road edge overlooking sea) ──
+    const seawallMat = new THREE.MeshStandardMaterial({ color: 0x091220, roughness: 0.4, metalness: 0.8 });
+    const seawallRailMat = new THREE.MeshBasicMaterial({ color: 0x00d4ff });
+    for (let i = 0; i < 45; i++) {
+      const sp = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.75, 7.5), seawallMat);
+      sp.position.set(-8.8, 0.38, -i * 8 + 25);
+      scene.add(sp);
+      const sr = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.08, 7.52), seawallRailMat);
+      sr.position.set(-8.8, 0.76, -i * 8 + 25);
+      scene.add(sr);
+    }
+
+    // ── Sea & Water Surface (Left side) ──
+    const seaGeo = new THREE.PlaneGeometry(180, 600);
+    const seaMat = new THREE.MeshStandardMaterial({
+      color: 0x001326,
+      roughness: 0.15,
+      metalness: 0.85,
+      transparent: true,
+      opacity: 0.88
+    });
+    const sea = new THREE.Mesh(seaGeo, seaMat);
+    sea.rotation.x = -Math.PI / 2;
+    sea.position.set(-95, -0.28, -150);
+    scene.add(sea);
+
+    // Water reflective sheen strips
+    const sheenMat = new THREE.MeshBasicMaterial({ color: 0x005588, transparent: true, opacity: 0.08 });
+    for (let i = 0; i < 12; i++) {
+      const sheen = new THREE.Mesh(new THREE.PlaneGeometry(160, 4 + (i % 3) * 3), sheenMat);
+      sheen.rotation.x = -Math.PI / 2;
+      sheen.position.set(-90, -0.26, -i * 35 + 10);
+      scene.add(sheen);
+    }
+
+    // ── Fleet of Ships, Yachts, Boats & Buoys ──
+    const fleet = [];
+    const buoyLights = [];
+
+    const cyanLightMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+    const blueLightMat = new THREE.MeshBasicMaterial({ color: 0x0088ff });
+    const iceLightMat  = new THREE.MeshBasicMaterial({ color: 0x7dd3fc });
+    const darkHullMat  = new THREE.MeshStandardMaterial({ color: 0x060f1c, roughness: 0.5, metalness: 0.6 });
+    const navyHullMat  = new THREE.MeshStandardMaterial({ color: 0x0a192f, roughness: 0.4, metalness: 0.7 });
+    const glassCabinMat = new THREE.MeshStandardMaterial({ color: 0x004488, roughness: 0.1, metalness: 0.9, transparent: true, opacity: 0.6 });
+    const wakeMat      = new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.18 });
+
+    // 1. CARGO & CONTAINER VESSELS
+    const containerColors = [0x00ffff, 0x0088ff, 0x0284c7, 0x0369a1, 0x0f172a, 0x00e5c0, 0x1e3a8a];
+    const makeCargoShip = (x, z, scale = 1, speed = 0.8) => {
+      const g = new THREE.Group();
+      const length = 26 * scale;
+      const width  = 6.5 * scale;
+      const height = 2.4 * scale;
+
+      const hull = new THREE.Mesh(new THREE.BoxGeometry(width, height, length), darkHullMat);
+      hull.position.y = height * 0.45;
+      g.add(hull);
+
+      const trim = new THREE.Mesh(new THREE.BoxGeometry(width + 0.15, 0.12 * scale, length + 0.15), cyanLightMat);
+      trim.position.y = height * 0.85;
+      g.add(trim);
+
+      const cRows = 4, cCols = 2, cTiers = 2;
+      const cw = (width * 0.82) / cCols;
+      const cl = 4.2 * scale;
+      const ch = 1.3 * scale;
+      for (let r = 0; r < cRows; r++) {
+        for (let c = 0; c < cCols; c++) {
+          for (let l = 0; l < cTiers; l++) {
+            if (Math.random() > 0.15) {
+              const col = containerColors[(r * 3 + c * 2 + l) % containerColors.length];
+              const cBox = new THREE.Mesh(
+                new THREE.BoxGeometry(cw * 0.92, ch * 0.92, cl * 0.92),
+                new THREE.MeshStandardMaterial({ color: col, roughness: 0.5, metalness: 0.3 })
+              );
+              cBox.position.set(
+                (c - 0.5) * cw,
+                height + ch * 0.5 + l * ch,
+                (r - 1.5) * (cl * 1.05) + 2 * scale
+              );
+              g.add(cBox);
+            }
+          }
+        }
+      }
+
+      const bridgeH = 3.6 * scale;
+      const bridge = new THREE.Mesh(
+        new THREE.BoxGeometry(width * 0.75, bridgeH, 4.5 * scale),
+        navyHullMat
+      );
+      bridge.position.set(0, height + bridgeH * 0.5, -length * 0.38);
+      g.add(bridge);
+
+      const bridgeGlass = new THREE.Mesh(
+        new THREE.BoxGeometry(width * 0.77, 0.7 * scale, 4.55 * scale),
+        cyanLightMat
+      );
+      bridgeGlass.position.set(0, height + bridgeH * 0.78, -length * 0.38);
+      g.add(bridgeGlass);
+
+      const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.15, 3 * scale, 6), darkHullMat);
+      mast.position.set(0, height + bridgeH + 1.5 * scale, -length * 0.38);
+      g.add(mast);
+
+      const mastBeacon = new THREE.Mesh(new THREE.SphereGeometry(0.3 * scale, 8, 8), cyanLightMat);
+      mastBeacon.position.set(0, height + bridgeH + 3 * scale, -length * 0.38);
+      g.add(mastBeacon);
+
+      const pLight = new THREE.PointLight(0x00ffff, 0.8, 25);
+      pLight.position.copy(mastBeacon.position);
+      g.add(pLight);
+
+      const wake = new THREE.Mesh(new THREE.PlaneGeometry(width * 1.4, length * 0.8), wakeMat);
+      wake.rotation.x = -Math.PI / 2;
+      wake.position.set(0, 0.02, -length * 0.75);
+      g.add(wake);
+
+      g.position.set(x, -0.2, z);
+      scene.add(g);
+      fleet.push({
+        group: g,
+        baseY: -0.2,
+        phase: Math.random() * Math.PI * 2,
+        bobFreq: 0.9 + Math.random() * 0.3,
+        bobAmp: 0.05 * scale,
+        rollAmp: 0.012,
+        pitchAmp: 0.008,
+        speed: speed
+      });
+    };
+
+    // 2. LUXURY CYBER YACHTS
+    const makeYacht = (x, z, scale = 1, speed = 1.5) => {
+      const g = new THREE.Group();
+      const length = 15 * scale;
+      const width  = 4.2 * scale;
+
+      const hull = new THREE.Mesh(new THREE.BoxGeometry(width, 1.6 * scale, length), navyHullMat);
+      hull.position.y = 0.8 * scale;
+      g.add(hull);
+
+      const bow = new THREE.Mesh(new THREE.ConeGeometry(width * 0.5, 3.5 * scale, 4), navyHullMat);
+      bow.rotation.x = Math.PI / 2;
+      bow.rotation.y = Math.PI / 4;
+      bow.position.set(0, 0.8 * scale, length * 0.55);
+      g.add(bow);
+
+      const deck1 = new THREE.Mesh(new THREE.BoxGeometry(width * 0.8, 1.2 * scale, length * 0.65), glassCabinMat);
+      deck1.position.set(0, 1.9 * scale, -length * 0.05);
+      g.add(deck1);
+
+      const deck2 = new THREE.Mesh(new THREE.BoxGeometry(width * 0.6, 0.9 * scale, length * 0.35), darkHullMat);
+      deck2.position.set(0, 2.7 * scale, -length * 0.12);
+      g.add(deck2);
+
+      const strip1 = new THREE.Mesh(new THREE.BoxGeometry(width + 0.1, 0.08, length + 0.1), cyanLightMat);
+      strip1.position.y = 1.35 * scale;
+      g.add(strip1);
+
+      const strip2 = new THREE.Mesh(new THREE.BoxGeometry(width * 0.82, 0.06, length * 0.66), blueLightMat);
+      strip2.position.y = 2.45 * scale;
+      g.add(strip2);
+
+      const arch = new THREE.Mesh(new THREE.BoxGeometry(width * 0.62, 1.2 * scale, 0.3 * scale), cyanLightMat);
+      arch.position.set(0, 3.2 * scale, -length * 0.25);
+      g.add(arch);
+
+      const underGlow = new THREE.PointLight(0x00ffff, 1.2, 16);
+      underGlow.position.set(0, 0.2, 0);
+      g.add(underGlow);
+
+      const wake = new THREE.Mesh(new THREE.PlaneGeometry(width * 1.5, length * 0.9), wakeMat);
+      wake.rotation.x = -Math.PI / 2;
+      wake.position.set(0, 0.02, -length * 0.65);
+      g.add(wake);
+
+      g.position.set(x, -0.2, z);
+      scene.add(g);
+      fleet.push({
+        group: g,
+        baseY: -0.2,
+        phase: Math.random() * Math.PI * 2,
+        bobFreq: 1.4 + Math.random() * 0.4,
+        bobAmp: 0.09 * scale,
+        rollAmp: 0.025,
+        pitchAmp: 0.018,
+        speed: speed
+      });
+    };
+
+    // 3. HIGH-SPEED PATROL / SPEEDBOATS
+    const makeSpeedboat = (x, z, scale = 1, speed = 3.5) => {
+      const g = new THREE.Group();
+      const length = 7.5 * scale;
+      const width  = 2.6 * scale;
+
+      const hull = new THREE.Mesh(new THREE.BoxGeometry(width, 1.0 * scale, length), darkHullMat);
+      hull.position.y = 0.5 * scale;
+      g.add(hull);
+
+      const cockpit = new THREE.Mesh(new THREE.BoxGeometry(width * 0.75, 0.65 * scale, length * 0.45), glassCabinMat);
+      cockpit.position.set(0, 1.05 * scale, -length * 0.08);
+      g.add(cockpit);
+
+      const trim = new THREE.Mesh(new THREE.BoxGeometry(width + 0.08, 0.08, length + 0.08), cyanLightMat);
+      trim.position.y = 0.85 * scale;
+      g.add(trim);
+
+      const bowLight = new THREE.Mesh(new THREE.SphereGeometry(0.18 * scale, 8, 8), iceLightMat);
+      bowLight.position.set(0, 0.8 * scale, length * 0.48);
+      g.add(bowLight);
+
+      const spot = new THREE.PointLight(0x00ffff, 1.5, 12);
+      spot.position.copy(bowLight.position);
+      g.add(spot);
+
+      const wake = new THREE.Mesh(new THREE.PlaneGeometry(width * 1.8, length * 1.4), wakeMat);
+      wake.rotation.x = -Math.PI / 2;
+      wake.position.set(0, 0.02, -length * 0.8);
+      g.add(wake);
+
+      g.position.set(x, -0.2, z);
+      scene.add(g);
+      fleet.push({
+        group: g,
+        baseY: -0.2,
+        phase: Math.random() * Math.PI * 2,
+        bobFreq: 2.0 + Math.random() * 0.5,
+        bobAmp: 0.12 * scale,
+        rollAmp: 0.035,
+        pitchAmp: 0.025,
+        speed: speed
+      });
+    };
+
+    // 4. CHANNEL NAVIGATION BUOYS
+    const buoyMat = new THREE.MeshStandardMaterial({ color: 0x071526, roughness: 0.3, metalness: 0.8 });
+    const makeBuoy = (x, z, lightColor = 0x00ffff) => {
+      const g = new THREE.Group();
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.55, 1.4, 12), buoyMat);
+      body.position.y = 0.7;
+      g.add(body);
+
+      const collar = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.07, 8, 16), new THREE.MeshBasicMaterial({ color: lightColor }));
+      collar.rotation.x = Math.PI / 2;
+      collar.position.y = 0.9;
+      g.add(collar);
+
+      const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8), new THREE.MeshBasicMaterial({ color: lightColor }));
+      beacon.position.y = 1.6;
+      g.add(beacon);
+
+      const bl = new THREE.PointLight(lightColor, 1.0, 10);
+      bl.position.copy(beacon.position);
+      g.add(bl);
+      buoyLights.push(bl);
+
+      g.position.set(x, -0.25, z);
+      scene.add(g);
+      fleet.push({
+        group: g,
+        baseY: -0.25,
+        phase: Math.random() * Math.PI * 2,
+        bobFreq: 1.8 + Math.random() * 0.4,
+        bobAmp: 0.08,
+        rollAmp: 0.04,
+        pitchAmp: 0.04,
+        speed: 0
+      });
+    };
+
+    // Place Channel Buoys along the highway shore line (4 well-spaced buoys)
+    [15, -60, -145, -230].forEach((bz, idx) => {
+      makeBuoy(-13.5, bz, idx % 2 === 0 ? 0x00ffff : 0x0088ff);
+    });
+
+    // Place High-Speed Patrols / Speedboats (3 energetic boats)
+    makeSpeedboat(-17,   8, 0.9, 3.6);
+    makeSpeedboat(-19, -75, 1.0, 4.0);
+    makeSpeedboat(-16, -170, 0.9, 3.8);
+
+    // Place Luxury Cyber Yachts (3 elegant cruisers)
+    makeYacht(-25,  -45, 1.05, 1.8);
+    makeYacht(-35, -125, 1.2,  1.5);
+    makeYacht(-30, -220, 1.1,  1.6);
+
+    // Place Heavy Container / Cargo Vessels (2 stately cargo titans)
+    makeCargoShip(-48,  -90, 1.1, 0.8);
+    makeCargoShip(-68, -240, 1.3, 0.6);
+
     // ── Street Lights (smart poles) ──
     for (let i = 0; i < 20; i++) {
       const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 6, 8), new THREE.MeshStandardMaterial({ color: 0x111133, metalness: 0.8, roughness: 0.3 }));
       const side = i % 2 === 0 ? -9.5 : 21.5;
       pole.position.set(side, 3, -i * 20 + 25);
       scene.add(pole);
-      const lampLight = new THREE.PointLight(i % 2 === 0 ? 0x00ffff : 0xaa44ff, 1.5, 18);
+      const lampLight = new THREE.PointLight(i % 2 === 0 ? 0x00ffff : 0x0066ff, 1.5, 18);
       lampLight.position.set(side, 6.5, -i * 20 + 25);
       scene.add(lampLight);
-      const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 8), new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0x00ffff : 0xcc66ff }));
+      const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 8), new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0x00ffff : 0x00d4ff }));
       lamp.position.copy(lampLight.position); scene.add(lamp);
     }
 
@@ -274,7 +665,7 @@ const Scene3D = ({ isHovered, mouseRef }) => {
     scene.add(truckGroup);
 
     // ── Electric Cars ──
-    const carPalette = [0x00ffff, 0xaa44ff, 0x0088ff, 0xff44aa, 0x44ffaa, 0xffaa00];
+    const carPalette = [0x00ffff, 0x0066ff, 0x0088ff, 0x00d4ff, 0x00aaff, 0x0055aa];
     const carGroups = [];
     carPalette.forEach((col, i) => {
       const cg = new THREE.Group();
@@ -330,7 +721,30 @@ const Scene3D = ({ isHovered, mouseRef }) => {
 
       // Pulsing neon (cyan fill light pulse)
       fillCyan.intensity = 1.5 + Math.sin(t * 2.5) * 0.6;
-      fillPurple.intensity = 1.2 + Math.cos(t * 1.8) * 0.5;
+      fillBlue.intensity = 1.2 + Math.cos(t * 1.8) * 0.5;
+
+      // Fleet (Boats, Ships, Yachts, Buoys) gentle ocean bobbing & cruising
+      fleet.forEach(b => {
+        b.group.position.y = b.baseY + Math.sin(t * b.bobFreq + b.phase) * b.bobAmp;
+        b.group.rotation.z = Math.sin(t * (b.bobFreq * 0.8) + b.phase) * b.rollAmp;
+        b.group.rotation.x = Math.cos(t * (b.bobFreq * 0.7) + b.phase) * b.pitchAmp;
+        if (b.speed) {
+          b.group.position.z += b.speed * delta * (isHovered.current ? 1.6 : 1.0);
+          if (b.speed > 0 && b.group.position.z > 35) {
+            b.group.position.z = -380;
+          }
+        }
+      });
+
+      // Pulsing buoy beacons
+      buoyLights.forEach((bl, i) => {
+        bl.intensity = 0.6 + Math.sin(t * 3.5 + i * 1.3) * 0.6;
+      });
+
+      // Sky stars rotation & diamond twinkle
+      starField.rotation.y = t * 0.0015;
+      cyanStarField.rotation.y = t * 0.002;
+      cyanStarMat.opacity = 0.75 + Math.sin(t * 2.5) * 0.25;
 
       // Camera spring
       const mx = mouseRef.current.x ?? 0.5;
@@ -397,7 +811,7 @@ const PremiumHero = () => {
       <section ref={heroRef} onMouseMove={handleMouseMove}
         onMouseEnter={() => { isHovered.current = true; setHoverState(true); }}
         onMouseLeave={() => { isHovered.current = false; setHoverState(false); mouseRef.current={x:0.5,y:0.5}; }}
-        style={{ position:'relative', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', background:'#060a14' }}
+        style={{ position:'relative', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', background:'#0f172a' }}
       >
         <Scene3D isHovered={isHovered} mouseRef={mouseRef} />
 
@@ -418,19 +832,14 @@ const PremiumHero = () => {
 
           <motion.div initial={{opacity:0,scale:0.85}} animate={{opacity:1,scale:1}} transition={{duration:0.7,delay:1.15}}
             style={{display:'flex',gap:20,flexWrap:'wrap',justifyContent:'center',pointerEvents:'auto'}}>
-            <MagneticButton to="/vehicles" variant="primary"><span style={{display:'flex',alignItems:'center',gap:10}}><i className="fas fa-car"/> Explore Cars</span></MagneticButton>
-            <MagneticButton to="/login" variant="outline"><span style={{display:'flex',alignItems:'center',gap:10}}><i className="fas fa-bolt"/> Book Now</span></MagneticButton>
+            <MagneticButton to="/login" variant="primary"><span style={{display:'flex',alignItems:'center',gap:10}}><i className="fas fa-bolt"/> Book Now</span></MagneticButton>
           </motion.div>
 
-          <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{delay:2}}
-            style={{marginTop:72,display:'flex',flexDirection:'column',alignItems:'center',gap:8,pointerEvents:'auto'}}>
-            <span style={{color:'rgba(148,163,184,0.6)',fontSize:'0.72rem',letterSpacing:'3px',textTransform:'uppercase'}}>Scroll</span>
-            <motion.div animate={{y:[0,8,0]}} transition={{duration:1.5,repeat:Infinity}}
-              style={{width:24,height:36,borderRadius:12,border:'2px solid rgba(0,212,255,0.3)',display:'flex',alignItems:'flex-start',justifyContent:'center',padding:4}}>
-              <motion.div animate={{y:[0,14,0],opacity:[1,0,1]}} transition={{duration:1.5,repeat:Infinity}} style={{width:4,height:8,borderRadius:2,background:'#00D4FF'}}/>
-            </motion.div>
-          </motion.div>
+
         </div>
+        
+        {/* Seamless blend gradient */}
+        <div style={{ position:'absolute', bottom:0, left:0, width:'100%', height:'250px', background:'linear-gradient(to bottom, transparent 0%, #0f172a 90%, #0f172a 100%)', zIndex:20, pointerEvents:'none' }} />
       </section>
     </>
   );
