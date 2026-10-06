@@ -42,7 +42,7 @@ const BarGraph = ({ trips }) => {
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
           <XAxis dataKey="month" domain={moment.months()} stroke="#94a3b8" />
           <YAxis domain={[0, 10]} stroke="#94a3b8" />
-          <Tooltip contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: 'none', color: '#fff' }} />
+          <Tooltip contentStyle={{ backgroundColor: 'rgba(5, 10, 51, 0.9)', border: 'none', color: '#fff' }} />
           <Legend />
           <Bar dataKey="no_of_trips" fill="#00D4FF" radius={[4, 4, 0, 0]} />
         </BarChart>

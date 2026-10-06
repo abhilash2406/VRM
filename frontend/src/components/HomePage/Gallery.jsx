@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 const GalleryContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: transparent;
   padding: 60px 20px;
   color: #fff;
   font-family: 'Inter', sans-serif;
@@ -150,7 +150,7 @@ const ModalImage = styled.img`
 const tempImgs = [
   { image: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', title: 'Modern Fleet' },
   { image: 'https://images.unsplash.com/photo-1519003722824-194d4455a60c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', title: 'Highway Transport' },
-  { image: 'https://images.unsplash.com/photo-1586528116311-ad8ed7c663c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', title: 'Warehouse Logistics' },
+  { image: 'https://images.unsplash.com/photo-1553413077-190dd305871c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', title: 'Warehouse Logistics' },
   { image: 'https://images.unsplash.com/photo-1580674285054-bed31e145f59?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', title: 'Global Shipping' },
   { image: 'https://images.unsplash.com/photo-1616423640778-28d1b53229bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', title: 'Last-Mile Delivery' },
   { image: 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', title: 'Container Yard' }

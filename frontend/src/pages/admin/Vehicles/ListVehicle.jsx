@@ -122,7 +122,7 @@ const ListTruck = () => {
   if (availabilityStatus) filterParams.availability_status = availabilityStatus;
   if (status) filterParams.status = status;
 
-  const { data: truckResponse } = useAllTrucks({ page, limit, sortBy, sortOrder, ...filterParams });
+  const { data: truckResponse, isLoading, isFetching } = useAllTrucks({ page, limit, sortBy, sortOrder, ...filterParams });
   const truckData = truckResponse?.data || [];
   const metaData = truckResponse?.meta || { total: 0 };
 
@@ -362,26 +362,71 @@ const ListTruck = () => {
               </>
             }
           />
-          <AppDataTable
-            columns={columns}
-            data={truckData}
-            paginationServer
-            paginationTotalRows={metaData.total}
-            onChangePage={(newPage) => setPage(newPage)}
-            onChangeRowsPerPage={(newPerPage, newPage) => {
-              setLimit(newPerPage);
-              setPage(newPage);
-            }}
-            sortServer
-            onSort={(column, sortDirection) => {
-              if (column.sortField) {
-                setSortBy(column.sortField);
-                setSortOrder(sortDirection.toUpperCase());
-              }
-            }}
-            noDataComponent={customNoData}
-          />
         </div>
+
+        {isLoading || isFetching ? (
+          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
+            <div className="spinner-border text-info" role="status" style={{ width: '3rem', height: '3rem' }}>
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) : truckData.length === 0 ? (
+          <div className="mt-5 w-100 d-flex justify-content-center">
+            {customNoData}
+          </div>
+        ) : (
+          <div className="vehicle-grid mt-4">
+            {truckData.map(vehicle => (
+              <div key={vehicle.id} className="vehicle-card-minimal" onClick={() => openViewModal(vehicle.id)}>
+                <div className="vehicle-image-wrapper">
+                  <img 
+                    src={vehicle.vehicle_photo_url || '/logo.png'} 
+                    onError={(e) => { e.target.onerror = null; e.target.src = '/logo.png'; }}
+                    alt={vehicle.model_name} 
+                    className="vehicle-image" 
+                  />
+                </div>
+                
+                <div className="vehicle-card-content p-3 pb-4">
+                  <h3 className="vehicle-title-lg">{vehicle.manufacturer} {vehicle.model_name}</h3>
+                  <div className="vehicle-reg-plate">{vehicle.registration_number}</div>
+                  
+                  <div className="vehicle-footer-minimal mt-2">
+                    <span className={`badge-minimal ${(vehicle.availability_status || 'available')}`}>
+                      {(vehicle.availability_status || 'available').toUpperCase()}
+                    </span>
+                  </div>
+
+                  <div className="vehicle-actions-inline">
+                    {(userRole === 'Admin' || userRole === 'SUPERADMIN' || permissionAllowed?.includes('Edit')) && (
+                      <button className="action-btn-inline edit-btn-inline" onClick={(e) => { e.stopPropagation(); openEditModal(vehicle.id); }}>
+                        <i className="bi bi-pencil"></i> Edit
+                      </button>
+                    )}
+                    {(userRole === 'Admin' || userRole === 'SUPERADMIN' || permissionAllowed?.includes('Delete')) && (
+                      <button className="action-btn-inline delete-btn-inline" onClick={(e) => { e.stopPropagation(); openDeleteModal(vehicle); }}>
+                        <i className="bi bi-trash"></i> Delete
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+          
+          {truckData.length > 0 && metaData.total > limit && (
+            <div className="d-flex justify-content-center align-items-center mt-5 mb-4">
+              <div className="btn-group shadow-sm">
+                <button className="btn btn-outline-info px-4" disabled={page === 1} onClick={() => setPage(p => p - 1)}>
+                  <i className="bi bi-chevron-left me-2"></i> Previous
+                </button>
+                <button className="btn btn-outline-info px-4" disabled={page * limit >= metaData.total} onClick={() => setPage(p => p + 1)}>
+                  Next <i className="bi bi-chevron-right ms-2"></i>
+                </button>
+              </div>
+            </div>
+          )}
       {ReactDOM.createPortal(
         <ViewVehicleModal 
           vehicleId={activeViewVehicleId} 

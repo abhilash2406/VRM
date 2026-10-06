@@ -152,6 +152,27 @@ export const useUpdateTruckAvailability = () => {
   });
 };
 
+export const useUpdateTruckStatus = () => {
+  const queryClient = useQueryClient();
+  const setSuccessMessage = useMsgStore((state) => state.setSuccessMessage);
+  const setErrorMessage = useMsgStore((state) => state.setErrorMessage);
+
+  return useMutation({
+    mutationFn: async ({ id, status }) => {
+      const { data } = await updateData(`/vehicles/${id}/status`, { status });
+      if (!data.success) throw new Error(data.message);
+      return data;
+    },
+    onSuccess: (data, variables) => {
+      setSuccessMessage(data.message);
+      queryClient.invalidateQueries({ queryKey: truckKeys.all });
+    },
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
+  });
+};
+
 export const useDeleteTruck = () => {
   const queryClient = useQueryClient();
   const setSuccessMessage = useMsgStore((state) => state.setSuccessMessage);

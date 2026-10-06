@@ -16,7 +16,7 @@ const NavWrapper = styled.nav`
   animation: ${slideDown} 0.5s ease forwards;
   background: ${({ scrolled }) =>
     scrolled
-      ? 'linear-gradient(135deg, rgba(15,23,42,0.98) 0%, rgba(30,41,59,0.98) 100%)'
+      ? 'linear-gradient(135deg, rgba(5, 10, 51, 0.98) 0%, rgba(7, 18, 41, 0.98) 100%)'
       : 'transparent'};
   backdrop-filter: ${({ scrolled }) => (scrolled ? 'blur(20px)' : 'none')};
   -webkit-backdrop-filter: ${({ scrolled }) => (scrolled ? 'blur(20px)' : 'none')};
@@ -182,7 +182,7 @@ const MobileMenu = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.98);
+  background: rgba(5, 10, 51, 0.98);
   backdrop-filter: blur(20px);
   z-index: 999;
   display: flex;
@@ -242,10 +242,11 @@ const Header = () => {
           <NavLinks>
             <NavItem to="/">Home</NavItem>
             <NavItem to="/image-gallery">Gallery</NavItem>
+            <NavItem as="a" href="/#blog">Blog</NavItem>
             <NavItem to="/contact-us">Contact Us</NavItem>
             <LoginBtn to="/login">
               <i className="fas fa-user"></i>
-              Login / Register
+              Sign In
             </LoginBtn>
           </NavLinks>
 
@@ -258,10 +259,11 @@ const Header = () => {
       <MobileMenu isOpen={isMobileMenuOpen}>
         <MobileNavItem to="/" onClick={() => setIsMobileMenuOpen(false)}>Home</MobileNavItem>
         <MobileNavItem to="/image-gallery" onClick={() => setIsMobileMenuOpen(false)}>Gallery</MobileNavItem>
+        <MobileNavItem as="a" href="/#blog" onClick={() => setIsMobileMenuOpen(false)}>Blog</MobileNavItem>
         <MobileNavItem to="/contact-us" onClick={() => setIsMobileMenuOpen(false)}>Contact Us</MobileNavItem>
         <LoginBtn to="/login" onClick={() => setIsMobileMenuOpen(false)} style={{ marginTop: '16px', fontSize: '1.2rem', padding: '14px 32px' }}>
           <i className="fas fa-user"></i>
-          Login / Register
+          Sign In
         </LoginBtn>
       </MobileMenu>
       <Spacer />

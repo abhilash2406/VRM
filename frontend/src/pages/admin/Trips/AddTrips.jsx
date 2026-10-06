@@ -85,7 +85,7 @@ const AddTrips = ({ id, onClose }) => {
   return (
     <div className="modal fade" id="addTripModal" tabIndex="-1" aria-labelledby="addTripModalLabel" aria-hidden="true">
       <div className="modal-dialog modal-dialog-centered modal-lg">
-        <div className="modal-content" style={{ background: 'rgba(15, 23, 42, 0.95)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px' }}>
+        <div className="modal-content" style={{ background: 'rgba(5, 10, 51, 0.95)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px' }}>
           <div className="modal-header border-bottom-0 pb-0">
             <h5 className="modal-title text-light fw-bold">{id ? 'Update Trip' : 'Create New Trip'}</h5>
             <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onClick={onClose}></button>

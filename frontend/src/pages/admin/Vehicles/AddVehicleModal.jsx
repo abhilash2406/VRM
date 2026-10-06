@@ -409,7 +409,7 @@ const AddVehicleModal = ({ vehicleId = null, onSuccess, onClose }) => {
 
       <style>{`
         .avm-modal-content {
-          background: #0f1729;
+          background: #071229;
           border: 1px solid rgba(0, 212, 255, 0.2);
           border-radius: 16px;
           color: #f8fafc;
@@ -451,7 +451,7 @@ const AddVehicleModal = ({ vehicleId = null, onSuccess, onClose }) => {
         }
         .avm-required { color: #f87171; }
         .avm-input {
-          background: rgba(15,23,42,0.7) !important;
+          background-color: rgba(255, 255, 255, 0.05) !important;
           border: 1px solid rgba(255,255,255,0.1) !important;
           color: #f8fafc !important;
           border-radius: 8px !important;
@@ -465,7 +465,7 @@ const AddVehicleModal = ({ vehicleId = null, onSuccess, onClose }) => {
           box-shadow: 0 0 0 3px rgba(0,212,255,0.12) !important;
           outline: none !important;
         }
-        .avm-input option { background: #0f1729; color: #f8fafc; }
+        .avm-input option { background: #071229; color: #f8fafc; }
         .avm-input::placeholder { color: #475569 !important; }
         .avm-input:disabled { opacity: 0.4; cursor: not-allowed; }
         
@@ -521,24 +521,24 @@ const AddVehicleModal = ({ vehicleId = null, onSuccess, onClose }) => {
         body.light-mode .avm-modal-content {
           background: #ffffff;
           border-color: rgba(0,102,255,0.15);
-          color: #0f172a;
+          color: #050a33;
         }
         body.light-mode .avm-modal-header {
           background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(0,102,255,0.05));
         }
-        body.light-mode .avm-modal-title { color: #0f172a; }
+        body.light-mode .avm-modal-title { color: #050a33; }
         body.light-mode .avm-label { color: #475569; }
         body.light-mode .avm-input {
           background: rgba(248,250,252,0.9) !important;
           border-color: rgba(0,0,0,0.12) !important;
-          color: #0f172a !important;
+          color: #050a33 !important;
           color-scheme: light;
         }
-        body.light-mode .avm-input option { background: #fff; color: #0f172a; }
+        body.light-mode .avm-input option { background: #fff; color: #050a33; }
         
         body.light-mode .avm-input[type="file"]::file-selector-button {
           background: #f1f5f9;
-          color: #1e293b;
+          color: #071229;
           border-color: rgba(0,0,0,0.1);
         }
         body.light-mode .avm-input[type="file"]::file-selector-button:hover {
@@ -547,7 +547,7 @@ const AddVehicleModal = ({ vehicleId = null, onSuccess, onClose }) => {
 
         body.light-mode .avm-modal-footer { background: rgba(0,0,0,0.02); }
         body.light-mode .avm-btn-cancel { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.1); color: #64748b; }
-        body.light-mode .avm-btn-cancel:hover { background: rgba(0,0,0,0.08); color: #0f172a; }
+        body.light-mode .avm-btn-cancel:hover { background: rgba(0,0,0,0.08); color: #050a33; }
         body.light-mode .avm-section-label { color: #0066ff; border-color: rgba(0,102,255,0.15); }
       `}</style>
     </>
