@@ -44,6 +44,17 @@ export const addVehicleService = async (data, userId) => {
 };
 
 /**
+ * Resolves a vehicle photo path to a fully qualified URL.
+ * Generates presigned URLs for Backblaze B2 objects, or returns local/absolute URLs.
+ */
+const resolvePhotoUrl = async (photoPath) => {
+  if (!photoPath) return null;
+  if (photoPath.startsWith('http')) return photoPath;
+  if (photoPath.startsWith('uploads/')) return await generateB2PresignedUrl(photoPath);
+  return `${process.env.APP_URL || 'http://localhost:5000'}/${photoPath}`;
+};
+
+/**
  * Retrieves all registered vehicles with advanced querying.
  * @param {Object} query - Query parameters (page, limit, search, filters, sort)
  * @returns {Promise<Object>} Object containing rows, count, page, and limit.
@@ -86,11 +97,32 @@ export const getAllVehiclesService = async (query = {}) => {
   const sortBy = query.sortBy || 'createdAt';
   const sortOrder = query.sortOrder?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
 
+  // Define only the needed attributes to optimize payload
+  const attributes = isExport
+    ? [
+        'registration_number',
+        'manufacturer',
+        'model_name',
+        'manufacturing_year',
+        'vehicle_type',
+        'availability_status',
+      ]
+    : [
+        'id',
+        'manufacturer',
+        'model_name',
+        'registration_number',
+        'status',
+        'availability_status',
+        'vehicle_photo',
+      ];
+
   const { count, rows } = await vehicle.findAndCountAll({
     where,
     limit,
     offset,
     order: [[sortBy, sortOrder]],
+    attributes,
   });
 
   if (isExport) {
@@ -109,7 +141,17 @@ export const getAllVehiclesService = async (query = {}) => {
     return { csv };
   }
 
-  return { count, rows, page, limit };
+  const resolvedRows = await Promise.all(
+    rows.map(async (row) => {
+      const data = row.toJSON ? row.toJSON() : row;
+      if (data.vehicle_photo) {
+        data.vehicle_photo_url = await resolvePhotoUrl(data.vehicle_photo);
+      }
+      return data;
+    })
+  );
+
+  return { count, rows: resolvedRows, page, limit };
 };
 
 /**
@@ -125,13 +167,6 @@ export const getVehicleByIdService = async (id) => {
   }
 
   const vehicleData = found.toJSON ? found.toJSON() : found;
-
-  const resolvePhotoUrl = async (photoPath) => {
-    if (!photoPath) return null;
-    if (photoPath.startsWith('http')) return photoPath;
-    if (photoPath.startsWith('uploads/')) return await generateB2PresignedUrl(photoPath);
-    return `${process.env.APP_URL || 'http://localhost:5000'}/${photoPath}`;
-  };
 
   if (vehicleData.vehicle_photo) {
     vehicleData.vehicle_photo_url = await resolvePhotoUrl(vehicleData.vehicle_photo);

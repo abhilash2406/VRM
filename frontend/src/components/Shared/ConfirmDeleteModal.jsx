@@ -55,85 +55,117 @@ const ConfirmDeleteModal = ({ title, message, onConfirm, isPending, modalId = "c
 
       <style>{`
         .cdm-modal-content {
-          background: #0f1729;
-          border-radius: 20px !important;
+          background: rgba(7, 18, 41, 0.85);
+          backdrop-filter: blur(25px);
+          -webkit-backdrop-filter: blur(25px);
+          border: 1px solid rgba(239, 68, 68, 0.2) !important;
+          border-radius: 24px !important;
           overflow: hidden;
           position: relative;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 40px rgba(239, 68, 68, 0.15);
         }
-        .cdm-modal-content::before {
-          content: "";
-          position: absolute;
-          top: 0; left: 0; right: 0;
-          height: 4px;
-          background: linear-gradient(90deg, #f87171, #ef4444);
-        }
+        
         .cdm-modal-header {
           background: transparent;
         }
+        
         .cdm-icon-container {
           width: 80px;
           height: 80px;
           border-radius: 50%;
-          background: rgba(239, 68, 68, 0.1);
+          background: rgba(239, 68, 68, 0.15);
           display: flex;
           align-items: center;
           justify-content: center;
           margin-top: 10px;
+          box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+          animation: pulse-danger 2s infinite;
         }
+        
+        @keyframes pulse-danger {
+          0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+          70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        
         .cdm-title {
-          color: #f8fafc;
-          font-weight: 700;
+          background: linear-gradient(135deg, #fca5a5, #ef4444);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          font-weight: 800;
+          font-size: 1.8rem;
+          letter-spacing: 0.5px;
         }
+        
         .cdm-message {
-          color: #e2e8f0;
-          font-size: 0.95rem;
-          line-height: 1.5;
+          color: #cbd5e1;
+          font-size: 1.05rem;
+          line-height: 1.6;
+          font-weight: 400;
         }
+        
         .cdm-modal-footer {
           background: transparent;
         }
+        
         .cdm-btn-cancel {
           background: rgba(255, 255, 255, 0.05);
           color: #f8fafc;
           border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
-          padding: 10px 0;
-          font-weight: 500;
-          transition: all 0.2s;
+          border-radius: 12px;
+          padding: 12px 0;
+          font-weight: 600;
+          font-size: 1rem;
+          letter-spacing: 0.5px;
+          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        
         .cdm-btn-cancel:hover {
           background: rgba(255, 255, 255, 0.1);
           color: #fff;
+          transform: translateY(-2px);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
+        
         .cdm-btn-delete {
-          background: #ef4444;
+          background: linear-gradient(135deg, #ef4444, #b91c1c);
           color: #fff;
-          border: none;
-          border-radius: 10px;
-          padding: 10px 0;
+          border: 1px solid rgba(239, 68, 68, 0.5);
+          border-radius: 12px;
+          padding: 12px 0;
           font-weight: 600;
-          transition: all 0.2s;
+          font-size: 1rem;
+          letter-spacing: 0.5px;
+          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          box-shadow: 0 8px 15px rgba(239, 68, 68, 0.2);
         }
+        
         .cdm-btn-delete:hover:not(:disabled) {
-          background: #dc2626;
-          transform: translateY(-1px);
+          transform: translateY(-2px);
+          box-shadow: 0 15px 25px rgba(239, 68, 68, 0.4);
+          background: linear-gradient(135deg, #f87171, #dc2626);
         }
+        
         .cdm-btn-delete:disabled {
           background: #f87171;
           opacity: 0.7;
+          box-shadow: none;
+          transform: none;
         }
         
         /* Light mode support */
         body.light-mode .cdm-modal-content {
-          background: #ffffff;
+          background: rgba(255, 255, 255, 0.9);
+          border-color: rgba(239, 68, 68, 0.3) !important;
+          box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.15);
         }
-        body.light-mode .cdm-title {
-          color: #1e293b;
+        body.light-mode .cdm-message {
+          color: #475569;
         }
         body.light-mode .cdm-btn-cancel {
           background: #f1f5f9;
           color: #475569;
-          border-color: transparent;
+          border-color: #e2e8f0;
         }
         body.light-mode .cdm-btn-cancel:hover {
           background: #e2e8f0;

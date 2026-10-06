@@ -18,7 +18,7 @@ const customStyles = {
     borderRadius: '16px',
     boxShadow: '0 10px 40px rgba(0, 0, 0, 0.6)',
     overflowY: 'auto',
-    backgroundColor: '#0f172a'
+    backgroundColor: '#050a33'
   },
   overlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.85)',
@@ -50,7 +50,7 @@ const CloseButton = styled.button`
 `;
 
 const AboutContainer = styled.div`
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: transparent;
   color: #f8fafc;
   font-family: 'Inter', sans-serif;
 `;

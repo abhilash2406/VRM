@@ -51,7 +51,7 @@ const RevenueGraph = ({ transactions }) => {
           <XAxis dataKey="month" domain={moment.months()} stroke="#94a3b8" />
           <YAxis stroke="#94a3b8" />
           <Tooltip 
-            contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: 'none', color: '#fff' }} 
+            contentStyle={{ backgroundColor: 'rgba(5, 10, 51, 0.9)', border: 'none', color: '#fff' }} 
             formatter={(value) => `$${value}`}
           />
           <Legend />

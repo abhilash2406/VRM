@@ -64,8 +64,8 @@ const Scene3D = ({ isHovered, mouseRef }) => {
 
     // ── Scene ──
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x0f172a, 0.008);
-    scene.background = new THREE.Color(0x0f172a);
+    scene.fog = new THREE.FogExp2(0x050a33, 0.008);
+    scene.background = new THREE.Color(0x050a33);
 
     // ── Camera ──
     const camera = new THREE.PerspectiveCamera(55, el.clientWidth / el.clientHeight, 0.1, 600);
@@ -358,7 +358,7 @@ const Scene3D = ({ isHovered, mouseRef }) => {
     const wakeMat      = new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.18 });
 
     // 1. CARGO & CONTAINER VESSELS
-    const containerColors = [0x00ffff, 0x0088ff, 0x0284c7, 0x0369a1, 0x0f172a, 0x00e5c0, 0x1e3a8a];
+    const containerColors = [0x00ffff, 0x0088ff, 0x0284c7, 0x0369a1, 0x050a33, 0x00e5c0, 0x1e3a8a];
     const makeCargoShip = (x, z, scale = 1, speed = 0.8) => {
       const g = new THREE.Group();
       const length = 26 * scale;
@@ -811,7 +811,7 @@ const PremiumHero = () => {
       <section ref={heroRef} onMouseMove={handleMouseMove}
         onMouseEnter={() => { isHovered.current = true; setHoverState(true); }}
         onMouseLeave={() => { isHovered.current = false; setHoverState(false); mouseRef.current={x:0.5,y:0.5}; }}
-        style={{ position:'relative', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', background:'#0f172a' }}
+        style={{ position:'relative', minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden', background:'linear-gradient(135deg, #050a33 0%, #05081f 50%, #071229 100%)' }}
       >
         <Scene3D isHovered={isHovered} mouseRef={mouseRef} />
 
@@ -839,7 +839,7 @@ const PremiumHero = () => {
         </div>
         
         {/* Seamless blend gradient */}
-        <div style={{ position:'absolute', bottom:0, left:0, width:'100%', height:'250px', background:'linear-gradient(to bottom, transparent 0%, #0f172a 90%, #0f172a 100%)', zIndex:20, pointerEvents:'none' }} />
+        <div style={{ position:'absolute', bottom:0, left:0, width:'100%', height:'250px', background:'linear-gradient(to bottom, transparent 0%, #05081f 90%, #071229 100%)', zIndex:20, pointerEvents:'none' }} />
       </section>
     </>
   );

@@ -74,7 +74,7 @@ const CloseButton = styled.button`
 
 /* ── Footer Styled Components ── */
 const FooterWrapper = styled.footer`
-  background: #0f172a;
+  background: transparent;
   color: #f8fafc;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   position: relative;
@@ -562,6 +562,7 @@ const Footer = () => {
               <li><FooterRouterLink to="/">Home</FooterRouterLink></li>
               <li><FooterLink as="span" onClick={() => setAboutModalIsOpen(true)}>About Us</FooterLink></li>
               <li><FooterRouterLink to="/image-gallery">Gallery</FooterRouterLink></li>
+              <li><FooterLink href="/#blog">Journal & Blog</FooterLink></li>
               <li><FooterRouterLink to="/contact-us">Contact Us</FooterRouterLink></li>
               <li><FooterRouterLink to="/login">Book a Ride</FooterRouterLink></li>
             </LinkList>

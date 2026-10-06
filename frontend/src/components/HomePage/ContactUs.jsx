@@ -18,11 +18,7 @@ const PageWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #0f172a;
-  background-image:
-    radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
-    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.2) 0, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.2) 0, transparent 50%);
+  background: linear-gradient(135deg, #050a33 0%, #05081f 50%, #071229 100%);
   padding: 80px 24px;
   position: relative;
   overflow: hidden;
@@ -35,7 +31,7 @@ const PageWrapper = styled.div`
     left: -5%;
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, rgba(0,212,255,0.08), transparent 60%);
+    background: radial-gradient(circle, rgba(0, 102, 255, 0.25), transparent 60%);
     border-radius: 50%;
     filter: blur(80px);
     z-index: 1;
@@ -49,7 +45,7 @@ const PageWrapper = styled.div`
     right: -5%;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(124,58,237,0.08), transparent 60%);
+    background: radial-gradient(circle, rgba(0, 212, 255, 0.22), transparent 60%);
     border-radius: 50%;
     filter: blur(80px);
     z-index: 1;
@@ -74,9 +70,9 @@ const ContentContainer = styled.div`
 /* ── Left Side: Contact Info ── */
 const InfoSection = styled.div`
   padding: 50px 40px;
-  background: rgba(0, 212, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 102, 255, 0.25);
   border-radius: 24px;
   display: flex;
   flex-direction: column;
@@ -91,7 +87,7 @@ const InfoSection = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(0,212,255,0.05) 0%, transparent 50%, rgba(124,58,237,0.05) 100%);
+    background: linear-gradient(135deg, rgba(0, 102, 255, 0.08) 0%, transparent 50%, rgba(0, 212, 255, 0.08) 100%);
     pointer-events: none;
   }
 `;
@@ -104,7 +100,7 @@ const Title = styled.h1`
   font-size: 3rem;
   font-weight: 800;
   margin-bottom: 16px;
-  background: linear-gradient(90deg, #ffffff, #00D4FF);
+  background: linear-gradient(90deg, #ffffff, #00D4FF, #00D4FF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -1px;
@@ -132,14 +128,14 @@ const IconWrapper = styled.div`
   width: 54px;
   height: 54px;
   border-radius: 16px;
-  background: rgba(0,212,255,0.1);
-  border: 1px solid rgba(0,212,255,0.2);
+  background: rgba(0, 102, 255, 0.15);
+  border: 1px solid rgba(0, 102, 255, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #00D4FF;
   font-size: 1.2rem;
-  box-shadow: 0 0 20px rgba(0,212,255,0.1);
+  box-shadow: 0 0 20px rgba(0, 102, 255, 0.2);
   flex-shrink: 0;
 `;
 
@@ -150,7 +146,7 @@ const ItemDetails = styled.div`
 
 const ItemLabel = styled.span`
   font-size: 0.85rem;
-  color: #64748b;
+  color: #93c5fd;
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 4px;
@@ -166,11 +162,11 @@ const ItemValue = styled.span`
 /* ── Right Side: Form ── */
 const FormSection = styled.div`
   padding: 50px 40px;
-  background: rgba(10, 15, 30, 0.6);
+  background: rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 102, 255, 0.2);
   border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 102, 255, 0.1);
 
   @media (max-width: 768px) {
     padding: 40px 24px;
@@ -194,8 +190,8 @@ const StyledLabel = styled.label`
 const StyledInput = styled(Field)`
   width: 100%;
   padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   color: #ffffff;
   font-size: 1rem;
@@ -203,13 +199,13 @@ const StyledInput = styled(Field)`
   outline: none;
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.3);
   }
 
   &:focus {
-    background: rgba(0, 212, 255, 0.05);
-    border-color: rgba(0, 212, 255, 0.4);
-    box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: #0066FF;
+    box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.2);
   }
 
   ${props => props.as === 'textarea' && `
@@ -219,7 +215,7 @@ const StyledInput = styled(Field)`
 `;
 
 const StyledError = styled(ErrorMessage)`
-  color: #ef4444;
+  color: #ff4d4d;
   font-size: 0.85rem;
   margin-top: 8px;
   display: block;
@@ -235,7 +231,7 @@ const StyledError = styled(ErrorMessage)`
 const SubmitButton = styled.button`
   width: 100%;
   padding: 18px;
-  background: linear-gradient(135deg, #00D4FF, #0066FF);
+  background: linear-gradient(135deg, #0066FF, #00D4FF);
   border: none;
   border-radius: 12px;
   color: #fff;
@@ -245,11 +241,11 @@ const SubmitButton = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 10px;
-  box-shadow: 0 10px 20px rgba(0, 212, 255, 0.2);
+  box-shadow: 0 10px 20px rgba(0, 212, 255, 0.25);
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(0, 212, 255, 0.3);
+    box-shadow: 0 15px 30px rgba(0, 212, 255, 0.45);
   }
   
   &:disabled {
@@ -268,7 +264,7 @@ const BackLink = styled(Link)`
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #64748b;
+  color: #94a3b8;
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;

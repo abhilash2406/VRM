@@ -12,174 +12,304 @@ import {
 } from '@react-oauth/google';
 import styled, { keyframes } from 'styled-components';
 
-/* ── Animations ── */
+/* ── Keyframe Animations ── */
 const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 `;
 
-/* ── Styled Components ── */
-const SplitLayout = styled.div`
-  display: flex;
+const floatAnim = keyframes`
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+`;
+
+/* ── Styled Components (Dark Slate #0f172a & Cyan/Blue Theme) ── */
+const AuthPageWrapper = styled.div`
   min-height: 100vh;
-  background-color: #0f172a;
-  background-image:
-    radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
-    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.2) 0, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.2) 0, transparent 50%);
-  font-family: 'Inter', sans-serif;
-`;
-
-const LeftPanel = styled.div`
-  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  display: none;
-  background-image: url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80');
-  background-size: cover;
-  background-position: center;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #050a33 0%, #05081f 50%, #071229 100%);
+  padding: 40px 20px;
+  box-sizing: border-box;
 
-  @media (min-width: 900px) {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 60px;
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(3,7,18,0.4) 0%, rgba(3,7,18,0.9) 100%);
+  @media (max-width: 900px) {
+    padding: 24px 16px;
+    align-items: flex-start;
   }
 `;
 
-const Branding = styled.div`
+const AmbientGlow = styled.div`
+  position: absolute;
+  top: ${props => props.top || 'auto'};
+  bottom: ${props => props.bottom || 'auto'};
+  left: ${props => props.left || 'auto'};
+  right: ${props => props.right || 'auto'};
+  width: ${props => props.size || '500px'};
+  height: ${props => props.size || '500px'};
+  border-radius: 50%;
+  background: ${props => props.color || 'rgba(0, 102, 255, 0.2)'};
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 1;
+`;
+
+const CloseButton = styled(Link)`
+  position: absolute;
+  top: 32px;
+  right: 36px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(20, 30, 50, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 102, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e1;
+  font-size: 1.1rem;
+  text-decoration: none;
+  z-index: 20;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: rgba(0, 212, 255, 0.15);
+    border-color: #00D4FF;
+    color: #ffffff;
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 900px) {
+    top: 20px;
+    right: 20px;
+    width: 38px;
+    height: 38px;
+    font-size: 0.95rem;
+  }
+`;
+
+const ContentContainer = styled.div`
   position: relative;
   z-index: 10;
+  width: 100%;
+  max-width: 1140px;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: 60px;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    max-width: 500px;
+    margin: 40px auto 20px;
+  }
 `;
 
-const Logo = styled.h2`
+/* ── Left Column: Brand & Value Prop ── */
+const LeftBrandColumn = styled.div`
+  color: #ffffff;
+  animation: ${fadeIn} 0.6s ease-out;
+
+  @media (max-width: 960px) {
+    text-align: center;
+  }
+`;
+
+const BrandLogoLink = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  margin-bottom: 32px;
+
+  img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 16px rgba(0, 102, 255, 0.85));
+    animation: ${floatAnim} 4s ease-in-out infinite;
+  }
+`;
+
+const BrandText = styled.span`
   font-family: 'Orbitron', sans-serif;
-  font-size: 2.2rem;
+  font-size: 2.1rem;
   font-weight: 900;
   color: #ffffff;
-  
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+
   span {
-    background: linear-gradient(90deg, #00D4FF, #0066FF);
+    background: linear-gradient(90deg, #00D4FF, #00D4FF);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 `;
 
-const PanelText = styled.div`
-  position: relative;
-  z-index: 10;
+const BrandTagline = styled.span`
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #93c5fd;
+  text-transform: uppercase;
+  margin-top: 3px;
+`;
+
+const HeroHeading = styled.h1`
+  font-size: 3.4rem;
+  font-weight: 800;
   color: #ffffff;
-  max-width: 500px;
+  line-height: 1.15;
+  margin: 0 0 16px 0;
+  letter-spacing: -1px;
 
-  h1 {
-    font-size: 3.5rem;
-    font-weight: 800;
-    margin-bottom: 20px;
-    line-height: 1.1;
-  }
-
-  p {
-    font-size: 1.1rem;
-    color: #94a3b8;
-    line-height: 1.6;
+  @media (max-width: 960px) {
+    font-size: 2.6rem;
   }
 `;
 
-const RightPanel = styled.div`
-  flex: 1;
+const HeroTagline = styled.div`
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #00D4FF;
+  margin-bottom: 16px;
+  letter-spacing: -0.2px;
+`;
+
+const HeroDescription = styled.p`
+  font-size: 1.05rem;
+  color: #94a3b8;
+  line-height: 1.65;
+  margin-bottom: 36px;
+  max-width: 480px;
+
+  @media (max-width: 960px) {
+    margin-left: auto;
+    margin-right: auto;
+  }
+`;
+
+const FeatureList = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: 14px;
+
+  @media (max-width: 960px) {
+    display: none;
+  }
+`;
+
+const FeatureItem = styled.div`
+  display: flex;
   align-items: center;
-  padding: 40px 24px;
-  position: relative;
+  gap: 12px;
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: #cbd5e1;
+
+  i {
+    color: #00D4FF;
+    font-size: 1.1rem;
+  }
 `;
 
-const FormContainer = styled.div`
+/* ── Right Column: Floating Dark Slate Card with Cyan Accents ── */
+const RightCardColumn = styled.div`
+  display: flex;
+  justify-content: center;
+  animation: ${fadeIn} 0.7s ease-out;
+`;
+
+const AuthCard = styled.div`
+  background: rgba(15, 26, 46, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 102, 255, 0.3);
+  border-radius: 28px;
+  padding: 44px 38px;
   width: 100%;
-  max-width: 440px;
-  animation: ${fadeIn} 0.6s ease-out;
+  max-width: 460px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 102, 255, 0.15);
+  box-sizing: border-box;
+
+  @media (max-width: 500px) {
+    padding: 32px 22px;
+    border-radius: 22px;
+  }
 `;
 
-const Header = styled.div`
-  margin-bottom: 40px;
+const CardHeader = styled.div`
+  margin-bottom: 28px;
   text-align: left;
-
-  h2 {
-    font-size: 2rem;
-    color: #ffffff;
-    margin-bottom: 10px;
-    font-weight: 700;
-  }
-
-  p {
-    color: #94a3b8;
-    font-size: 1rem;
-  }
-
-  /* Show logo on mobile only */
-  @media (min-width: 900px) {
-    .mobile-logo { display: none; }
-  }
 `;
 
-const MobileLogo = styled(Logo)`
-  font-size: 1.8rem;
-  margin-bottom: 24px;
+const CardTitle = styled.h2`
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+`;
+
+const CardSubtitle = styled.p`
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.5;
 `;
 
 const FormGroup = styled.div`
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   position: relative;
 `;
 
 const Label = styled.label`
   display: block;
   color: #cbd5e1;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.88rem;
+  font-weight: 600;
   margin-bottom: 8px;
 `;
 
 const Input = styled.input`
   width: 100%;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 16px 20px;
+  background: rgba(10, 15, 26, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50px;
+  padding: 14px 22px;
   color: #ffffff;
-  font-size: 1rem;
-  transition: all 0.3s ease;
+  font-size: 0.98rem;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
 
   &:focus {
     outline: none;
-    background: rgba(0, 212, 255, 0.05);
-    border-color: #00D4FF;
-    box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.1);
+    background: rgba(10, 15, 26, 0.9);
+    border-color: #0066FF;
+    box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.2);
   }
 
   &::placeholder {
-    color: #475569;
+    color: #64748b;
   }
 `;
 
 const ErrorText = styled.div`
-  color: #ef4444;
-  font-size: 0.85rem;
+  color: #ff4d4d;
+  font-size: 0.82rem;
   margin-top: 6px;
+  padding-left: 12px;
   display: flex;
   align-items: center;
-  gap: 6px;
-
-  &::before {
-    content: '⚠';
-  }
+  gap: 5px;
+  font-weight: 500;
 `;
 
 const ForgotPasswordLink = styled(Link)`
@@ -190,31 +320,43 @@ const ForgotPasswordLink = styled(Link)`
   font-weight: 600;
   text-decoration: none;
   margin-top: 8px;
-  transition: color 0.3s ease;
+  margin-bottom: 4px;
+  transition: all 0.2s ease;
 
   &:hover {
-    color: #ffffff;
+    color: #00D4FF;
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+    text-decoration: underline;
   }
 `;
 
 const LoginButton = styled.button`
   width: 100%;
-  padding: 16px;
-  border-radius: 12px;
+  padding: 15px;
+  border-radius: 50px;
   border: none;
-  background: linear-gradient(135deg, #00D4FF, #0066FF);
+  background: #0066FF;
   color: #ffffff;
   font-size: 1.05rem;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 24px rgba(0, 212, 255, 0.25);
-  margin-top: 10px;
+  box-shadow: 0 8px 25px rgba(0, 102, 255, 0.35);
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(0, 212, 255, 0.4);
+    background: #0052cc;
+    box-shadow: 0 12px 30px rgba(0, 102, 255, 0.55);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 
   &:disabled {
@@ -228,10 +370,11 @@ const Divider = styled.div`
   display: flex;
   align-items: center;
   text-align: center;
-  margin: 32px 0;
-  color: #475569;
-  font-size: 0.85rem;
-  font-weight: 500;
+  margin: 24px 0 20px;
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 
   &::before,
   &::after {
@@ -240,53 +383,37 @@ const Divider = styled.div`
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  &::before { margin-right: 1em; }
-  &::after { margin-left: 1em; }
+  &::before { margin-right: 1.2em; }
+  &::after { margin-left: 1.2em; }
 `;
 
 const GoogleWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+
+  div {
+    border-radius: 50px !important;
+  }
 `;
 
 const FooterText = styled.p`
   text-align: center;
   color: #94a3b8;
-  font-size: 0.95rem;
-  
+  font-size: 0.92rem;
+  margin: 0;
+
   a {
     color: #00D4FF;
     text-decoration: none;
-    font-weight: 600;
-    transition: color 0.3s ease;
+    font-weight: 700;
+    transition: color 0.2s ease;
 
     &:hover {
-      color: #ffffff;
+      color: #00D4FF;
+      text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+      text-decoration: underline;
     }
-  }
-`;
-
-const BackLink = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #64748b;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: color 0.3s ease;
-  position: absolute;
-  top: 40px;
-  right: 40px;
-
-  &:hover {
-    color: #ffffff;
-  }
-
-  @media (max-width: 900px) {
-    top: 20px;
-    right: 20px;
   }
 `;
 
@@ -316,112 +443,151 @@ const Login = () => {
   }
 
   return (
-    <SplitLayout>
-      <LeftPanel>
-        <Branding>
-          <Logo>DriveOn<span>Ryd</span></Logo>
-        </Branding>
-        <PanelText>
-          <h1>Welcome Back</h1>
-          <p>Sign in to access your premium vehicle fleet, track ongoing rentals, and discover new destinations.</p>
-        </PanelText>
-      </LeftPanel>
+    <AuthPageWrapper>
+      {/* Ambient background glows */}
+      <AmbientGlow top="-10%" left="-5%" size="600px" color="rgba(0, 102, 255, 0.25)" />
+      <AmbientGlow bottom="-10%" right="15%" size="500px" color="rgba(0, 212, 255, 0.22)" />
 
-      <RightPanel>
-        <BackLink to="/">
-          <i className="fas fa-times"></i>
-        </BackLink>
+      {/* Close button to return to home */}
+      <CloseButton to="/" title="Back to Home">
+        <i className="fas fa-times"></i>
+      </CloseButton>
 
-        <FormContainer>
-          <Header>
-            <MobileLogo className="mobile-logo">DriveOn<span>Ryd</span></MobileLogo>
-            <h2>Log In</h2>
-            <p>Please enter your credentials to continue.</p>
-          </Header>
+      <ContentContainer>
+        {/* Left column: Brand & welcoming messaging */}
+        <LeftBrandColumn>
+          <BrandLogoLink to="/">
+            <img src="/logo.png" alt="DriveOnRyd Logo" />
+            <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+              <BrandText>
+                DriveOn<span>Ryd</span>
+              </BrandText>
+              <BrandTagline>RIDE WITHOUT LIMITS</BrandTagline>
+            </div>
+          </BrandLogoLink>
 
-          <Formik
-            initialValues={{ email: '', password: '' }}
-            validationSchema={LoginSchema}
-            onSubmit={async (values, { resetForm }) => {
-              try {
-                await login(values);
-                resetForm();
-                navigate('/dashboard');
-              } catch (err) {
-                // error is handled by mutation
-              }
-            }}
-          >
-            {({
-              values,
-              errors,
-              touched,
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              isSubmitting,
-            }) => (
-              <form onSubmit={handleSubmit}>
-                <FormGroup>
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="name@company.com"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.email}
-                  />
-                  {errors.email && touched.email && <ErrorText>{errors.email}</ErrorText>}
-                </FormGroup>
+          <HeroHeading>Hey, Hello!</HeroHeading>
+          <HeroTagline>Welcome to DriveOnRyd Login</HeroTagline>
+          <HeroDescription>
+            Sign in to access your premium vehicle fleet, track active rentals, and discover seamless booking without limits.
+          </HeroDescription>
 
-                <FormGroup>
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.password}
-                  />
-                  <ForgotPasswordLink to="/forgot-password">Forgot password?</ForgotPasswordLink>
-                  {errors.password && touched.password && <ErrorText>{errors.password}</ErrorText>}
-                </FormGroup>
+          <FeatureList>
+            <FeatureItem>
+              <i className="fas fa-check-circle"></i>
+              <span>Instant keyless vehicle unlock & digital check-in</span>
+            </FeatureItem>
+            <FeatureItem>
+              <i className="fas fa-check-circle"></i>
+              <span>Curated fleet of luxury, sports, and electric vehicles</span>
+            </FeatureItem>
+            <FeatureItem>
+              <i className="fas fa-check-circle"></i>
+              <span>Transparent pricing with 24/7 dedicated support</span>
+            </FeatureItem>
+          </FeatureList>
+        </LeftBrandColumn>
 
-                <LoginButton type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Authenticating...' : 'Log In'}
-                </LoginButton>
+        {/* Right column: Floating Dark Card in App Theme */}
+        <RightCardColumn>
+          <AuthCard>
+            <CardHeader>
+              <CardTitle>Welcome Back</CardTitle>
+              <CardSubtitle>Please enter your credentials to continue.</CardSubtitle>
+            </CardHeader>
 
-                <Divider>OR CONTINUE WITH</Divider>
-
-                <GoogleWrapper>
-                  <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-                    <GoogleLogin
-                      onSuccess={(credentialResponse) => {
-                        verifyGoogleAccessToken(credentialResponse.credential);
-                      }}
-                      onError={() => {
-                        logger.info('Login Failed');
-                      }}
-                      theme="filled_black"
-                      shape="pill"
-                      text="continue_with"
+            <Formik
+              initialValues={{ email: '', password: '' }}
+              validationSchema={LoginSchema}
+              onSubmit={async (values, { resetForm }) => {
+                try {
+                  await login(values);
+                  resetForm();
+                  navigate('/dashboard');
+                } catch (err) {
+                  // error handled by mutation
+                }
+              }}
+            >
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting,
+              }) => (
+                <form onSubmit={handleSubmit}>
+                  <FormGroup>
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input
+                      type="email"
+                      id="email"
+                      name="email"
+                      placeholder="e.g. user@example.com"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.email}
                     />
-                  </GoogleOAuthProvider>
-                </GoogleWrapper>
+                    {errors.email && touched.email && <ErrorText><i className="fas fa-exclamation-circle"></i> {errors.email}</ErrorText>}
+                  </FormGroup>
 
-                <FooterText>
-                  Don't have an account? <Link to="/signup">Register Now</Link>
-                </FooterText>
-              </form>
-            )}
-          </Formik>
-        </FormContainer>
-      </RightPanel>
-    </SplitLayout>
+                  <FormGroup>
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      type="password"
+                      id="password"
+                      name="password"
+                      placeholder="Enter your password"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.password}
+                    />
+                    <ForgotPasswordLink to="/forgot-password">Forgot password?</ForgotPasswordLink>
+                    {errors.password && touched.password && <ErrorText><i className="fas fa-exclamation-circle"></i> {errors.password}</ErrorText>}
+                  </FormGroup>
+
+                  <LoginButton type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <i className="fas fa-spinner fa-spin"></i> Authenticating...
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-sign-in-alt"></i> Log In
+                      </>
+                    )}
+                  </LoginButton>
+
+                  <Divider>OR</Divider>
+
+                  <GoogleWrapper>
+                    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+                      <GoogleLogin
+                        onSuccess={(credentialResponse) => {
+                          verifyGoogleAccessToken(credentialResponse.credential);
+                        }}
+                        onError={() => {
+                          logger.info('Login Failed');
+                        }}
+                        theme="filled_black"
+                        shape="pill"
+                        text="continue_with"
+                      />
+                    </GoogleOAuthProvider>
+                  </GoogleWrapper>
+
+                  <FooterText>
+                    Don't have an account? <Link to="/signup">Sign Up</Link>
+                  </FooterText>
+                </form>
+              )}
+            </Formik>
+          </AuthCard>
+        </RightCardColumn>
+      </ContentContainer>
+    </AuthPageWrapper>
   );
 };
 

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 const GalleryContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: transparent;
   padding: 60px 20px;
   color: #fff;
   font-family: 'Inter', sans-serif;

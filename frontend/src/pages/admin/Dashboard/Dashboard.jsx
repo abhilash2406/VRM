@@ -189,7 +189,7 @@ const Dashboard = () => {
                     ))
                   ) : (
                     <li className="list-item">
-                      <p className="text-muted m-0">No recent transactions found.</p>
+                      <p className="m-0" style={{ color: '#94a3b8' }}>No recent transactions found.</p>
                     </li>
                   )}
                 </ul>
@@ -217,7 +217,7 @@ const Dashboard = () => {
                     ))
                   ) : (
                     <li className="list-item">
-                      <p className="text-muted m-0">No recent trips found.</p>
+                      <p className="m-0" style={{ color: '#94a3b8' }}>No recent trips found.</p>
                     </li>
                   )}
                 </ul>
@@ -246,7 +246,7 @@ const Dashboard = () => {
                     ))
                   ) : (
                     <li className="list-item">
-                      <p className="text-muted m-0">No recent feedbacks found.</p>
+                      <p className="m-0" style={{ color: '#94a3b8' }}>No recent feedbacks found.</p>
                     </li>
                   )}
                 </ul>

@@ -2,11 +2,7 @@
 .dashboard-layout {
   display: flex;
   min-height: 100vh;
-  background-color: #0f172a;
-  background-image:
-    radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
-    radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.2) 0, transparent 50%),
-    radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.2) 0, transparent 50%);
+  background: linear-gradient(135deg, #050a33 0%, #05081f 50%, #071229 100%);
   color: #f8fafc;
   font-family: 'Inter', 'Roboto', sans-serif;
   overflow-x: hidden;
@@ -15,7 +11,7 @@
 /* Sidebar */
 .dashboard-sidebar {
   width: 280px;
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(5, 10, 51, 0.6);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-right: 1px solid rgba(255, 255, 255, 0.05);
@@ -142,7 +138,7 @@
 
 /* Custom Dropdown Styling */
 .sidebar-footer .dropdown-menu {
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(5, 10, 51, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -449,7 +445,7 @@
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(5, 10, 51, 0.6);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #fff;
@@ -491,13 +487,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #0f172a;
+  border: 2px solid #050a33;
 }
 
 body.light-mode .action-btn {
   background: rgba(255, 255, 255, 0.8);
   border-color: rgba(0, 0, 0, 0.1);
-  color: #0f172a;
+  color: #050a33;
 }
 
 body.light-mode .action-btn:hover {
@@ -512,7 +508,7 @@ body.light-mode .notification-badge {
 body.light-mode .dashboard-layout {
   background-color: #f1f5f9;
   background-image: none;
-  color: #0f172a;
+  color: #050a33;
 }
 
 body.light-mode .dashboard-sidebar {
@@ -521,7 +517,7 @@ body.light-mode .dashboard-sidebar {
 }
 
 body.light-mode .brand-title {
-  color: #0f172a;
+  color: #050a33;
 }
 
 body.light-mode .nav-link-custom {
@@ -530,11 +526,11 @@ body.light-mode .nav-link-custom {
 
 body.light-mode .nav-link-custom:hover {
   background: rgba(0, 212, 255, 0.1);
-  color: #0f172a;
+  color: #050a33;
 }
 
 body.light-mode .user-name {
-  color: #0f172a;
+  color: #050a33;
 }
 
 body.light-mode .user-role {
@@ -552,11 +548,11 @@ body.light-mode .sidebar-footer .dropdown-item {
 
 body.light-mode .sidebar-footer .dropdown-item:hover {
   background: rgba(0, 212, 255, 0.1);
-  color: #0f172a;
+  color: #050a33;
 }
 
 body.light-mode .dashboard-title {
-  color: #0f172a;
+  color: #050a33;
 }
 
 body.light-mode .dashboard-subtitle {
@@ -573,7 +569,7 @@ body.light-mode .stat-title {
 }
 
 body.light-mode .stat-value {
-  color: #0f172a;
+  color: #050a33;
 }
 
 body.light-mode .glass-panel {
@@ -582,7 +578,7 @@ body.light-mode .glass-panel {
 }
 
 body.light-mode .panel-title {
-  color: #0f172a;
+  color: #050a33;
 }
 
 body.light-mode .list-item {
@@ -591,7 +587,7 @@ body.light-mode .list-item {
 }
 
 body.light-mode .item-details h6 {
-  color: #0f172a;
+  color: #050a33;
 }
 
 body.light-mode .item-details p {
@@ -658,13 +654,13 @@ body.light-mode .rdt_TableCol,
 body.light-mode .rdt_TableCol_Sortable,
 body.light-mode .rdt_TableCell,
 body.light-mode .rdt_Pagination {
-  color: #0f172a !important;
+  color: #050a33 !important;
   background: transparent !important;
 }
 body.light-mode .rdt_Pagination select,
 body.light-mode .rdt_Pagination button,
 body.light-mode .rdt_Pagination span {
-  color: #0f172a !important;
+  color: #050a33 !important;
 }
 body.light-mode .rdt_Pagination button:disabled {
   color: #94a3b8 !important;
@@ -672,7 +668,7 @@ body.light-mode .rdt_Pagination button:disabled {
 
 /* Top Actions Dropdown Styling */
 .top-actions-container .dropdown-menu {
-  background: rgba(15, 23, 42, 0.95);
+  background: rgba(5, 10, 51, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -722,13 +718,13 @@ body.light-mode .top-actions-container .dropdown-header {
 }
 
 body.light-mode .top-actions-container .dropdown-item {
-  color: #0f172a;
+  color: #050a33;
 }
 
 body.light-mode .top-actions-container .dropdown-item:hover,
 body.light-mode .top-actions-container .dropdown-item:focus {
   background: rgba(0, 212, 255, 0.1);
-  color: #0f172a;
+  color: #050a33;
 }
 
 body.light-mode .top-actions-container .dropdown-item-time {
@@ -757,7 +753,7 @@ body.light-mode .panel-header {
 }
 
 .panel-search {
-  background: rgba(15, 23, 42, 0.5) !important;
+  background: rgba(5, 10, 51, 0.5) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   color: #f8fafc !important;
   border-radius: 8px !important;
@@ -777,7 +773,7 @@ body.light-mode .panel-header {
 body.light-mode .panel-search {
   background: rgba(255, 255, 255, 0.8) !important;
   border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  color: #0f172a !important;
+  color: #050a33 !important;
 }
 
 body.light-mode .panel-search::placeholder {

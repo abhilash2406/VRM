@@ -8,7 +8,7 @@ const float = keyframes`
 
 const SectionWrapper = styled.section`
   padding: 100px 0;
-  background: #0f172a;
+  background: transparent;
   color: #f8fafc;
   position: relative;
   overflow: hidden;
@@ -20,7 +20,7 @@ const SectionWrapper = styled.section`
     left: -10%;
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, rgba(124, 58, 237, 0.06) 0%, transparent 60%);
+    background: radial-gradient(circle, rgba(0, 102, 255, 0.1) 0%, transparent 60%);
     pointer-events: none;
   }
 `;
@@ -123,7 +123,7 @@ const Avatar = styled.div`
   height: 56px;
   border-radius: 50%;
   padding: 2px;
-  background: linear-gradient(135deg, #00D4FF, #7c3aed);
+  background: linear-gradient(135deg, #00D4FF, #0066FF);
   
   img {
     width: 100%;

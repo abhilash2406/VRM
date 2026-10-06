@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const SectionWrapper = styled.section`
   padding: 100px 0;
-  background: #0f172a;
+  background: transparent;
   color: #f8fafc;
   position: relative;
 `;
@@ -122,7 +122,7 @@ const FrontFace = styled(CardFace)`
 
 const BackFace = styled(CardFace)`
   transform: rotateY(180deg);
-  background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(3,7,18,0.98));
+  background: linear-gradient(135deg, rgba(7, 18, 41, 0.95), rgba(3, 7, 18, 0.98));
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -153,7 +153,7 @@ const BgImage = styled.div`
   background-image: url(${props => props.src});
   background-size: cover;
   background-position: center;
-  background-color: #1e293b; /* Fallback color if image fails */
+  background-color: #071229; /* Fallback color if image fails */
   transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
   filter: saturate(0.8) brightness(0.8);
   z-index: 1;
