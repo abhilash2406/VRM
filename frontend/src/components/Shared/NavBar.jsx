@@ -10,6 +10,7 @@ const NavBar = () => {
   const { setLogout, grantedPermissions } = useAuthStore();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false); // Desktop collapse state
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   
   const [isLightMode, setIsLightMode] = useState(() => {
@@ -144,68 +145,76 @@ const NavBar = () => {
         ></div>
       )}
 
-      <aside className={`dashboard-sidebar ${isSidebarOpen ? 'open' : ''}`}>
-        <div className="sidebar-header">
+      <aside className={`dashboard-sidebar ${isSidebarOpen ? 'open' : ''} ${isCollapsed ? 'collapsed' : ''}`}>
+        <div className="sidebar-header d-flex justify-content-between align-items-center">
           <Link to="/dashboard" className="brand-title">
-            DriveOn<span>Ryd</span>
+            <span className="brand-text">DriveOn<span>Ryd</span></span>
+            <span className="brand-icon d-none">D<span>R</span></span>
           </Link>
+          <button 
+            className="collapse-toggle-btn d-none d-lg-flex"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            title="Toggle Sidebar"
+          >
+            <i className={`bi bi-chevron-${isCollapsed ? 'right' : 'left'}`}></i>
+          </button>
       </div>
 
       <div className="sidebar-nav">
         <div className="nav-item">
-          <Link to="/dashboard" className={`nav-link-custom ${isActive('/dashboard') ? 'active' : ''}`}>
-            <i className="bi-house-door"></i> Dashboard
+          <Link to="/dashboard" className={`nav-link-custom ${isActive('/dashboard') ? 'active' : ''}`} title="Dashboard">
+            <i className="bi-house-door"></i> <span className="nav-text">Dashboard</span>
           </Link>
         </div>
         
         <div className="nav-item">
-          <Link to="/vehicles" className={`nav-link-custom ${isActive('/vehicles') ? 'active' : ''}`}>
-            <i className="bi-truck"></i> Vehicles
+          <Link to="/vehicles" className={`nav-link-custom ${isActive('/vehicles') ? 'active' : ''}`} title="Vehicles">
+            <i className="bi-truck"></i> <span className="nav-text">Vehicles</span>
           </Link>
         </div>
 
         <div className="nav-item">
-          <Link to="/trips" className={`nav-link-custom ${isActive('/trips') ? 'active' : ''}`}>
-            <i className="bi-map"></i> Journeys
+          <Link to="/trips" className={`nav-link-custom ${isActive('/trips') ? 'active' : ''}`} title="Journeys">
+            <i className="bi-map"></i> <span className="nav-text">Journeys</span>
           </Link>
         </div>
 
         {(userRole === 'Admin' || userRole === 'SUPERADMIN') && (
           <div className="nav-item">
-            <Link to="/add-user" className={`nav-link-custom ${isActive('/add-user') ? 'active' : ''}`}>
-              <i className="bi-person"></i> Users
+            <Link to="/add-user" className={`nav-link-custom ${isActive('/add-user') ? 'active' : ''}`} title="Users">
+              <i className="bi-person"></i> <span className="nav-text">Users</span>
             </Link>
           </div>
         )}
 
         {(userRole === 'Admin' || userRole === 'SUPERADMIN') && (
           <div className="nav-item">
-            <Link to="/transactions" className={`nav-link-custom ${isActive('/transactions') ? 'active' : ''}`}>
-              <i className="bi-credit-card"></i> Transactions
+            <Link to="/transactions" className={`nav-link-custom ${isActive('/transactions') ? 'active' : ''}`} title="Transactions">
+              <i className="bi-credit-card"></i> <span className="nav-text">Transactions</span>
             </Link>
           </div>
         )}
 
         {(userRole === 'Admin' || userRole === 'SUPERADMIN') && (
           <div className="nav-item">
-            <Link to="/drivers" className={`nav-link-custom ${isActive('/drivers') ? 'active' : ''}`}>
-              <i className="bi-people"></i> Drivers
+            <Link to="/drivers" className={`nav-link-custom ${isActive('/drivers') ? 'active' : ''}`} title="Drivers">
+              <i className="bi-people"></i> <span className="nav-text">Drivers</span>
             </Link>
           </div>
         )}
 
         {(userRole === 'Admin' || userRole === 'SUPERADMIN') && (
           <div className="nav-item">
-            <Link to="/activity-logs" className={`nav-link-custom ${isActive('/activity-logs') ? 'active' : ''}`}>
-              <i className="bi-shield-lock"></i> Activity Logs
+            <Link to="/activity-logs" className={`nav-link-custom ${isActive('/activity-logs') ? 'active' : ''}`} title="Activity Logs">
+              <i className="bi-shield-lock"></i> <span className="nav-text">Activity Logs</span>
             </Link>
           </div>
         )}
 
         {(userRole !== 'Admin' && userRole !== 'SUPERADMIN') && (
           <div className="nav-item">
-            <Link to="/routes" className={`nav-link-custom ${isActive('/routes') ? 'active' : ''}`}>
-              <i className="bi-signpost-split"></i> Routes
+            <Link to="/routes" className={`nav-link-custom ${isActive('/routes') ? 'active' : ''}`} title="Routes">
+              <i className="bi-signpost-split"></i> <span className="nav-text">Routes</span>
             </Link>
           </div>
         )}
@@ -213,13 +222,13 @@ const NavBar = () => {
         {(userRole !== 'Admin' && userRole !== 'SUPERADMIN') && userRole === 'Manager' && (
           <>
             <div className="nav-item">
-              <Link to="/gallery" className={`nav-link-custom ${isActive('/gallery') ? 'active' : ''}`}>
-                <i className="bi-images"></i> Gallery
+              <Link to="/gallery" className={`nav-link-custom ${isActive('/gallery') ? 'active' : ''}`} title="Gallery">
+                <i className="bi-images"></i> <span className="nav-text">Gallery</span>
               </Link>
             </div>
             <div className="nav-item">
-              <Link to="/feedbacks" className={`nav-link-custom ${isActive('/feedbacks') ? 'active' : ''}`}>
-                <i className="bi-chat-left-text"></i> Feedbacks
+              <Link to="/feedbacks" className={`nav-link-custom ${isActive('/feedbacks') ? 'active' : ''}`} title="Feedbacks">
+                <i className="bi-chat-left-text"></i> <span className="nav-text">Feedbacks</span>
               </Link>
             </div>
           </>
