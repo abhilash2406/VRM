@@ -52,11 +52,7 @@ app.use(
   })
 );
 
-const port = process.env.PORT || '5000';
-logger.info('==================================================');
-logger.info(`🚀 Server is running locally on port: ${port}`);
-logger.info(`📚 Swagger documentation available at: http://localhost:${port}/api-docs`);
-logger.info('==================================================');
+// Server startup logs are handled in server.js
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "node --watch ./bin/www",
+    "start": "node server.js",
+    "dev": "node --watch server.js",
     "seed:designation": "node ./src/seeders/designation.js",
     "seed:admin": "node ./src/seeders/admin.js",
     "seed:all": "npm run seed:designation && npm run seed:admin",

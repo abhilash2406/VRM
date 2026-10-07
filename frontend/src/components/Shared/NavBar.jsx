@@ -211,6 +211,14 @@ const NavBar = () => {
           </div>
         )}
 
+         {(userRole === 'Admin' || userRole === 'SUPERADMIN') && (
+          <div className="nav-item">
+            <Link to="/settings" className={`nav-link-custom ${isActive('/settings') ? 'active' : ''}`} title="Settings">
+              <i className="bi-person"></i> <span className="nav-text">Settings</span>
+            </Link>
+          </div>
+        )}
+
         {(userRole !== 'Admin' && userRole !== 'SUPERADMIN') && (
           <div className="nav-item">
             <Link to="/routes" className={`nav-link-custom ${isActive('/routes') ? 'active' : ''}`} title="Routes">
