@@ -33,6 +33,7 @@ import ViewDriver from '../pages/admin/Drivers/ViewDriver';
 import Trips from '../pages/admin/Trips/Trips';
 import Transactions from '../pages/admin/Transactions/Transactions';
 import Permissions from '../pages/admin/Permissions/Permissions';
+import Settings from '../pages/admin/Settings/Settings';
 
 const AppRoutes = () => {
   return (
@@ -88,6 +89,9 @@ const AppRoutes = () => {
 
         {/* ── System ── */}
         <Route path="/activity-logs" element={<ActivityLogs />} />
+
+         {/* ── Settings ── */}
+        <Route path="/settings" element={<Settings />} />
       </Route>
 
       {/* ── Fallback ── */}
